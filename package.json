@@ -87,7 +87,7 @@
     "react-toastify": "7.0.3",
     "react-transition-group": "4.4.1",
     "reactstrap": "8.9.0",
-    "redux": "4.0.5",
+    "redux": "4.1.0",
     "redux-devtools": "3.7.0",
     "redux-devtools-dock-monitor": "1.2.0",
     "redux-devtools-log-monitor": "2.1.0",
