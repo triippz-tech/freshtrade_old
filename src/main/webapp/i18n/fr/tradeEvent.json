@@ -1,0 +1,31 @@
+{
+  "freshtradeApp": {
+    "tradeEvent": {
+      "home": {
+        "title": "TradeEvents",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Trade Event",
+        "createOrEditLabel": "Créer ou éditer un Trade Event",
+        "notFound": "Aucun Trade Event trouvé"
+      },
+      "created": "Un nouveau Trade Event a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Trade Event avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Trade Event avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Etes-vous certain de vouloir supprimer le Trade Event {{ id }} ?"
+      },
+      "detail": {
+        "title": "Trade Event"
+      },
+      "id": "Id",
+      "eventName": "Event Name",
+      "eventDescription": "Event Description",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "isActive": "Is Active",
+      "location": "Location",
+      "items": "Items",
+      "reservations": "Reservations"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+id;reservation_number;is_active;is_cancelled;cancellation_note;pickup_time;created_date;updated_date
+92c5c59f-7a24-4e7d-8f48-7e5dcceadf17;withdrawal e-markets white;false;true;../fake-data/blob/hipster.txt;2021-05-29T18:06:00;2021-05-29T04:55:16;2021-05-29T11:46:41
+3fac6fcc-4319-48ba-950d-02177f9cccff;Identity Sports;false;true;../fake-data/blob/hipster.txt;2021-05-29T12:48:46;2021-05-29T03:47:21;2021-05-29T09:30:33
+dd9382b6-835c-4378-bb0e-e9bfcd627389;Supervisor Road bandwidth;false;false;../fake-data/blob/hipster.txt;2021-05-29T19:16:56;2021-05-29T18:46:57;2021-05-29T00:46:07
+1e15dc3d-5fa9-49c5-9780-a895c5d35de9;array;true;true;../fake-data/blob/hipster.txt;2021-05-29T07:14:07;2021-05-29T15:16:28;2021-05-29T01:15:12
+ea71abcc-44e7-440c-8dc1-eba798909309;Internal Hat;false;true;../fake-data/blob/hipster.txt;2021-05-29T12:28:03;2021-05-29T18:34:59;2021-05-29T15:17:56
+fbe2edd7-fdb8-459a-bf9f-f9297e1a4ae9;Burundi;true;true;../fake-data/blob/hipster.txt;2021-05-29T16:46:55;2021-05-29T12:12:53;2021-05-29T22:23:01
+563b0765-3723-4fc5-b906-d9ba9eeaf39a;Indian Vermont capacity;false;false;../fake-data/blob/hipster.txt;2021-05-29T21:54:48;2021-05-29T02:29:55;2021-05-29T03:46:53
+c98ff6c4-1b92-4d25-967a-e5e3d75be535;Courts International Analyst;false;false;../fake-data/blob/hipster.txt;2021-05-29T20:13:20;2021-05-29T09:16:30;2021-05-29T03:51:50
+3eb7614e-25dc-4e02-aac7-31b8d1e160fb;PCI Ferry;true;false;../fake-data/blob/hipster.txt;2021-05-29T17:25:07;2021-05-29T01:17:48;2021-05-29T00:55:23
+395ca0e4-df5f-4cd5-b85c-ea8cd3246a10;sensor Plastic PCI;true;false;../fake-data/blob/hipster.txt;2021-05-29T21:41:27;2021-05-29T16:01:48;2021-05-29T20:52:50

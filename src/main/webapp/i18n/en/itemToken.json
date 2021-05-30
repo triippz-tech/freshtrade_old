@@ -1,0 +1,29 @@
+{
+  "freshtradeApp": {
+    "itemToken": {
+      "home": {
+        "title": "Item Tokens",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Item Token",
+        "createOrEditLabel": "Create or edit a Item Token",
+        "notFound": "No Item Tokens found"
+      },
+      "created": "A new Item Token is created with identifier {{ param }}",
+      "updated": "A Item Token is updated with identifier {{ param }}",
+      "deleted": "A Item Token is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Item Token {{ id }}?"
+      },
+      "detail": {
+        "title": "Item Token"
+      },
+      "id": "ID",
+      "tokenName": "Token Name",
+      "tokenCode": "Token Code",
+      "createdDate": "Created Date",
+      "updatedDate": "Updated Date",
+      "owner": "Owner",
+      "item": "Item"
+    }
+  }
+}

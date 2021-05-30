@@ -1,0 +1,33 @@
+{
+  "freshtradeApp": {
+    "reservation": {
+      "home": {
+        "title": "Reservations",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Reservation",
+        "createOrEditLabel": "Create or edit a Reservation",
+        "notFound": "No Reservations found"
+      },
+      "created": "A new Reservation is created with identifier {{ param }}",
+      "updated": "A Reservation is updated with identifier {{ param }}",
+      "deleted": "A Reservation is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Reservation {{ id }}?"
+      },
+      "detail": {
+        "title": "Reservation"
+      },
+      "id": "Id",
+      "reservationNumber": "Reservation Number",
+      "isActive": "Is Active",
+      "isCancelled": "Is Cancelled",
+      "cancellationNote": "Cancellation Note",
+      "pickupTime": "Pickup Time",
+      "createdDate": "Created Date",
+      "updatedDate": "Updated Date",
+      "seller": "Seller",
+      "buyer": "Buyer",
+      "event": "Event"
+    }
+  }
+}

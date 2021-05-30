@@ -1,0 +1,11 @@
+id;price;quantity;name;details;item_condition;is_active;created_date;updated_date
+8f078643-3e73-4e83-9486-c87232a5a23f;35270;42521;drive haptic;../fake-data/blob/hipster.txt;DAMAGED;false;2021-05-29T23:15:10;2021-05-29T12:21:51
+4d64b82f-19b0-4292-b100-a6b832ac07d0;46061;75561;Agent Gorgeous compressing;../fake-data/blob/hipster.txt;LIKE_NEW;false;2021-05-29T05:36:32;2021-05-29T16:48:13
+7fe37fa9-f26b-45ba-be06-2e22f0ad91dd;2849;56364;Mississippi Hawaii;../fake-data/blob/hipster.txt;USED;true;2021-05-29T17:01:15;2021-05-29T04:08:59
+c46b32d7-8a5c-4143-9744-76d2c425a560;25215;21893;Wisconsin;../fake-data/blob/hipster.txt;USED;true;2021-05-29T02:25:41;2021-05-29T16:23:43
+7c0c33aa-bbb0-4354-bd85-3bb787552864;62523;13071;Refined;../fake-data/blob/hipster.txt;FOR_PARTS;true;2021-05-29T08:26:46;2021-05-29T14:08:41
+d2f56eb5-bc38-429c-8ae4-82391293a499;20740;91974;Computers HTTP Intelligent;../fake-data/blob/hipster.txt;FOR_PARTS;true;2021-05-29T01:15:45;2021-05-29T01:41:00
+ffd2bf8b-2b97-4cb5-9604-05a013871e56;2274;79461;Metal payment;../fake-data/blob/hipster.txt;OPEN_BOX;true;2021-05-30T00:17:47;2021-05-29T05:56:16
+b9d93dfd-2b00-45fc-8ab2-423b635af1ed;91563;74103;invoice;../fake-data/blob/hipster.txt;DAMAGED;true;2021-05-29T03:16:24;2021-05-29T05:42:51
+690e2aa4-b4a5-4f80-a8fc-656f711a9842;16354;81729;Rustic;../fake-data/blob/hipster.txt;NEW;true;2021-05-29T12:14:44;2021-05-29T05:02:14
+9804d39b-0b9a-4ed4-8c53-77a25fb70623;73871;58227;Keyboard Springs Arkansas;../fake-data/blob/hipster.txt;LIKE_NEW;true;2021-05-29T02:33:12;2021-05-29T17:56:54

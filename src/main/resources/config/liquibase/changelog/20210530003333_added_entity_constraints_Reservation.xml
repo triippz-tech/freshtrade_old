@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+    <!--
+        Added the constraints for entity Reservation.
+    -->
+    <changeSet id="20210530003333-2" author="jhipster">
+
+        <addForeignKeyConstraint baseColumnNames="seller_id"
+                                 baseTableName="reservation"
+                                 constraintName="fk_reservation__seller_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="ft_user"/>
+
+        <addForeignKeyConstraint baseColumnNames="buyer_id"
+                                 baseTableName="reservation"
+                                 constraintName="fk_reservation__buyer_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="ft_user"/>
+
+        <addForeignKeyConstraint baseColumnNames="event_id"
+                                 baseTableName="reservation"
+                                 constraintName="fk_reservation__event_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="trade_event"/>
+    </changeSet>
+</databaseChangeLog>

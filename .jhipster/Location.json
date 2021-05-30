@@ -1,0 +1,56 @@
+{
+  "name": "Location",
+  "fields": [
+    {
+      "fieldName": "shortName",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "address",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "postalCode",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "latLocation",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "longLocation",
+      "fieldType": "Double"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "country",
+      "otherEntityRelationshipName": "locations",
+      "relationshipName": "country"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "item",
+      "otherEntityRelationshipName": "location",
+      "relationshipName": "items"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "tradeEvent",
+      "otherEntityRelationshipName": "location",
+      "relationshipName": "tradeEvents"
+    }
+  ],
+  "entityTableName": "location",
+  "dto": "no",
+  "pagination": "infinite-scroll",
+  "service": "serviceClass",
+  "jpaMetamodelFiltering": true,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": ["freshtrade"],
+  "changelogDate": "20210530003533"
+}

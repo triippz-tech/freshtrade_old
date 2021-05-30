@@ -1,0 +1,135 @@
+
+application {
+  config {
+    baseName freshtrade,
+    applicationType monolith,
+    packageName com.triippztech.freshtrade,
+    authenticationType jwt,
+    databaseType sql,
+    prodDatabaseType postgresql,
+    clientFramework react,
+    buildTool maven,
+    clientTheme litera,
+    clientThemeVariant dark,
+    devDatabaseType postgresql,
+    jhiPrefix ft,
+    languages [en, fr],
+    nativeLanguage en,
+    websocket spring-websocket
+  }
+  entities *
+}
+
+enum Condition {
+	NEW,
+    OPEN_BOX,
+    LIKE_NEW,
+    USED,
+    DAMAGED,
+    FOR_PARTS
+}
+
+entity Category {
+	id UUID,
+    slug String maxlength(50) required,
+    name String maxlength(50) required,
+    createdDate ZonedDateTime,
+    isActive Boolean
+}
+
+entity Image {
+	id UUID,
+    imageUrl String,
+    createdDate ZonedDateTime,
+    isVisible Boolean
+}
+
+entity Item {
+	id UUID,
+    price Double required,
+    quantity Integer required min(1),
+    name String required,
+    details TextBlob required,
+    itemCondition Condition,
+    isActive Boolean required,
+    createdDate ZonedDateTime,
+    updatedDate ZonedDateTime
+}
+
+entity ItemToken {
+    tokenName String required,
+    tokenCode String unique required
+    createdDate ZonedDateTime,
+    updatedDate ZonedDateTime
+}
+
+entity Reservation {
+	id UUID,
+    reservationNumber String maxlength(100) required unique,
+    isActive Boolean required,
+    isCancelled Boolean,
+    cancellationNote TextBlob,
+    pickupTime ZonedDateTime,
+    createdDate ZonedDateTime,
+    updatedDate ZonedDateTime,
+}
+
+entity Country {
+	countryCode String maxlength(2) minlength(2),
+    countryName String
+}
+
+entity Location {
+	shortName String required,
+    address String,
+    postalCode String,
+    latLocation Double,
+    longLocation Double
+}
+
+entity TradeEvent {
+	id UUID,
+	eventName String required,
+    eventDescription String required,
+    startDate ZonedDateTime required,
+    endDate ZonedDateTime required,
+    isActive Boolean
+}
+
+entity UserProfile {
+	id UUID,
+    location String,
+    description TextBlob
+}
+
+
+relationship OneToMany {
+  Item{images} to Image{item}
+  Item{tokens} to ItemToken{item}
+}
+
+relationship ManyToOne {
+	Item{owner} to User,
+    Item{location} to Location{items},
+    Item{tradeEvent} to TradeEvent{items},
+    Reservation{seller} to User,
+    Reservation{buyer} to User,
+    Reservation{event} to TradeEvent{reservations},
+    Location{country} to Country{locations},
+    TradeEvent{location} to Location{tradeEvents}
+}
+
+relationship ManyToMany {
+  Item{categories} to Category{items},
+  Item{user} to User,
+  ItemToken{owner} to User
+}
+
+relationship OneToOne {
+  UserProfile{user} to User
+}
+
+paginate * with infinite-scroll
+service * with serviceClass
+filter *
+    
