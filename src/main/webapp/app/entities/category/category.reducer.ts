@@ -12,9 +12,11 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { ICategory, defaultValue } from 'app/shared/model/category.model';
+import { ICrudGetActionNoId } from 'app/config/redux-action.type';
 
 export const ACTION_TYPES = {
   FETCH_CATEGORY_LIST: 'category/FETCH_CATEGORY_LIST',
+  FETCH_CATEGORY_HEADER_LIST: 'category/FETCH_CATEGORY_HEADER_LIST',
   FETCH_CATEGORY: 'category/FETCH_CATEGORY',
   CREATE_CATEGORY: 'category/CREATE_CATEGORY',
   UPDATE_CATEGORY: 'category/UPDATE_CATEGORY',
@@ -27,6 +29,7 @@ const initialState = {
   loading: false,
   errorMessage: null,
   entities: [] as ReadonlyArray<ICategory>,
+  headerEntities: [] as ReadonlyArray<ICategory>,
   entity: defaultValue,
   links: { next: 0 },
   updating: false,
@@ -41,6 +44,7 @@ export type CategoryState = Readonly<typeof initialState>;
 export default (state: CategoryState = initialState, action): CategoryState => {
   switch (action.type) {
     case REQUEST(ACTION_TYPES.FETCH_CATEGORY_LIST):
+    case REQUEST(ACTION_TYPES.FETCH_CATEGORY_HEADER_LIST):
     case REQUEST(ACTION_TYPES.FETCH_CATEGORY):
       return {
         ...state,
@@ -59,6 +63,7 @@ export default (state: CategoryState = initialState, action): CategoryState => {
         updating: true,
       };
     case FAILURE(ACTION_TYPES.FETCH_CATEGORY_LIST):
+    case FAILURE(ACTION_TYPES.FETCH_CATEGORY_HEADER_LIST):
     case FAILURE(ACTION_TYPES.FETCH_CATEGORY):
     case FAILURE(ACTION_TYPES.CREATE_CATEGORY):
     case FAILURE(ACTION_TYPES.UPDATE_CATEGORY):
@@ -80,6 +85,13 @@ export default (state: CategoryState = initialState, action): CategoryState => {
         links,
         entities: loadMoreDataWhenScrolled(state.entities, action.payload.data, links),
         totalItems: parseInt(action.payload.headers['x-total-count'], 10),
+      };
+    }
+    case SUCCESS(ACTION_TYPES.FETCH_CATEGORY_HEADER_LIST): {
+      return {
+        ...state,
+        loading: false,
+        headerEntities: action.payload.data,
       };
     }
     case SUCCESS(ACTION_TYPES.FETCH_CATEGORY):
@@ -129,6 +141,14 @@ export const getEntity: ICrudGetAction<ICategory> = id => {
   const requestUrl = `${apiUrl}/${id}`;
   return {
     type: ACTION_TYPES.FETCH_CATEGORY,
+    payload: axios.get<ICategory>(requestUrl),
+  };
+};
+
+export const getFeaturedEntities: ICrudGetActionNoId<ICategory> = () => {
+  const requestUrl = `${apiUrl}/featured`;
+  return {
+    type: ACTION_TYPES.FETCH_CATEGORY_HEADER_LIST,
     payload: axios.get<ICategory>(requestUrl),
   };
 };

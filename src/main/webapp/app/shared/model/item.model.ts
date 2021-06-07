@@ -24,8 +24,12 @@ export interface IItem {
   tradeEvent?: ITradeEvent | null;
   categories?: ICategory[] | null;
   users?: IUser[] | null;
+  availableQuantity?: number;
 }
 
 export const defaultValue: Readonly<IItem> = {
   isActive: false,
+  images: [],
+  users: [],
+  categories: [],
 };

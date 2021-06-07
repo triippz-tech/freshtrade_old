@@ -59,7 +59,7 @@ public class Item implements Serializable {
     @Column(name = "updated_date")
     private ZonedDateTime updatedDate;
 
-    @OneToMany(mappedBy = "item")
+    @OneToMany(mappedBy = "item", fetch = FetchType.EAGER)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "item" }, allowSetters = true)
     private Set<Image> images = new HashSet<>();
@@ -69,15 +69,21 @@ public class Item implements Serializable {
     @JsonIgnoreProperties(value = { "owners", "item" }, allowSetters = true)
     private Set<ItemToken> tokens = new HashSet<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnoreProperties(
+        value = {
+            "langKey", "activated", "email", "password", "firstName", "lastName", "activationKey", "resetKey", "resetDate", "authorities",
+        },
+        allowSetters = true
+    )
     private User owner;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnoreProperties(value = { "country", "items", "tradeEvents" }, allowSetters = true)
     private Location location;
 
     @ManyToOne
-    @JsonIgnoreProperties(value = { "location", "items", "reservations" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "items", "reservations" }, allowSetters = true)
     private TradeEvent tradeEvent;
 
     @ManyToMany

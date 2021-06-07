@@ -41,6 +41,9 @@ public class Category implements Serializable {
     @Column(name = "is_active")
     private Boolean isActive;
 
+    @Column(name = "is_featured")
+    private Boolean isFeatured;
+
     @ManyToMany(mappedBy = "categories")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "images", "tokens", "owner", "location", "tradeEvent", "categories", "users" }, allowSetters = true)
@@ -143,6 +146,14 @@ public class Category implements Serializable {
         this.items = items;
     }
 
+    public Boolean getIsFeatured() {
+        return isFeatured;
+    }
+
+    public void setIsFeatured(Boolean featured) {
+        isFeatured = featured;
+    }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -171,6 +182,7 @@ public class Category implements Serializable {
             ", name='" + getName() + "'" +
             ", createdDate='" + getCreatedDate() + "'" +
             ", isActive='" + getIsActive() + "'" +
+            ", isFeatured='" + getIsFeatured() + "'" +
             "}";
     }
 }

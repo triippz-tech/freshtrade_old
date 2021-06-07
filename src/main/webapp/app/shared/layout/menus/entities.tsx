@@ -1,43 +1,60 @@
 import React from 'react';
-import MenuItem from 'app/shared/layout/menus/menu-item';
 import { Translate, translate } from 'react-jhipster';
 import { NavDropdown } from './menu-components';
+import { DropdownItem, MDBLink } from 'mdbreact';
 
 export const EntitiesMenu = props => (
   <NavDropdown
-    icon="th-list"
+    icon="fas fa-th-list"
     name={translate('global.menu.entities.main')}
     id="entity-menu"
     data-cy="entity"
     style={{ maxHeight: '80vh', overflow: 'auto' }}
   >
-    <MenuItem icon="asterisk" to="/category">
-      <Translate contentKey="global.menu.entities.category" />
-    </MenuItem>
-    <MenuItem icon="asterisk" to="/image">
-      <Translate contentKey="global.menu.entities.image" />
-    </MenuItem>
-    <MenuItem icon="asterisk" to="/item">
-      <Translate contentKey="global.menu.entities.item" />
-    </MenuItem>
-    <MenuItem icon="asterisk" to="/item-token">
-      <Translate contentKey="global.menu.entities.itemToken" />
-    </MenuItem>
-    <MenuItem icon="asterisk" to="/reservation">
-      <Translate contentKey="global.menu.entities.reservation" />
-    </MenuItem>
-    <MenuItem icon="asterisk" to="/country">
-      <Translate contentKey="global.menu.entities.country" />
-    </MenuItem>
-    <MenuItem icon="asterisk" to="/location">
-      <Translate contentKey="global.menu.entities.location" />
-    </MenuItem>
-    <MenuItem icon="asterisk" to="/trade-event">
-      <Translate contentKey="global.menu.entities.tradeEvent" />
-    </MenuItem>
-    <MenuItem icon="asterisk" to="/user-profile">
-      <Translate contentKey="global.menu.entities.userProfile" />
-    </MenuItem>
-    {/* jhipster-needle-add-entity-to-menu - JHipster will add entities to the menu here */}
+    <DropdownItem>
+      <MDBLink to="/category">
+        <Translate contentKey="global.menu.entities.category" />
+      </MDBLink>
+    </DropdownItem>
+    <DropdownItem>
+      <MDBLink to="/image">
+        <Translate contentKey="global.menu.entities.image" />
+      </MDBLink>
+    </DropdownItem>
+    <DropdownItem>
+      <MDBLink to="/item">
+        <Translate contentKey="global.menu.entities.item" />
+      </MDBLink>
+    </DropdownItem>
+    <DropdownItem>
+      <MDBLink to="/item-token">
+        <Translate contentKey="global.menu.entities.itemToken" />
+      </MDBLink>
+    </DropdownItem>
+    <DropdownItem>
+      <MDBLink to="/reservation">
+        <Translate contentKey="global.menu.entities.reservation" />
+      </MDBLink>
+    </DropdownItem>
+    <DropdownItem>
+      <MDBLink to="/country">
+        <Translate contentKey="global.menu.entities.country" />
+      </MDBLink>
+    </DropdownItem>
+    <DropdownItem>
+      <MDBLink to="/location">
+        <Translate contentKey="global.menu.entities.location" />
+      </MDBLink>
+    </DropdownItem>
+    <DropdownItem>
+      <MDBLink to="/trade-event">
+        <Translate contentKey="global.menu.entities.tradeEvent" />
+      </MDBLink>
+    </DropdownItem>
+    <DropdownItem>
+      <MDBLink to="/user-profile">
+        <Translate contentKey="global.menu.entities.userProfile" />
+      </MDBLink>
+    </DropdownItem>
   </NavDropdown>
 );

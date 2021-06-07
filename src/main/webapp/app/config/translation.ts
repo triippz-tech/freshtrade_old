@@ -6,8 +6,8 @@ TranslatorContext.setDefaultLocale('en');
 TranslatorContext.setRenderInnerTextForMissingKeys(false);
 
 export const languages: any = {
-  en: { name: 'English' },
-  fr: { name: 'Français' },
+  en: { name: 'English', flag: 'america flag m-0' },
+  fr: { name: 'Français', flag: 'france flag m-0' },
   // jhipster-needle-i18n-language-key-pipe - JHipster will add/remove languages in this object
 };
 

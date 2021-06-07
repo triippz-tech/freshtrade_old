@@ -32,6 +32,7 @@ describe('Entities reducer tests', () => {
     loading: false,
     errorMessage: null,
     entities: [] as ReadonlyArray<ICategory>,
+    headerEntities: [] as ReadonlyArray<ICategory>,
     entity: defaultValue,
     links: {
       next: 0,

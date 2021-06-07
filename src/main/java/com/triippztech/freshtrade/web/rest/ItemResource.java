@@ -4,10 +4,16 @@ import com.triippztech.freshtrade.domain.Item;
 import com.triippztech.freshtrade.repository.ItemRepository;
 import com.triippztech.freshtrade.service.ItemQueryService;
 import com.triippztech.freshtrade.service.ItemService;
+import com.triippztech.freshtrade.service.UserService;
 import com.triippztech.freshtrade.service.criteria.ItemCriteria;
+import com.triippztech.freshtrade.service.dto.AdminUserDTO;
+import com.triippztech.freshtrade.service.dto.item.ItemDetailDTO;
+import com.triippztech.freshtrade.service.dto.item.ListItemDTO;
+import com.triippztech.freshtrade.service.mapper.ItemMapper;
 import com.triippztech.freshtrade.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.Principal;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -20,7 +26,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -35,6 +40,13 @@ import tech.jhipster.web.util.ResponseUtil;
 @RequestMapping("/api")
 public class ItemResource {
 
+    private static class ItemResourceException extends RuntimeException {
+
+        private ItemResourceException(String message) {
+            super(message);
+        }
+    }
+
     private final Logger log = LoggerFactory.getLogger(ItemResource.class);
 
     private static final String ENTITY_NAME = "item";
@@ -48,10 +60,22 @@ public class ItemResource {
 
     private final ItemQueryService itemQueryService;
 
-    public ItemResource(ItemService itemService, ItemRepository itemRepository, ItemQueryService itemQueryService) {
+    private final ItemMapper itemMapper;
+
+    private final UserService userService;
+
+    public ItemResource(
+        ItemService itemService,
+        ItemRepository itemRepository,
+        ItemQueryService itemQueryService,
+        ItemMapper itemMapper,
+        UserService userService
+    ) {
         this.itemService = itemService;
         this.itemRepository = itemRepository;
         this.itemQueryService = itemQueryService;
+        this.itemMapper = itemMapper;
+        this.userService = userService;
     }
 
     /**
@@ -107,6 +131,31 @@ public class ItemResource {
     }
 
     /**
+     * {@code PUT  /items/:id/reserve/:quantity} : Reserves an item.
+     *
+     * @param id the id of the item to save.
+     * @param quantity the item quantity to reserver.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated item,
+     * or with status {@code 400 (Bad Request)} if the item is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the item couldn't be updated.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PutMapping("/items/{id}/reserve/{quantity}")
+    public ResponseEntity<ItemDetailDTO> reserveItem(
+        Principal principal,
+        @PathVariable(value = "id") final UUID id,
+        @PathVariable(value = "quantity") final Integer quantity
+    ) {
+        log.debug("Request to reserve {} Item(s): {} by User: {}", quantity, id, principal);
+
+        var user = userService.getUserWithAuthorities();
+        if (user.isEmpty()) throw new ItemResourceException("Current User could not be found");
+
+        var item = itemService.reserveItem(id, quantity, user.get());
+        return ResponseEntity.ok().body(item);
+    }
+
+    /**
      * {@code PATCH  /items/:id} : Partial updates given fields of an existing item, field will ignore if it is null
      *
      * @param id the id of the item to save.
@@ -158,6 +207,21 @@ public class ItemResource {
     }
 
     /**
+     * {@code GET  /items} : get all the items for list page.
+     *
+     * @param pageable the pagination information.
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of items in body.
+     */
+    @GetMapping("/items/list-page")
+    public ResponseEntity<List<ListItemDTO>> getListPageItems(ItemCriteria criteria, Pageable pageable) {
+        log.debug("REST request to get Items by criteria: {}", criteria);
+        Page<Item> page = itemQueryService.findByCriteriaEagerLoad(criteria, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(itemMapper.itemsToItemDTOs(page.getContent()));
+    }
+
+    /**
      * {@code GET  /items/count} : count all the items.
      *
      * @param criteria the criteria which the requested entities should match.
@@ -179,6 +243,19 @@ public class ItemResource {
     public ResponseEntity<Item> getItem(@PathVariable UUID id) {
         log.debug("REST request to get Item : {}", id);
         Optional<Item> item = itemService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(item);
+    }
+
+    /**
+     * {@code GET  /items/:id/detail} : get the "id" item.
+     *
+     * @param id the id of the item to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the item, or with status {@code 404 (Not Found)}.
+     */
+    @GetMapping("/items/{id}/detail")
+    public ResponseEntity<ItemDetailDTO> getItemDetails(@PathVariable UUID id) {
+        log.debug("REST request to get Item : {}", id);
+        Optional<ItemDetailDTO> item = itemService.findOneWithAvailableTokens(id);
         return ResponseUtil.wrapOrNotFound(item);
     }
 

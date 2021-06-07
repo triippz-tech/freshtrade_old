@@ -1,19 +1,19 @@
 {
   "home": {
-    "title": "Bienvenue, Java Hipster !",
+    "title": "Bienvenue chez FreshTrade!",
     "subtitle": "Ceci est votre page d'accueil",
     "logged": {
       "message": "Vous êtes connecté en tant que \"{{username}}\"."
     },
-    "question": "Si vous avez des questions à propos de JHipster :",
+    "question": "Si vous avez des questions à propos de FreshTrade :",
     "link": {
-      "homepage": "Page d'accueil de JHipster",
-      "stackoverflow": "JHipster sur Stack Overflow",
-      "bugtracker": "JHipster bug tracker",
+      "homepage": "Page d'accueil de FreshTrade",
+      "stackoverflow": "FreshTrade sur Stack Overflow",
+      "bugtracker": "FreshTrade bug tracker",
       "chat": "JHipster public chat room",
       "follow": "Suivez @jhipster sur Twitter"
     },
-    "like": "Si vous aimez JHipster, donnez nous une étoile sur",
+    "like": "Si vous aimez FreshTrade, donnez nous une étoile sur",
     "github": "GitHub "
   }
 }

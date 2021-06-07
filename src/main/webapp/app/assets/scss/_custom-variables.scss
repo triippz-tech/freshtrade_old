@@ -1,0 +1,17 @@
+// Your custom variables
+$image-path: 'assets/img' !default;
+
+.text-ft-primary {
+  color: $ft-primary;
+}
+
+.bg-ft-primary {
+  background-color: $ft-primary !important;
+}
+
+.btn-ft-primary,
+.btn-ft-primary:hover,
+.btn-ft-primary:active,
+.btn-ft-primary:visited {
+  background-color: $ft-primary !important;
+}

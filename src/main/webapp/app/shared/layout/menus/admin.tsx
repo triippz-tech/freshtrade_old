@@ -1,42 +1,54 @@
 import React from 'react';
-import MenuItem from 'app/shared/layout/menus/menu-item';
 import { DropdownItem } from 'reactstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { NavDropdown } from './menu-components';
 import { Translate, translate } from 'react-jhipster';
+import { MDBLink } from 'mdbreact';
 
 const adminMenuItems = (
   <>
-    <MenuItem icon="users" to="/admin/user-management">
-      <Translate contentKey="global.menu.admin.userManagement">User management</Translate>
-    </MenuItem>
-    <MenuItem icon="eye" to="/admin/tracker">
-      <Translate contentKey="global.menu.admin.tracker">User tracker</Translate>
-    </MenuItem>
-    <MenuItem icon="tachometer-alt" to="/admin/metrics">
-      <Translate contentKey="global.menu.admin.metrics">Metrics</Translate>
-    </MenuItem>
-    <MenuItem icon="heart" to="/admin/health">
-      <Translate contentKey="global.menu.admin.health">Health</Translate>
-    </MenuItem>
-    <MenuItem icon="cogs" to="/admin/configuration">
-      <Translate contentKey="global.menu.admin.configuration">Configuration</Translate>
-    </MenuItem>
-    <MenuItem icon="tasks" to="/admin/logs">
-      <Translate contentKey="global.menu.admin.logs">Logs</Translate>
-    </MenuItem>
-    {/* jhipster-needle-add-element-to-admin-menu - JHipster will add entities to the admin menu here */}
+    <DropdownItem>
+      <MDBLink to="/admin/user-management">
+        <Translate contentKey="global.menu.admin.userManagement">User management</Translate>
+      </MDBLink>
+    </DropdownItem>
+    <DropdownItem>
+      <MDBLink to="/admin/tracker">
+        <Translate contentKey="global.menu.admin.tracker">User tracker</Translate>
+      </MDBLink>
+    </DropdownItem>
+    <DropdownItem>
+      <MDBLink to="/admin/metrics">
+        <Translate contentKey="global.menu.admin.metrics">Metrics</Translate>
+      </MDBLink>
+    </DropdownItem>
+    <DropdownItem>
+      <MDBLink to="/admin/health">
+        <Translate contentKey="global.menu.admin.health">Health</Translate>
+      </MDBLink>
+    </DropdownItem>
+    <DropdownItem>
+      <MDBLink to="/admin/configuration">
+        <Translate contentKey="global.menu.admin.configuration">Configuration</Translate>
+      </MDBLink>
+    </DropdownItem>
+    <DropdownItem>
+      <MDBLink to="/admin/logs">
+        <Translate contentKey="global.menu.admin.logs">Logs</Translate>
+      </MDBLink>
+    </DropdownItem>
   </>
 );
 
 const openAPIItem = (
-  <MenuItem icon="book" to="/admin/docs">
-    <Translate contentKey="global.menu.admin.apidocs">API</Translate>
-  </MenuItem>
+  <DropdownItem>
+    <MDBLink to="/admin/docs">
+      <Translate contentKey="global.menu.admin.apidocs">API</Translate>
+    </MDBLink>
+  </DropdownItem>
 );
 
 export const AdminMenu = ({ showOpenAPI }) => (
-  <NavDropdown icon="users-cog" name={translate('global.menu.admin.main')} id="admin-menu" data-cy="adminMenu">
+  <NavDropdown icon="fas fa-cogs" name={translate('global.menu.admin.main')} id="admin-menu" data-cy="adminMenu">
     {adminMenuItems}
     {showOpenAPI && openAPIItem}
   </NavDropdown>

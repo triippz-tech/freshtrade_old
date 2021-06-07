@@ -19,6 +19,8 @@ import { hasAnyAuthority } from 'app/shared/auth/private-route';
 import ErrorBoundary from 'app/shared/error/error-boundary';
 import { AUTHORITIES } from 'app/config/constants';
 import AppRoutes from 'app/routes';
+import CustomNavbar from 'app/shared/layout/header/custom-navbar';
+import { getFeaturedEntities } from 'app/entities/category/category.reducer';
 
 const baseHref = document.querySelector('base').getAttribute('href').replace(/\/$/, '');
 
@@ -28,15 +30,16 @@ export const App = (props: IAppProps) => {
   useEffect(() => {
     props.getSession();
     props.getProfile();
+    props.getFeaturedEntities();
   }, []);
 
-  const paddingTop = '60px';
+  const paddingTop = '10px';
   return (
     <Router basename={baseHref}>
       <div className="app-container" style={{ paddingTop }}>
         <ToastContainer position={toast.POSITION.TOP_LEFT} className="toastify-container" toastClassName="toastify-toast" />
         <ErrorBoundary>
-          <Header
+          <CustomNavbar
             isAuthenticated={props.isAuthenticated}
             isAdmin={props.isAdmin}
             currentLocale={props.currentLocale}
@@ -44,31 +47,31 @@ export const App = (props: IAppProps) => {
             ribbonEnv={props.ribbonEnv}
             isInProduction={props.isInProduction}
             isOpenAPIEnabled={props.isOpenAPIEnabled}
+            categories={props.categories}
           />
         </ErrorBoundary>
         <div className="container-fluid view-container" id="app-view-container">
-          <Card className="jh-card">
-            <ErrorBoundary>
-              <AppRoutes />
-            </ErrorBoundary>
-          </Card>
-          <Footer />
+          <ErrorBoundary>
+            <AppRoutes />
+          </ErrorBoundary>
         </div>
+        <Footer />
       </div>
     </Router>
   );
 };
 
-const mapStateToProps = ({ authentication, applicationProfile, locale }: IRootState) => ({
+const mapStateToProps = ({ authentication, applicationProfile, locale, category }: IRootState) => ({
   currentLocale: locale.currentLocale,
   isAuthenticated: authentication.isAuthenticated,
   isAdmin: hasAnyAuthority(authentication.account.authorities, [AUTHORITIES.ADMIN]),
   ribbonEnv: applicationProfile.ribbonEnv,
   isInProduction: applicationProfile.inProduction,
   isOpenAPIEnabled: applicationProfile.isOpenAPIEnabled,
+  categories: category.headerEntities,
 });
 
-const mapDispatchToProps = { setLocale, getSession, getProfile };
+const mapDispatchToProps = { setLocale, getSession, getProfile, getFeaturedEntities };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;

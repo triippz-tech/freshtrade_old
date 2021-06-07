@@ -1,8 +1,12 @@
 // Override Boostrap variables
-@import '~bootswatch/dist/litera/variables';
+//@import '~bootswatch/dist/litera/variables';
 // Import Bootstrap source files from node_modules
 @import 'node_modules/bootstrap/scss/bootstrap';
-@import '~bootswatch/dist/litera/bootswatch';
+//@import '~bootswatch/dist/litera/bootswatch';
+@import 'assets/scss/mdb-free.scss';
+@import 'assets/scss/mdb-pro.scss';
+@import 'assets/scss/custom-variables';
+
 body {
   margin: 0;
 }

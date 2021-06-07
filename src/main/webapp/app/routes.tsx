@@ -26,6 +26,11 @@ const Admin = Loadable({
   loading: () => <div>loading ...</div>,
 });
 
+const Items = Loadable({
+  loader: () => import(/* webpackChunkName: "administration" */ 'app/modules/items'),
+  loading: () => <div>loading ...</div>,
+});
+
 const Routes = () => {
   const location = useLocation();
   React.useEffect(() => {
@@ -36,14 +41,15 @@ const Routes = () => {
       <Switch>
         <ErrorBoundaryRoute path="/login" component={Login} />
         <ErrorBoundaryRoute path="/logout" component={Logout} />
+        <ErrorBoundaryRoute path="/items" component={Items} />
         <ErrorBoundaryRoute path="/account/register" component={Register} />
         <ErrorBoundaryRoute path="/account/activate/:key?" component={Activate} />
         <ErrorBoundaryRoute path="/account/reset/request" component={PasswordResetInit} />
         <ErrorBoundaryRoute path="/account/reset/finish/:key?" component={PasswordResetFinish} />
         <PrivateRoute path="/admin" component={Admin} hasAnyAuthorities={[AUTHORITIES.ADMIN]} />
-        <PrivateRoute path="/account" component={Account} hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.USER]} />
+        <PrivateRoute path="/account" component={Account} hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.BUYER]} />
         <ErrorBoundaryRoute path="/" exact component={Home} />
-        <PrivateRoute path="/" component={Entities} hasAnyAuthorities={[AUTHORITIES.USER]} />
+        <PrivateRoute path="/" component={Entities} hasAnyAuthorities={[AUTHORITIES.BUYER]} />
         <ErrorBoundaryRoute component={PageNotFound} />
       </Switch>
     </div>

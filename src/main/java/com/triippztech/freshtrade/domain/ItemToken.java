@@ -52,6 +52,10 @@ public class ItemToken implements Serializable {
     @JsonIgnoreProperties(value = { "images", "tokens", "owner", "location", "tradeEvent", "categories", "users" }, allowSetters = true)
     private Item item;
 
+    @ManyToOne
+    @JsonIgnoreProperties(value = { "tokens" }, allowSetters = true)
+    private Reservation reservation;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
         return id;
