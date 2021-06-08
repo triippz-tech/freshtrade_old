@@ -1,13 +1,11 @@
 package com.triippztech.freshtrade.service;
 
-import com.triippztech.freshtrade.domain.Item;
-import com.triippztech.freshtrade.domain.ItemToken;
-import com.triippztech.freshtrade.domain.User;
+import com.triippztech.freshtrade.domain.*;
 import com.triippztech.freshtrade.repository.ItemRepository;
-import com.triippztech.freshtrade.service.dto.AdminUserDTO;
-import com.triippztech.freshtrade.service.dto.UserDTO;
+import com.triippztech.freshtrade.repository.ItemTokenRepository;
+import com.triippztech.freshtrade.repository.ReservationRepository;
 import com.triippztech.freshtrade.service.dto.item.ItemDetailDTO;
-import java.security.Principal;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -16,9 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,8 +35,14 @@ public class ItemService {
 
     private final ItemRepository itemRepository;
 
-    public ItemService(ItemRepository itemRepository) {
+    private final ReservationRepository reservationRepository;
+
+    private final ItemTokenRepository tokenRepository;
+
+    public ItemService(ItemRepository itemRepository, ReservationRepository reservationRepository, ItemTokenRepository tokenRepository) {
         this.itemRepository = itemRepository;
+        this.reservationRepository = reservationRepository;
+        this.tokenRepository = tokenRepository;
     }
 
     /**
@@ -156,8 +157,17 @@ public class ItemService {
         return Optional.of(new ItemDetailDTO(found.get(), availableTokens));
     }
 
+    /**
+     * Reserves an item. Creates a {@link Reservation} and issues {@link ItemToken} to the buyer for redemption
+     *
+     * @param id       {@link UUID} the ID of the {@link Item}
+     * @param quantity {@link Integer} The quantity to reserve
+     * @param buyer    {@link User} The currently logged in user (buyer)
+     * @return {@link ItemDetailDTO} the updated {@link Item}
+     * @throws ItemServiceException
+     */
     @Transactional(readOnly = true)
-    public ItemDetailDTO reserveItem(UUID id, Integer quantity, User user) throws ItemServiceException {
+    public ItemDetailDTO reserveItem(UUID id, Integer quantity, User buyer) throws ItemServiceException {
         var foundItem = findOne(id);
         if (foundItem.isEmpty()) throw new ItemServiceException("Item with ID: " + id + " was not found");
 
@@ -172,11 +182,71 @@ public class ItemService {
             String.format("Unable to reserve %d %s(s), only %d available", quantity, foundItem.get().getName(), availableTokens)
         );
 
+        // Create the reservation
+        Reservation reservation = generatedNewReservation(buyer, foundItem.get().getOwner(), foundItem.get().getTradeEvent(), null);
+
         // Create x number of tokens and assign them to the user
-        List<ItemToken> tokens = new ArrayList<>();
         for (int i = 1; i <= quantity; i++) {
-            //            tokens.add(generateToken());
+            reservation.addToken((generateToken(foundItem.get(), reservation, buyer)));
         }
-        return null;
+        return findOneWithAvailableTokens(foundItem.get().getId()).get();
+    }
+
+    @Transactional(readOnly = true)
+    public ItemToken generateToken(Item item, Reservation reservation, User owner) {
+        log.debug("Request to generate new ItemToken");
+        String tokenCode = item.getTokens().stream().findFirst().isEmpty()
+            ? item.getTokens().stream().findFirst().get().getTokenCode()
+            : generateTokenCode(item);
+        String tokenName = item.getTokens().stream().findFirst().isEmpty()
+            ? item.getTokens().stream().findFirst().get().getTokenName()
+            : generateTokenName(item);
+
+        ItemToken itemToken = new ItemToken()
+            .item(item)
+            .tokenCode(tokenCode)
+            .tokenName(tokenName)
+            .createdDate(ZonedDateTime.now())
+            .reservation(reservation)
+            .owner(owner);
+
+        return tokenRepository.save(itemToken);
+    }
+
+    /**
+     * Generates a unique code for a {@link ItemToken} based on a random {@link UUID}
+     * @param item {@link Item} The item to make a code for
+     * @return {@link String} the generated Code
+     */
+    private String generateTokenCode(Item item) {
+        return "FTT=" + UUID.randomUUID().toString();
+    }
+
+    /**
+     * Generates a name for a {@link ItemToken} based on the {@link Item} name
+     * @param item {@link Item} The item to generate a name from
+     * @return {@link String} The name of the generated token
+     */
+    private String generateTokenName(Item item) {
+        return "FT-" + item.getName().replace(" ", "_").toUpperCase();
+    }
+
+    @Transactional(readOnly = true)
+    public Reservation generatedNewReservation(User buyer, User seller, TradeEvent event, ZonedDateTime pickupTime) {
+        log.debug("Request to generate new Reservation");
+        Reservation reservation = new Reservation()
+            .reservationNumber(generateReservationNumber())
+            .buyer(buyer)
+            .seller(seller)
+            .event(event)
+            .isActive(true)
+            .createdDate(ZonedDateTime.now())
+            .isCancelled(false)
+            .pickupTime(pickupTime);
+        return reservationRepository.save(reservation);
+    }
+
+    private String generateReservationNumber() {
+        return "FT-" + UUID.randomUUID().toString();
     }
 }

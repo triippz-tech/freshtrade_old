@@ -23,6 +23,6 @@ export type ICrudGetAllActionCriteria<T> = (
   page?: number,
   size?: number,
   sort?: string,
-  callback?: Function
+  callback?: () => void
 ) => IPayload<T> | ((dispatch: any) => IPayload<T>);
 export type ICrudReserveAction<T> = (data: T, quantity: number) => IPayload<T> | IPayloadResult<T>;

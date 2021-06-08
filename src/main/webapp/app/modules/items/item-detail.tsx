@@ -40,8 +40,8 @@ export const ItemDetail = (props: IItemDetail) => {
   const { itemEntity } = props;
 
   return (
-    <MDBContainer>
-      <MDBCard>
+    <MDBContainer fluid>
+      <MDBCard className="mb-5">
         <MDBContainer fluid>
           <MDBRow className="">
             <MDBCol md="6">

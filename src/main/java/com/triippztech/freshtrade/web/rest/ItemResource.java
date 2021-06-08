@@ -19,6 +19,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -144,7 +145,7 @@ public class ItemResource {
     public ResponseEntity<ItemDetailDTO> reserveItem(
         Principal principal,
         @PathVariable(value = "id") final UUID id,
-        @PathVariable(value = "quantity") final Integer quantity
+        @PathVariable(value = "quantity") @Min(1) final Integer quantity
     ) {
         log.debug("Request to reserve {} Item(s): {} by User: {}", quantity, id, principal);
 

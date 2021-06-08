@@ -31,7 +31,5 @@
     <include file="config/liquibase/changelog/20210530003333_added_entity_constraints_Reservation.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20210530003533_added_entity_constraints_Location.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20210530003633_added_entity_constraints_TradeEvent.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20210530003733_added_entity_constraints_UserProfile.xml" relativeToChangelogFile="false"/>
-    <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
-    <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
+    <include file="config/liquibase/changelog/20210530003833_updated_entites.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>

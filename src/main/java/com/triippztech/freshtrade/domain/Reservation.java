@@ -3,6 +3,8 @@ package com.triippztech.freshtrade.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -59,6 +61,10 @@ public class Reservation implements Serializable {
     @ManyToOne
     @JsonIgnoreProperties(value = { "location", "items", "reservations" }, allowSetters = true)
     private TradeEvent event;
+
+    @OneToMany
+    @JsonIgnoreProperties(value = { "reservation" }, allowSetters = true)
+    private Set<ItemToken> tokens = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public UUID getId() {
@@ -205,6 +211,29 @@ public class Reservation implements Serializable {
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
+
+    public Set<ItemToken> getTokens() {
+        return this.tokens;
+    }
+
+    public Reservation tokens(Set<ItemToken> tokens) {
+        this.setTokens(tokens);
+        return this;
+    }
+
+    public Reservation addToken(ItemToken token) {
+        this.tokens.add(token);
+        return this;
+    }
+
+    public Reservation removeToken(ItemToken token) {
+        this.tokens.remove(token);
+        return this;
+    }
+
+    public void setTokens(Set<ItemToken> tokens) {
+        this.tokens = tokens;
+    }
 
     @Override
     public boolean equals(Object o) {

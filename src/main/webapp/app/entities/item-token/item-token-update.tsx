@@ -146,20 +146,12 @@ export const ItemTokenUpdate = (props: IItemTokenUpdateProps) => {
                 <Label for="item-token-owner">
                   <Translate contentKey="freshtradeApp.itemToken.owner">Owner</Translate>
                 </Label>
-                <AvInput
-                  id="item-token-owner"
-                  data-cy="owner"
-                  type="select"
-                  multiple
-                  className="form-control"
-                  name="owners"
-                  value={!isNew && itemTokenEntity.owners && itemTokenEntity.owners.map(e => e.id)}
-                >
+                <AvInput id="item-token-owner" data-cy="owner" type="select" className="form-control" name="ownerId">
                   <option value="" key="0" />
                   {users
                     ? users.map(otherEntity => (
                         <option value={otherEntity.id} key={otherEntity.id}>
-                          {otherEntity.id}
+                          {otherEntity.login}
                         </option>
                       ))
                     : null}

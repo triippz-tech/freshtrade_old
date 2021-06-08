@@ -24,5 +24,30 @@ spring:
     password: ${JDBC_DATABASE_PASSWORD}
     hikari:
       maximumPoolSize: 8
+  mail:
+    host: ${MAILGUN_SMTP_SERVER}
+    port: ${MAILGUN_SMTP_PORT}
+    username: ${MAILGUN_USERNAME}
+    password: ${MAILGUN_PASSWORD}
+
 server:
   port: ${PORT:8080}
+
+sentry:
+  logging:
+    minimum-event-level: info
+    minimum-breadcrumb-level: info
+  dsn: ${SENTRY_DSN}
+
+jhipster:
+  cors:
+    allowed-origins: 'lc'
+    allowed-methods: '*'
+    allowed-headers: '*'
+    exposed-headers: 'Authorization,Link,X-Total-Count,X-${jhipster.clientApp.name}-alert,X-${jhipster.clientApp.name}-error,X-${jhipster.clientApp.name}-params'
+    allow-credentials: true
+    max-age: 1800
+  security:
+    authentication:
+      jwt:
+        base64-secret: ${JHIPSTER_SECURITY_AUTHENTICATION_JWT_BASE64_SECRET}
