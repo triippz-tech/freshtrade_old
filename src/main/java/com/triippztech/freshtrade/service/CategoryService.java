@@ -118,6 +118,8 @@ public class CategoryService {
     /**
      * Find a category by its slug.
      *
+     * @param slug {@link String} the slug of the category to search
+     *
      * @return the entity.
      */
     @Transactional(readOnly = true)

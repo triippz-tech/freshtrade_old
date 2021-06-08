@@ -134,12 +134,12 @@ public class ItemResource {
     /**
      * {@code PUT  /items/:id/reserve/:quantity} : Reserves an item.
      *
+     * @param principal {@link Principal}
      * @param id the id of the item to save.
      * @param quantity the item quantity to reserver.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated item,
      * or with status {@code 400 (Bad Request)} if the item is not valid,
      * or with status {@code 500 (Internal Server Error)} if the item couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/items/{id}/reserve/{quantity}")
     public ResponseEntity<ItemDetailDTO> reserveItem(

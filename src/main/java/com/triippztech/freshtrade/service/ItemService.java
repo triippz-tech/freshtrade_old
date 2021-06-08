@@ -114,7 +114,7 @@ public class ItemService {
 
     /**
      * Get all the items with eager load of many-to-many relationships.
-     *
+     * @param pageable {@link Pageable} Page
      * @return the list of entities.
      */
     public Page<Item> findAllWithEagerRelationships(Pageable pageable) {
@@ -164,7 +164,7 @@ public class ItemService {
      * @param quantity {@link Integer} The quantity to reserve
      * @param buyer    {@link User} The currently logged in user (buyer)
      * @return {@link ItemDetailDTO} the updated {@link Item}
-     * @throws ItemServiceException
+     * @throws ItemServiceException Thrown if item is not found or inaalid quantity
      */
     @Transactional(readOnly = true)
     public ItemDetailDTO reserveItem(UUID id, Integer quantity, User buyer) throws ItemServiceException {
