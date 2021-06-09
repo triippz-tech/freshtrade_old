@@ -11,14 +11,14 @@
             <applicationName>FreshTrade</applicationName>
             <subsystemName>FreshTrade Server</subsystemName>
 
-            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                <fileNamePattern>logFile.%d{yyyy-MM-dd}.log</fileNamePattern>
-                <maxHistory>90</maxHistory>
-            </rollingPolicy>
-            <encoder>
-                <charset>utf-8</charset>
-                <Pattern>%d %-5level [%thread] %logger{0}: %msg%n</Pattern>
-            </encoder>
+<!--            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
+<!--                <fileNamePattern>logFile.%d{yyyy-MM-dd}.log</fileNamePattern>-->
+<!--                <maxHistory>90</maxHistory>-->
+<!--            </rollingPolicy>-->
+<!--            <encoder>-->
+<!--                <charset>utf-8</charset>-->
+<!--                <Pattern>%d %-5level [%thread] %logger{0}: %msg%n</Pattern>-->
+<!--            </encoder>-->
 
         </appender>
 
