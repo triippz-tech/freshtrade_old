@@ -12,12 +12,15 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IItem, defaultValue } from 'app/shared/model/item.model';
+import { ICrudGetAllActionCriteria, ICrudReserveAction } from 'app/config/redux-action.type';
+import { ItemCriteria } from 'app/shared/criteria/item-criteria';
 
 export const ACTION_TYPES = {
   FETCH_ITEM_LIST: 'item/FETCH_ITEM_LIST',
   FETCH_ITEM: 'item/FETCH_ITEM',
   CREATE_ITEM: 'item/CREATE_ITEM',
   UPDATE_ITEM: 'item/UPDATE_ITEM',
+  RESERVE_ITEM: 'item/RESERVE_ITEM',
   PARTIAL_UPDATE_ITEM: 'item/PARTIAL_UPDATE_ITEM',
   DELETE_ITEM: 'item/DELETE_ITEM',
   SET_BLOB: 'item/SET_BLOB',
@@ -51,6 +54,7 @@ export default (state: ItemState = initialState, action): ItemState => {
       };
     case REQUEST(ACTION_TYPES.CREATE_ITEM):
     case REQUEST(ACTION_TYPES.UPDATE_ITEM):
+    case REQUEST(ACTION_TYPES.RESERVE_ITEM):
     case REQUEST(ACTION_TYPES.DELETE_ITEM):
     case REQUEST(ACTION_TYPES.PARTIAL_UPDATE_ITEM):
       return {
@@ -63,6 +67,7 @@ export default (state: ItemState = initialState, action): ItemState => {
     case FAILURE(ACTION_TYPES.FETCH_ITEM):
     case FAILURE(ACTION_TYPES.CREATE_ITEM):
     case FAILURE(ACTION_TYPES.UPDATE_ITEM):
+    case FAILURE(ACTION_TYPES.RESERVE_ITEM):
     case FAILURE(ACTION_TYPES.PARTIAL_UPDATE_ITEM):
     case FAILURE(ACTION_TYPES.DELETE_ITEM):
       return {
@@ -92,6 +97,13 @@ export default (state: ItemState = initialState, action): ItemState => {
     case SUCCESS(ACTION_TYPES.CREATE_ITEM):
     case SUCCESS(ACTION_TYPES.UPDATE_ITEM):
     case SUCCESS(ACTION_TYPES.PARTIAL_UPDATE_ITEM):
+      return {
+        ...state,
+        updating: false,
+        updateSuccess: true,
+        entity: action.payload.data,
+      };
+    case SUCCESS(ACTION_TYPES.RESERVE_ITEM):
       return {
         ...state,
         updating: false,
@@ -128,12 +140,39 @@ export default (state: ItemState = initialState, action): ItemState => {
 const apiUrl = 'api/items';
 
 // Actions
-
 export const getEntities: ICrudGetAllAction<IItem> = (page, size, sort) => {
-  const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
+  const requestUrl = `${apiUrl}?${sort ? `page=${page}&size=${size}&sort=${sort}` : ''}`;
   return {
     type: ACTION_TYPES.FETCH_ITEM_LIST,
     payload: axios.get<IItem>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`),
+  };
+};
+
+export const getEntitiesWithCriteria: ICrudGetAllActionCriteria<IItem> = (criteria: ItemCriteria, page, size, sort) => {
+  const requestUrl = `${apiUrl}?${criteria.generateUrl()}&${sort ? `page=${page}&size=${size}&sort=${sort}` : ''}`;
+  return {
+    type: ACTION_TYPES.FETCH_ITEM_LIST,
+    payload: axios.get<IItem>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`),
+  };
+};
+
+export const getListPageEntities: ICrudGetAllActionCriteria<IItem> = (criteria: ItemCriteria, page, size, sort) => {
+  let requestUrl = `${apiUrl}/list-page?${sort ? `page=${page}&size=${size}&sort=${sort}` : ''}`;
+  if (criteria !== null) {
+    requestUrl = `${apiUrl}/list-page?${criteria.generateUrl()}&${sort ? `page=${page}&size=${size}&sort=${sort}` : ''}`;
+  }
+
+  return {
+    type: ACTION_TYPES.FETCH_ITEM_LIST,
+    payload: axios.get<IItem>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`),
+  };
+};
+
+export const getEntityDetail: ICrudGetAction<IItem> = id => {
+  const requestUrl = `${apiUrl}/${id}/detail`;
+  return {
+    type: ACTION_TYPES.FETCH_ITEM,
+    payload: axios.get<IItem>(requestUrl),
   };
 };
 
@@ -157,6 +196,14 @@ export const updateEntity: ICrudPutAction<IItem> = entity => async dispatch => {
   const result = await dispatch({
     type: ACTION_TYPES.UPDATE_ITEM,
     payload: axios.put(`${apiUrl}/${entity.id}`, cleanEntity(entity)),
+  });
+  return result;
+};
+
+export const reserveItems: ICrudReserveAction<IItem> = (entity, quantity) => async dispatch => {
+  const result = await dispatch({
+    type: ACTION_TYPES.UPDATE_ITEM,
+    payload: axios.put(`${apiUrl}/${entity.id}/reserve/${quantity}`),
   });
   return result;
 };

@@ -72,6 +72,8 @@ public class ItemCriteria implements Serializable, Criteria {
 
     private UUIDFilter categoriesId;
 
+    private StringFilter categorySlug;
+
     private LongFilter userId;
 
     public ItemCriteria() {}
@@ -91,6 +93,7 @@ public class ItemCriteria implements Serializable, Criteria {
         this.locationId = other.locationId == null ? null : other.locationId.copy();
         this.tradeEventId = other.tradeEventId == null ? null : other.tradeEventId.copy();
         this.categoriesId = other.categoriesId == null ? null : other.categoriesId.copy();
+        this.categorySlug = other.categorySlug == null ? null : other.categorySlug.copy();
         this.userId = other.userId == null ? null : other.userId.copy();
     }
 
@@ -324,6 +327,14 @@ public class ItemCriteria implements Serializable, Criteria {
         this.userId = userId;
     }
 
+    public StringFilter getCategorySlug() {
+        return categorySlug;
+    }
+
+    public void setCategorySlug(StringFilter categorySlug) {
+        this.categorySlug = categorySlug;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -348,6 +359,7 @@ public class ItemCriteria implements Serializable, Criteria {
             Objects.equals(locationId, that.locationId) &&
             Objects.equals(tradeEventId, that.tradeEventId) &&
             Objects.equals(categoriesId, that.categoriesId) &&
+            Objects.equals(categorySlug, that.categorySlug) &&
             Objects.equals(userId, that.userId)
         );
     }
@@ -369,6 +381,7 @@ public class ItemCriteria implements Serializable, Criteria {
             locationId,
             tradeEventId,
             categoriesId,
+            categorySlug,
             userId
         );
     }
@@ -391,6 +404,7 @@ public class ItemCriteria implements Serializable, Criteria {
             (locationId != null ? "locationId=" + locationId + ", " : "") +
             (tradeEventId != null ? "tradeEventId=" + tradeEventId + ", " : "") +
             (categoriesId != null ? "categoriesId=" + categoriesId + ", " : "") +
+            (categorySlug != null ? "categorySlug=" + categorySlug + ", " : "") +
             (userId != null ? "userId=" + userId + ", " : "") +
             "}";
     }

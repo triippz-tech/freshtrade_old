@@ -164,6 +164,18 @@ public class CategoryResource {
     }
 
     /**
+     * {@code GET  /categories} : get featured categories.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of categories in body.
+     */
+    @GetMapping("/categories/featured")
+    public ResponseEntity<List<Category>> getFeaturedCategories() {
+        log.debug("REST request to get featured Categories by criteria");
+        List<Category> categories = categoryService.getFeaturedCategories();
+        return ResponseEntity.ok().body(categories);
+    }
+
+    /**
      * {@code GET  /categories/count} : count all the categories.
      *
      * @param criteria the criteria which the requested entities should match.
@@ -185,6 +197,19 @@ public class CategoryResource {
     public ResponseEntity<Category> getCategory(@PathVariable UUID id) {
         log.debug("REST request to get Category : {}", id);
         Optional<Category> category = categoryService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(category);
+    }
+
+    /**
+     * {@code GET  /categories/:slug} : get the "slug" category.
+     *
+     * @param slug the slug of the category to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the category, or with status {@code 404 (Not Found)}.
+     */
+    @GetMapping("/categories/{slug}")
+    public ResponseEntity<Category> getCategory(@PathVariable String slug) {
+        log.debug("REST request to get Category : {}", slug);
+        Optional<Category> category = categoryService.findBySlug(slug);
         return ResponseUtil.wrapOrNotFound(category);
     }
 

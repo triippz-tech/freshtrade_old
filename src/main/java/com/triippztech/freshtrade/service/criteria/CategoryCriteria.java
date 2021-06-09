@@ -36,6 +36,8 @@ public class CategoryCriteria implements Serializable, Criteria {
 
     private BooleanFilter isActive;
 
+    private BooleanFilter isFeatured;
+
     private UUIDFilter itemsId;
 
     public CategoryCriteria() {}
@@ -46,6 +48,7 @@ public class CategoryCriteria implements Serializable, Criteria {
         this.name = other.name == null ? null : other.name.copy();
         this.createdDate = other.createdDate == null ? null : other.createdDate.copy();
         this.isActive = other.isActive == null ? null : other.isActive.copy();
+        this.isFeatured = other.isFeatured == null ? null : other.isFeatured.copy();
         this.itemsId = other.itemsId == null ? null : other.itemsId.copy();
     }
 
@@ -144,6 +147,14 @@ public class CategoryCriteria implements Serializable, Criteria {
         this.itemsId = itemsId;
     }
 
+    public BooleanFilter getIsFeatured() {
+        return isFeatured;
+    }
+
+    public void setIsFeatured(BooleanFilter isFeatured) {
+        this.isFeatured = isFeatured;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -159,13 +170,14 @@ public class CategoryCriteria implements Serializable, Criteria {
             Objects.equals(name, that.name) &&
             Objects.equals(createdDate, that.createdDate) &&
             Objects.equals(isActive, that.isActive) &&
+            Objects.equals(isFeatured, that.isFeatured) &&
             Objects.equals(itemsId, that.itemsId)
         );
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, slug, name, createdDate, isActive, itemsId);
+        return Objects.hash(id, slug, name, createdDate, isActive, isFeatured, itemsId);
     }
 
     // prettier-ignore
@@ -177,6 +189,7 @@ public class CategoryCriteria implements Serializable, Criteria {
             (name != null ? "name=" + name + ", " : "") +
             (createdDate != null ? "createdDate=" + createdDate + ", " : "") +
             (isActive != null ? "isActive=" + isActive + ", " : "") +
+            (isFeatured != null ? "isFeatured=" + isFeatured + ", " : "") +
             (itemsId != null ? "itemsId=" + itemsId + ", " : "") +
             "}";
     }

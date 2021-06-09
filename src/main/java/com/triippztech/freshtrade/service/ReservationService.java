@@ -1,7 +1,11 @@
 package com.triippztech.freshtrade.service;
 
+import com.triippztech.freshtrade.domain.Item;
 import com.triippztech.freshtrade.domain.Reservation;
+import com.triippztech.freshtrade.domain.TradeEvent;
+import com.triippztech.freshtrade.domain.User;
 import com.triippztech.freshtrade.repository.ReservationRepository;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.UUID;
 import org.slf4j.Logger;

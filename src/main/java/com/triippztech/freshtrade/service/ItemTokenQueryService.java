@@ -96,7 +96,7 @@ public class ItemTokenQueryService extends QueryService<ItemToken> {
             if (criteria.getOwnerId() != null) {
                 specification =
                     specification.and(
-                        buildSpecification(criteria.getOwnerId(), root -> root.join(ItemToken_.owners, JoinType.LEFT).get(User_.id))
+                        buildSpecification(criteria.getOwnerId(), root -> root.join(ItemToken_.owner, JoinType.LEFT).get(User_.id))
                     );
             }
             if (criteria.getItemId() != null) {

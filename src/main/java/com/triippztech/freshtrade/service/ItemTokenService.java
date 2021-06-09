@@ -82,7 +82,7 @@ public class ItemTokenService {
 
     /**
      * Get all the itemTokens with eager load of many-to-many relationships.
-     *
+     * @param pageable {@link Pageable}
      * @return the list of entities.
      */
     public Page<ItemToken> findAllWithEagerRelationships(Pageable pageable) {

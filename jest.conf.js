@@ -11,7 +11,7 @@ module.exports = {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   coveragePathIgnorePatterns: ['<rootDir>/src/test/javascript/'],
   moduleNameMapper: mapTypescriptAliasToJestAlias({
-    '\\.(css|scss)$': 'identity-obj-proxy',
+    '\\.(css|styl|less|sass|scss|png|jpg|ttf|woff|woff2)$': 'identity-obj-proxy',
   }),
   reporters: ['default', ['jest-junit', { outputDirectory: './target/test-results/', outputName: 'TESTS-results-jest.xml' }]],
   testResultsProcessor: 'jest-sonar-reporter',

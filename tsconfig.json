@@ -12,7 +12,7 @@
     "suppressImplicitAnyIndexErrors": true,
     "outDir": "target/classes/static/app",
     "lib": ["dom", "es2015", "es2016", "es2017"],
-    "types": ["jest", "webpack-env"],
+    "types": ["jest", "webpack-env", "node"],
     "allowJs": true,
     "checkJs": false,
     "baseUrl": "./",

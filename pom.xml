@@ -26,7 +26,7 @@
         <maven.version>3.3.9</maven.version>
         <java.version>11</java.version>
         <node.version>v14.16.0</node.version>
-        <npm.version>7.8.0</npm.version>
+        <npm.version>6.14.11</npm.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -55,7 +55,7 @@
         <javassist.version>3.27.0-GA</javassist.version>
         <!-- The liquibase version should match the one managed by
         https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-dependencies/${spring-boot.version} -->
-        <liquibase.version>4.3.2</liquibase.version>
+        <liquibase.version>4.3.5</liquibase.version>
         <liquibase-hibernate5.version>4.3.2</liquibase-hibernate5.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
         <jaxb-runtime.version>2.3.3</jaxb-runtime.version>
@@ -314,6 +314,21 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-messaging</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.coralogix.sdk</groupId>
+            <artifactId>coralogix-sdk</artifactId>
+            <version>2.0.6</version>
+        </dependency>
+        <dependency>
+            <groupId>com.coralogix.sdk</groupId>
+            <artifactId>logback-appender</artifactId>
+            <version>2.0.6</version>
+        </dependency>
+        <dependency>
+            <groupId>io.sentry</groupId>
+            <artifactId>sentry-logback</artifactId>
+            <version>4.1.0</version>
         </dependency>
         <!-- jhipster-needle-maven-add-dependency -->
     </dependencies>

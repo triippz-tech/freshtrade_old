@@ -1,37 +1,47 @@
 import React from 'react';
-import MenuItem from 'app/shared/layout/menus/menu-item';
 import { Translate, translate } from 'react-jhipster';
-import { NavDropdown } from './menu-components';
+import { NavDropdown, NavDropdownUser } from './menu-components';
+import { DropdownItem, MDBLink } from 'mdbreact';
 
 const accountMenuItemsAuthenticated = (
   <>
-    <MenuItem icon="wrench" to="/account/settings" data-cy="settings">
-      <Translate contentKey="global.menu.account.settings">Settings</Translate>
-    </MenuItem>
-    <MenuItem icon="lock" to="/account/password" data-cy="passwordItem">
-      <Translate contentKey="global.menu.account.password">Password</Translate>
-    </MenuItem>
-    <MenuItem icon="sign-out-alt" to="/logout" data-cy="logout">
-      <Translate contentKey="global.menu.account.logout">Sign out</Translate>
-    </MenuItem>
+    <DropdownItem data-cy="settings">
+      <MDBLink to="/account/settings">
+        <Translate contentKey="global.menu.account.settings">Settings</Translate>
+      </MDBLink>
+    </DropdownItem>
+    <DropdownItem data-cy="passwordItem">
+      <MDBLink to="/account/password">
+        <Translate contentKey="global.menu.account.password">Password</Translate>
+      </MDBLink>
+    </DropdownItem>
+    <DropdownItem data-cy="logout">
+      <MDBLink to="/logout">
+        <Translate contentKey="global.menu.account.logout">Sign out</Translate>
+      </MDBLink>
+    </DropdownItem>
   </>
 );
 
-const accountMenuItems = (
+export const accountMenuItems = (
   <>
-    <MenuItem id="login-item" icon="sign-in-alt" to="/login" data-cy="login">
-      <Translate contentKey="global.menu.account.login">Sign in</Translate>
-    </MenuItem>
-    <MenuItem icon="user-plus" to="/account/register" data-cy="register">
-      <Translate contentKey="global.menu.account.register">Register</Translate>
-    </MenuItem>
+    <DropdownItem id="login-item" data-cy="login">
+      <MDBLink to="/login">
+        <Translate contentKey="global.menu.account.login">Sign in</Translate>
+      </MDBLink>
+    </DropdownItem>
+    <DropdownItem data-cy="register">
+      <MDBLink to="/account/register">
+        <Translate contentKey="global.menu.account.register">Register</Translate>
+      </MDBLink>
+    </DropdownItem>
   </>
 );
 
-export const AccountMenu = ({ isAuthenticated = false }) => (
-  <NavDropdown icon="user" name={translate('global.menu.account.main')} id="account-menu" data-cy="accountMenu">
+export const AccountMenu = ({ isAuthenticated = false, image = undefined }) => (
+  <NavDropdownUser name={translate('global.menu.account.main')} id="account-menu" data-cy="accountMenu" image={image ? image : undefined}>
     {isAuthenticated ? accountMenuItemsAuthenticated : accountMenuItems}
-  </NavDropdown>
+  </NavDropdownUser>
 );
 
 export default AccountMenu;

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <!--
+        Added the entity UserProfile.
+    -->
+    <changeSet id="20210530003833-1" author="mgtripoli">
+        <dropForeignKeyConstraint  baseTableName="rel_item_token__owner"
+                                   constraintName="fk_rel_item_token__owner__item_token_id"/>
+
+        <dropForeignKeyConstraint  baseTableName="rel_item_token__owner"
+                                   constraintName="fk_rel_item_token__owner__owner_id"/>
+    </changeSet>
+
+    <changeSet id="20210530003833-2" author="mgtripoli">
+        <addColumn tableName="item_token">
+            <column name="reservation_id" type="${uuidType}">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="item_token">
+            <column name="owner_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here -->
+    <changeSet id="20210530003833-3" author="mgtripoli">
+        <addForeignKeyConstraint baseColumnNames="reservation_id"
+                                 baseTableName="item_token"
+                                 constraintName="fk_item_token_reservation_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="reservation"/>
+        <addForeignKeyConstraint baseColumnNames="owner_id"
+                                 baseTableName="item_token"
+                                 constraintName="fk_item_token_owner_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="ft_user"/>
+    </changeSet>
+</databaseChangeLog>

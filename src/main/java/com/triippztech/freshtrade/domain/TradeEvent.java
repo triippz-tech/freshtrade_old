@@ -44,7 +44,7 @@ public class TradeEvent implements Serializable {
     @Column(name = "is_active")
     private Boolean isActive;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnoreProperties(value = { "country", "items", "tradeEvents" }, allowSetters = true)
     private Location location;
 

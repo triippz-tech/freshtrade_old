@@ -2,6 +2,7 @@ package com.triippztech.freshtrade.service;
 
 import com.triippztech.freshtrade.domain.Category;
 import com.triippztech.freshtrade.repository.CategoryRepository;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.slf4j.Logger;
@@ -101,5 +102,29 @@ public class CategoryService {
     public void delete(UUID id) {
         log.debug("Request to delete Category : {}", id);
         categoryRepository.deleteById(id);
+    }
+
+    /**
+     * Fina 6 featured categories.
+     *
+     * @return the entity.
+     */
+    @Transactional(readOnly = true)
+    public List<Category> getFeaturedCategories() {
+        log.debug("Request to get 6 featured categories");
+        return categoryRepository.findTop6ByIsFeatured(true);
+    }
+
+    /**
+     * Find a category by its slug.
+     *
+     * @param slug {@link String} the slug of the category to search
+     *
+     * @return the entity.
+     */
+    @Transactional(readOnly = true)
+    public Optional<Category> findBySlug(String slug) {
+        log.debug("Request to get Category by Slug: {}", slug);
+        return categoryRepository.findBySlugEquals(slug);
     }
 }

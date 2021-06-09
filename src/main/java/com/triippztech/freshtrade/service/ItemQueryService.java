@@ -5,10 +5,13 @@ import com.triippztech.freshtrade.domain.Item;
 import com.triippztech.freshtrade.repository.ItemRepository;
 import com.triippztech.freshtrade.service.criteria.ItemCriteria;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.criteria.JoinType;
+import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -56,6 +59,36 @@ public class ItemQueryService extends QueryService<Item> {
         log.debug("find by criteria : {}, page: {}", criteria, page);
         final Specification<Item> specification = createSpecification(criteria);
         return itemRepository.findAll(specification, page);
+    }
+
+    /**
+     * Return a {@link Page} of {@link Item} which matches the criteria from the database.
+     * @param criteria The object which holds all the filters, which the entities should match.
+     * @param page The page, which should be returned.
+     * @return the matching entities.
+     */
+    @Transactional(readOnly = true)
+    public Page<Item> findByCriteriaEagerLoad(ItemCriteria criteria, Pageable page) {
+        log.debug("find by criteria : {}, page: {}", criteria, page);
+        final Specification<Item> specification = createSpecification(criteria);
+        var found = itemRepository.findAll(specification, page);
+        return new PageImpl<>(
+            found
+                .getContent()
+                .stream()
+                .map(
+                    key -> {
+                        Hibernate.initialize(key.getCategories());
+                        Hibernate.initialize(key.getImages());
+                        Hibernate.initialize(key.getLocation());
+                        Hibernate.initialize(key.getTradeEvent());
+                        return key;
+                    }
+                )
+                .collect(Collectors.toList()),
+            page,
+            found.getTotalElements()
+        );
     }
 
     /**
@@ -140,6 +173,10 @@ public class ItemQueryService extends QueryService<Item> {
                     specification.and(
                         buildSpecification(criteria.getCategoriesId(), root -> root.join(Item_.categories, JoinType.LEFT).get(Category_.id))
                     );
+            }
+            if (criteria.getCategorySlug() != null) {
+                specification =
+                    specification.and(buildReferringEntitySpecification(criteria.getCategorySlug(), Item_.categories, Category_.slug));
             }
             if (criteria.getUserId() != null) {
                 specification =

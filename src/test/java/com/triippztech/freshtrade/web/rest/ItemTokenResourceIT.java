@@ -634,7 +634,7 @@ class ItemTokenResourceIT {
         User owner = UserResourceIT.createEntity(em);
         em.persist(owner);
         em.flush();
-        itemToken.addOwner(owner);
+        itemToken.setOwner(owner);
         itemTokenRepository.saveAndFlush(itemToken);
         Long ownerId = owner.getId();
 

@@ -3,7 +3,7 @@
   "short_name": "Freshtrade",
   "icons": [
     {
-      "src": "./content/images/jhipster_family_member_2_head-192.png",
+      "src": "./content/images/freshtrade-logo.png",
       "sizes": "192x192",
       "type": "image/png"
     },

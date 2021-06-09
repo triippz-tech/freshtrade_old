@@ -1,15 +1,20 @@
 import React from 'react';
 import { DropdownItem } from 'reactstrap';
-import { NavDropdown } from './menu-components';
 import { locales, languages } from 'app/config/translation';
+import { Dropdown, DropdownMenu, DropdownToggle } from 'mdbreact';
 
 export const LocaleMenu = ({ currentLocale, onClick }: { currentLocale: string; onClick: (event: any) => void }) =>
   Object.keys(languages).length > 1 ? (
-    <NavDropdown icon="flag" name={currentLocale ? languages[currentLocale].name : undefined}>
-      {locales.map(locale => (
-        <DropdownItem key={locale} value={locale} onClick={onClick}>
-          {languages[locale].name}
-        </DropdownItem>
-      ))}
-    </NavDropdown>
+    <Dropdown className="d-flex">
+      <DropdownToggle tag="language" className="nav-link text-reset dropdown-toggle me-3 hidden-arrow">
+        <i className={currentLocale ? languages[currentLocale].flag : 'america flag m-0'}></i>
+      </DropdownToggle>
+      <DropdownMenu>
+        {locales.map(locale => (
+          <DropdownItem key={locale} value={locale} onClick={onClick}>
+            <i className={languages[locale].flag}></i>
+          </DropdownItem>
+        ))}
+      </DropdownMenu>
+    </Dropdown>
   ) : null;

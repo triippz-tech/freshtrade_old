@@ -101,12 +101,12 @@ jhipster:
         # - In the JHipster Registry (which includes a Spring Cloud Config server)
         # - In a separate `application-prod.yml` file, in the same folder as your executable JAR file
         # - In the `JHIPSTER_SECURITY_AUTHENTICATION_JWT_BASE64_SECRET` environment variable
-        base64-secret: ZDY3N2RiZDlmM2YwZDc1OWZjNzUzYmVlYTlkMGQyNGMyM2U1ZjJjYjc5ZjM2MmNmNGQxNDY1MzQyY2Y4YzQzNDQ2OGFjNzkxZWVmY2U0ZTU0ODRmZWNjNTFkMTA1NTIzZmE1NWFmNDJmNjZlMTQwM2M4YTg0MmY0Nzk0NWFlYzU=
+        base64-secret: ${JHIPSTER_SECURITY_AUTHENTICATION_JWT_BASE64_SECRET}
         # Token is valid 24 hours
         token-validity-in-seconds: 86400
         token-validity-in-seconds-for-remember-me: 2592000
   mail: # specific JHipster mail property, for standard properties see MailProperties
-    base-url: http://my-server-url-to-change # Modify according to your server's URL
+    base-url: https://freshtrade.io # Modify according to your server's URL
   logging:
     use-json-format: false # By default, logs are not in Json format
     logstash: # Forward logs to logstash over a socket, used by LoggingConfiguration

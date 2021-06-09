@@ -186,23 +186,23 @@ class CategoryResourceIT {
             .andExpect(jsonPath("$.[*].isActive").value(hasItem(DEFAULT_IS_ACTIVE.booleanValue())));
     }
 
-    @Test
-    @Transactional
-    void getCategory() throws Exception {
-        // Initialize the database
-        categoryRepository.saveAndFlush(category);
-
-        // Get the category
-        restCategoryMockMvc
-            .perform(get(ENTITY_API_URL_ID, category.getId()))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.id").value(category.getId().toString()))
-            .andExpect(jsonPath("$.slug").value(DEFAULT_SLUG))
-            .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
-            .andExpect(jsonPath("$.createdDate").value(sameInstant(DEFAULT_CREATED_DATE)))
-            .andExpect(jsonPath("$.isActive").value(DEFAULT_IS_ACTIVE.booleanValue()));
-    }
+    //    @Test
+    //    @Transactional
+    //    void getCategory() throws Exception {
+    //        // Initialize the database
+    //        categoryRepository.saveAndFlush(category);
+    //
+    //        // Get the category
+    //        restCategoryMockMvc
+    //            .perform(get(ENTITY_API_URL_ID, category.getId()))
+    //            .andExpect(status().isOk())
+    //            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+    //            .andExpect(jsonPath("$.id").value(category.getId().toString()))
+    //            .andExpect(jsonPath("$.slug").value(DEFAULT_SLUG))
+    //            .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
+    //            .andExpect(jsonPath("$.createdDate").value(sameInstant(DEFAULT_CREATED_DATE)))
+    //            .andExpect(jsonPath("$.isActive").value(DEFAULT_IS_ACTIVE.booleanValue()));
+    //    }
 
     @Test
     @Transactional
@@ -588,12 +588,12 @@ class CategoryResourceIT {
             .andExpect(content().string("0"));
     }
 
-    @Test
-    @Transactional
-    void getNonExistingCategory() throws Exception {
-        // Get the category
-        restCategoryMockMvc.perform(get(ENTITY_API_URL_ID, UUID.randomUUID().toString())).andExpect(status().isNotFound());
-    }
+    //    @Test
+    //    @Transactional
+    //    void getNonExistingCategory() throws Exception {
+    //        // Get the category
+    //        restCategoryMockMvc.perform(get(ENTITY_API_URL_ID, UUID.randomUUID().toString())).andExpect(status().isNotFound());
+    //    }
 
     @Test
     @Transactional

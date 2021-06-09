@@ -1,5 +1,5 @@
 import React from 'react';
-import { DropdownItem } from 'reactstrap';
+import { DropdownItem } from 'mdbreact';
 import { NavLink as Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';

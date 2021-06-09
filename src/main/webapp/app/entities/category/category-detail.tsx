@@ -56,6 +56,12 @@ export const CategoryDetail = (props: ICategoryDetailProps) => {
             </span>
           </dt>
           <dd>{categoryEntity.isActive ? 'true' : 'false'}</dd>
+          <dt>
+            <span id="isFeatured">
+              <Translate contentKey="freshtradeApp.category.isFeatured">Is Featured</Translate>
+            </span>
+          </dt>
+          <dd>{categoryEntity.isFeatured ? 'true' : 'false'}</dd>
         </dl>
         <Button tag={Link} to="/category" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" />{' '}

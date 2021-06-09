@@ -124,6 +124,9 @@ export const Category = (props: ICategoryProps) => {
                   <th className="hand" onClick={sort('isActive')}>
                     <Translate contentKey="freshtradeApp.category.isActive">Is Active</Translate> <FontAwesomeIcon icon="sort" />
                   </th>
+                  <th className="hand" onClick={sort('isFeatured')}>
+                    <Translate contentKey="freshtradeApp.category.isFeatured">Is Featured</Translate> <FontAwesomeIcon icon="sort" />
+                  </th>
                   <th />
                 </tr>
               </thead>
@@ -141,6 +144,7 @@ export const Category = (props: ICategoryProps) => {
                       {category.createdDate ? <TextFormat type="date" value={category.createdDate} format={APP_DATE_FORMAT} /> : null}
                     </td>
                     <td>{category.isActive ? 'true' : 'false'}</td>
+                    <td>{category.isFeatured ? 'true' : 'false'}</td>
                     <td className="text-right">
                       <div className="btn-group flex-btn-group-container">
                         <Button tag={Link} to={`${match.url}/${category.id}`} color="info" size="sm" data-cy="entityDetailsButton">

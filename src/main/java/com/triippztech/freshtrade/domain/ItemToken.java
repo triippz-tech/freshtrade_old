@@ -39,18 +39,25 @@ public class ItemToken implements Serializable {
     @Column(name = "updated_date")
     private ZonedDateTime updatedDate;
 
-    @ManyToMany
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JoinTable(
-        name = "rel_item_token__owner",
-        joinColumns = @JoinColumn(name = "item_token_id"),
-        inverseJoinColumns = @JoinColumn(name = "owner_id")
-    )
-    private Set<User> owners = new HashSet<>();
+    //    @ManyToMany
+    //    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    //    @JoinTable(
+    //        name = "rel_item_token__owner",
+    //        joinColumns = @JoinColumn(name = "item_token_id"),
+    //        inverseJoinColumns = @JoinColumn(name = "owner_id")
+    //    )
+    //    private Set<User> owners = new HashSet<>();
+
+    @ManyToOne
+    private User owner;
 
     @ManyToOne
     @JsonIgnoreProperties(value = { "images", "tokens", "owner", "location", "tradeEvent", "categories", "users" }, allowSetters = true)
     private Item item;
+
+    @ManyToOne
+    @JsonIgnoreProperties(value = { "tokens" }, allowSetters = true)
+    private Reservation reservation;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
@@ -118,29 +125,6 @@ public class ItemToken implements Serializable {
         this.updatedDate = updatedDate;
     }
 
-    public Set<User> getOwners() {
-        return this.owners;
-    }
-
-    public ItemToken owners(Set<User> users) {
-        this.setOwners(users);
-        return this;
-    }
-
-    public ItemToken addOwner(User user) {
-        this.owners.add(user);
-        return this;
-    }
-
-    public ItemToken removeOwner(User user) {
-        this.owners.remove(user);
-        return this;
-    }
-
-    public void setOwners(Set<User> users) {
-        this.owners = users;
-    }
-
     public Item getItem() {
         return this.item;
     }
@@ -155,6 +139,32 @@ public class ItemToken implements Serializable {
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
+    }
+
+    public ItemToken owner(User owner) {
+        this.owner = owner;
+        return this;
+    }
+
+    public ItemToken reservation(Reservation reservation) {
+        this.reservation = reservation;
+        return this;
+    }
+
+    public Reservation getReservation() {
+        return reservation;
+    }
+
+    public void setReservation(Reservation reservation) {
+        this.reservation = reservation;
+    }
 
     @Override
     public boolean equals(Object o) {

@@ -61,16 +61,7 @@ export const ItemTokenDetail = (props: IItemTokenDetailProps) => {
           <dt>
             <Translate contentKey="freshtradeApp.itemToken.owner">Owner</Translate>
           </dt>
-          <dd>
-            {itemTokenEntity.owners
-              ? itemTokenEntity.owners.map((val, i) => (
-                  <span key={val.id}>
-                    <a>{val.id}</a>
-                    {itemTokenEntity.owners && i === itemTokenEntity.owners.length - 1 ? '' : ', '}
-                  </span>
-                ))
-              : null}{' '}
-          </dd>
+          <dd>{itemTokenEntity.owner ? itemTokenEntity.owner.id : ''}</dd>
           <dt>
             <Translate contentKey="freshtradeApp.itemToken.item">Item</Translate>
           </dt>

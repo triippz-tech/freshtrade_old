@@ -7,9 +7,11 @@ export interface ICategory {
   name?: string;
   createdDate?: string | null;
   isActive?: boolean | null;
+  isFeatured?: boolean | null;
   items?: IItem[] | null;
 }
 
 export const defaultValue: Readonly<ICategory> = {
   isActive: false,
+  isFeatured: false,
 };

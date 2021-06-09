@@ -15,14 +15,14 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ItemTokenRepository extends JpaRepository<ItemToken, Long>, JpaSpecificationExecutor<ItemToken> {
     @Query(
-        value = "select distinct itemToken from ItemToken itemToken left join fetch itemToken.owners",
+        value = "select distinct itemToken from ItemToken itemToken left join fetch itemToken.owner",
         countQuery = "select count(distinct itemToken) from ItemToken itemToken"
     )
     Page<ItemToken> findAllWithEagerRelationships(Pageable pageable);
 
-    @Query("select distinct itemToken from ItemToken itemToken left join fetch itemToken.owners")
+    @Query("select distinct itemToken from ItemToken itemToken left join fetch itemToken.owner")
     List<ItemToken> findAllWithEagerRelationships();
 
-    @Query("select itemToken from ItemToken itemToken left join fetch itemToken.owners where itemToken.id =:id")
+    @Query("select itemToken from ItemToken itemToken left join fetch itemToken.owner where itemToken.id =:id")
     Optional<ItemToken> findOneWithEagerRelationships(@Param("id") Long id);
 }

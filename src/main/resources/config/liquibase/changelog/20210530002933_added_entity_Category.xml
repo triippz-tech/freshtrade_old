@@ -26,6 +26,9 @@
             <column name="is_active" type="boolean">
                 <constraints nullable="true" />
             </column>
+            <column name="is_featured" type="boolean">
+                <constraints nullable="true" />
+            </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
         <dropDefaultValue tableName="category" columnName="created_date" columnDataType="${datetimeType}"/>

@@ -1,7 +1,13 @@
 package com.triippztech.freshtrade.service;
 
-import com.triippztech.freshtrade.domain.Item;
+import com.triippztech.freshtrade.domain.*;
 import com.triippztech.freshtrade.repository.ItemRepository;
+import com.triippztech.freshtrade.repository.ItemTokenRepository;
+import com.triippztech.freshtrade.repository.ReservationRepository;
+import com.triippztech.freshtrade.service.dto.item.ItemDetailDTO;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.slf4j.Logger;
@@ -18,12 +24,25 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ItemService {
 
+    private static class ItemServiceException extends RuntimeException {
+
+        private ItemServiceException(String message) {
+            super(message);
+        }
+    }
+
     private final Logger log = LoggerFactory.getLogger(ItemService.class);
 
     private final ItemRepository itemRepository;
 
-    public ItemService(ItemRepository itemRepository) {
+    private final ReservationRepository reservationRepository;
+
+    private final ItemTokenRepository tokenRepository;
+
+    public ItemService(ItemRepository itemRepository, ReservationRepository reservationRepository, ItemTokenRepository tokenRepository) {
         this.itemRepository = itemRepository;
+        this.reservationRepository = reservationRepository;
+        this.tokenRepository = tokenRepository;
     }
 
     /**
@@ -95,7 +114,7 @@ public class ItemService {
 
     /**
      * Get all the items with eager load of many-to-many relationships.
-     *
+     * @param pageable {@link Pageable} Page
      * @return the list of entities.
      */
     public Page<Item> findAllWithEagerRelationships(Pageable pageable) {
@@ -122,5 +141,112 @@ public class ItemService {
     public void delete(UUID id) {
         log.debug("Request to delete Item : {}", id);
         itemRepository.deleteById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<ItemDetailDTO> findOneWithAvailableTokens(UUID id) {
+        log.debug("Request to get Item : {} with available tokens", id);
+        var found = itemRepository.findOneWithEagerRelationships(id);
+        if (found.isEmpty()) return Optional.empty();
+
+        if (found.get().getTokens().isEmpty()) return Optional.of(new ItemDetailDTO(found.get(), found.get().getQuantity()));
+
+        if (found.get().getTokens().size() == found.get().getQuantity()) return Optional.of(new ItemDetailDTO(found.get(), 0));
+
+        var availableTokens = found.get().getQuantity() - found.get().getTokens().size();
+        return Optional.of(new ItemDetailDTO(found.get(), availableTokens));
+    }
+
+    /**
+     * Reserves an item. Creates a {@link Reservation} and issues {@link ItemToken} to the buyer for redemption
+     *
+     * @param id       {@link UUID} the ID of the {@link Item}
+     * @param quantity {@link Integer} The quantity to reserve
+     * @param buyer    {@link User} The currently logged in user (buyer)
+     * @return {@link ItemDetailDTO} the updated {@link Item}
+     * @throws ItemServiceException Thrown if item is not found or inaalid quantity
+     */
+    @Transactional(readOnly = true)
+    public ItemDetailDTO reserveItem(UUID id, Integer quantity, User buyer) throws ItemServiceException {
+        var foundItem = findOne(id);
+        if (foundItem.isEmpty()) throw new ItemServiceException("Item with ID: " + id + " was not found");
+
+        // Check if any tokens are available
+        if (foundItem.get().getTokens().size() == foundItem.get().getQuantity()) throw new ItemServiceException(
+            "Item with ID: " + id + " is unavailable"
+        );
+
+        // Check if there enough tokens to fulfill the request
+        var availableTokens = foundItem.get().getQuantity() - foundItem.get().getTokens().size();
+        if (quantity > availableTokens) throw new ItemServiceException(
+            String.format("Unable to reserve %d %s(s), only %d available", quantity, foundItem.get().getName(), availableTokens)
+        );
+
+        // Create the reservation
+        Reservation reservation = generatedNewReservation(buyer, foundItem.get().getOwner(), foundItem.get().getTradeEvent(), null);
+
+        // Create x number of tokens and assign them to the user
+        for (int i = 1; i <= quantity; i++) {
+            reservation.addToken((generateToken(foundItem.get(), reservation, buyer)));
+        }
+        return findOneWithAvailableTokens(foundItem.get().getId()).get();
+    }
+
+    @Transactional(readOnly = true)
+    public ItemToken generateToken(Item item, Reservation reservation, User owner) {
+        log.debug("Request to generate new ItemToken");
+        String tokenCode = item.getTokens().stream().findFirst().isEmpty()
+            ? item.getTokens().stream().findFirst().get().getTokenCode()
+            : generateTokenCode(item);
+        String tokenName = item.getTokens().stream().findFirst().isEmpty()
+            ? item.getTokens().stream().findFirst().get().getTokenName()
+            : generateTokenName(item);
+
+        ItemToken itemToken = new ItemToken()
+            .item(item)
+            .tokenCode(tokenCode)
+            .tokenName(tokenName)
+            .createdDate(ZonedDateTime.now())
+            .reservation(reservation)
+            .owner(owner);
+
+        return tokenRepository.save(itemToken);
+    }
+
+    /**
+     * Generates a unique code for a {@link ItemToken} based on a random {@link UUID}
+     * @param item {@link Item} The item to make a code for
+     * @return {@link String} the generated Code
+     */
+    private String generateTokenCode(Item item) {
+        return "FTT=" + UUID.randomUUID().toString();
+    }
+
+    /**
+     * Generates a name for a {@link ItemToken} based on the {@link Item} name
+     * @param item {@link Item} The item to generate a name from
+     * @return {@link String} The name of the generated token
+     */
+    private String generateTokenName(Item item) {
+        return "FT-" + item.getName().replace(" ", "_").toUpperCase();
+    }
+
+    @Transactional(readOnly = true)
+    public Reservation generatedNewReservation(User buyer, User seller, TradeEvent event, ZonedDateTime pickupTime) {
+        log.debug("Request to generate new Reservation");
+        Reservation reservation = new Reservation()
+            .reservationNumber(generateReservationNumber())
+            .buyer(buyer)
+            .seller(seller)
+            .event(event)
+            .isActive(true)
+            .createdDate(ZonedDateTime.now())
+            .isCancelled(false)
+            .pickupTime(pickupTime);
+        return reservationRepository.save(reservation);
+    }
+
+    private String generateReservationNumber() {
+        return "FT-" + UUID.randomUUID().toString();
     }
 }
