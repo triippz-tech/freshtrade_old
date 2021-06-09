@@ -207,7 +207,7 @@ public class CategoryResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the category, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/categories/{slug}")
-    public ResponseEntity<Category> getCategory(@PathVariable String slug) {
+    public ResponseEntity<Category> getCategoryBySlug(@PathVariable String slug) {
         log.debug("REST request to get Category : {}", slug);
         Optional<Category> category = categoryService.findBySlug(slug);
         return ResponseUtil.wrapOrNotFound(category);

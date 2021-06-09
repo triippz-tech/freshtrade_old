@@ -9,6 +9,9 @@ export interface CategoriesHeaderProps {
 export const CategoriesHeader: React.FC<CategoriesHeaderProps> = props => (
   <MDBNavbar color="white" expand="sm" light>
     <MDBNavbarNav className="">
+      <NavItem>
+        <MDBLink to={`/items`}>All</MDBLink>
+      </NavItem>
       {props.categories.map((category, idx) => {
         return (
           <NavItem key={`category-${idx}`}>
