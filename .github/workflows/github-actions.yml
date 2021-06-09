@@ -47,7 +47,7 @@ jobs:
                   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
               run: |
                   if [ ! -z "$SONAR_TOKEN" ]; then
-                      ./mvnw -ntp initialize sonar:sonar -Dsonar.host.url=https://sonarcloud.io
+                      ./mvnw -ntp initialize sonar:sonar -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=triippz-tech -Dsonar.projectKey=triippz-tech_freshtrade
                   else
                       echo No SONAR_TOKEN, skipping...
                   fi
