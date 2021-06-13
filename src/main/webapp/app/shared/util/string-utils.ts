@@ -14,3 +14,8 @@ export const toTitleCase = (inString: string): string => {
   if (inString === null) return null;
   return inString.replace('_', ' ').replace(/(\w)(\w*)/g, (_, firstCharacter, otherChars) => firstCharacter + otherChars.toLowerCase());
 };
+
+export const toEnumCase = (inString: string): string => {
+  if (inString === null) return null;
+  return inString.replace(' ', '_').toUpperCase();
+};

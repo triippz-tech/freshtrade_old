@@ -1,0 +1,26 @@
+/**
+ * Varkala - Bootstrap 4 E-commerce Theme v. 1.2.0
+ * Homepage: https://themes.getbootstrap.com/product/varkala-e-commerce-theme/
+ * Copyright 2020, Bootstrapious - https://bootstrapious.com
+ */
+
+// functions.scss - Bootstrap functions
+@import 'bootstrap/functions';
+
+// your variables + overrides of Bootstrap variables
+@import 'user/user-variables';
+
+// custom variables + overrides of Bootstrap variables for this theme
+@import 'theme/variables';
+
+// bootstrap main
+@import 'bootstrap/bootstrap';
+
+// 3rd party plugin variables
+@import 'theme/variables-3rd-party';
+
+// theme components
+@import 'theme/theme';
+
+// your components
+@import 'user/user';

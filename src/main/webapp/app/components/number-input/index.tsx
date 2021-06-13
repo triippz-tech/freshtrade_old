@@ -2,6 +2,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import KeyCode from 'rc-util/lib/KeyCode';
+import { Input } from 'reactstrap';
 
 type ISize = 'large' | 'middle' | 'small';
 
@@ -800,7 +801,7 @@ class NumberInput extends React.Component<Partial<NumberInputProps>, NumberInput
           </span>
         </div>
         <div className={`${prefixCls}-input-wrap`}>
-          <input
+          <Input
             role="spinbutton"
             aria-valuemin={min}
             aria-valuemax={max}

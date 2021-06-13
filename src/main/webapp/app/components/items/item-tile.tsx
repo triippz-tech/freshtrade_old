@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { IItem } from 'app/shared/model/item.model';
-import { MDBCard, MDBCardBody, MDBLazyLoading, MDBLink } from 'mdbreact';
+import { MDBCard, MDBCardBody } from 'mdbreact';
 import { truncateString } from 'app/shared/util/string-utils';
 import { Link } from 'react-router-dom';
 

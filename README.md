@@ -4,6 +4,10 @@
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=triippz-tech_freshtrade&metric=coverage)](https://sonarcloud.io/dashboard?id=triippz-tech_freshtrade)
 [![Known Vulnerabilities](https://snyk.io/test/github/triippz-tech/freshtrade/badge.svg)]
 
+## Asset (video/image) Uploads
+
+https://github.com/cloudinary/cloudinary_java
+
 ## Development
 
 Before you can build this project, you must install and configure the following dependencies on your machine:

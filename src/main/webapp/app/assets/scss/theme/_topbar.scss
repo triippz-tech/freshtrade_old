@@ -1,0 +1,38 @@
+/*
+* ===================================================
+*     Top bar
+* ===================================================
+*/
+
+.top-bar {
+  position: relative;
+  color: $gray-800;
+  background: $gray-200;
+  font-weight: 300;
+  z-index: 50;
+
+  .topbar-link {
+    text-decoration: none;
+    color: $gray-800;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  .dropdown-menu {
+    margin-top: 1rem;
+    //transition: transform .2s;
+    //transform: translateY(30px);
+    will-change: transform, opacity;
+  }
+
+  .dropdown-toggle {
+    text-decoration: none;
+    color: inherit;
+
+    &::after {
+      margin-left: 5px;
+    }
+  }
+}

@@ -1,7 +1,6 @@
 import React from 'react';
-import { DropdownItem } from 'reactstrap';
 import { locales, languages } from 'app/config/translation';
-import { Dropdown, DropdownMenu, DropdownToggle } from 'mdbreact';
+import { Dropdown, DropdownMenu, DropdownToggle, DropdownItem } from 'mdbreact';
 
 export const LocaleMenu = ({ currentLocale, onClick }: { currentLocale: string; onClick: (event: any) => void }) =>
   Object.keys(languages).length > 1 ? (

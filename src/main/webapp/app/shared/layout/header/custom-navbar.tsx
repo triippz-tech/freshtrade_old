@@ -45,7 +45,6 @@ const CustomNavbar = (props: INavbarProps) => {
       {renderDevRibbon()}
       <LoadingBar className="loading-bar" />
       <Jumbotron
-        data-cy="navbar"
         locationName={'Lancaster, PA'}
         isAdmin={props.isAdmin}
         isAuthenticated={props.isAuthenticated}

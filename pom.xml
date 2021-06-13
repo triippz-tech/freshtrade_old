@@ -1026,7 +1026,7 @@
             <id>war</id>
             <build>
                 <plugins>
-                    <plugin>
+                    <plugin>javax.validation
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-war-plugin</artifactId>
                     </plugin>

@@ -17,8 +17,6 @@ export interface JumbotronProps {
 }
 
 export const Jumbotron: React.FC<JumbotronProps> = props => {
-  // getLocation();
-
   return (
     <div className="p-3 text-center bg-white border-bottom">
       <MDBContainer fluid={true}>

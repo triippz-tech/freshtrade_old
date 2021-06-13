@@ -2,53 +2,53 @@ import React from 'react';
 import { DropdownItem } from 'reactstrap';
 import { NavDropdown } from './menu-components';
 import { Translate, translate } from 'react-jhipster';
-import { MDBLink } from 'mdbreact';
+import { Link } from 'react-router-dom';
 
 const adminMenuItems = (
   <>
-    <DropdownItem>
-      <MDBLink to="/admin/user-management">
+    <Link to="/admin/user-management">
+      <DropdownItem>
         <Translate contentKey="global.menu.admin.userManagement">User management</Translate>
-      </MDBLink>
-    </DropdownItem>
-    <DropdownItem>
-      <MDBLink to="/admin/tracker">
+      </DropdownItem>
+    </Link>
+    <Link to="/admin/tracker">
+      <DropdownItem>
         <Translate contentKey="global.menu.admin.tracker">User tracker</Translate>
-      </MDBLink>
-    </DropdownItem>
-    <DropdownItem>
-      <MDBLink to="/admin/metrics">
+      </DropdownItem>
+    </Link>
+    <Link to="/admin/metrics">
+      <DropdownItem>
         <Translate contentKey="global.menu.admin.metrics">Metrics</Translate>
-      </MDBLink>
-    </DropdownItem>
-    <DropdownItem>
-      <MDBLink to="/admin/health">
+      </DropdownItem>
+    </Link>
+    <Link to="/admin/health">
+      <DropdownItem>
         <Translate contentKey="global.menu.admin.health">Health</Translate>
-      </MDBLink>
-    </DropdownItem>
-    <DropdownItem>
-      <MDBLink to="/admin/configuration">
+      </DropdownItem>
+    </Link>
+    <Link to="/admin/configuration">
+      <DropdownItem>
         <Translate contentKey="global.menu.admin.configuration">Configuration</Translate>
-      </MDBLink>
-    </DropdownItem>
-    <DropdownItem>
-      <MDBLink to="/admin/logs">
+      </DropdownItem>
+    </Link>
+    <Link to="/admin/logs">
+      <DropdownItem>
         <Translate contentKey="global.menu.admin.logs">Logs</Translate>
-      </MDBLink>
-    </DropdownItem>
+      </DropdownItem>
+    </Link>
   </>
 );
 
 const openAPIItem = (
-  <DropdownItem>
-    <MDBLink to="/admin/docs">
+  <Link to="/admin/docs">
+    <DropdownItem>
       <Translate contentKey="global.menu.admin.apidocs">API</Translate>
-    </MDBLink>
-  </DropdownItem>
+    </DropdownItem>
+  </Link>
 );
 
 export const AdminMenu = ({ showOpenAPI }) => (
-  <NavDropdown icon="fas fa-cogs" name={translate('global.menu.admin.main')} id="admin-menu" data-cy="adminMenu">
+  <NavDropdown icon="fas fa-cogs" name={translate('global.menu.admin.main')} id="admin-menu">
     {adminMenuItems}
     {showOpenAPI && openAPIItem}
   </NavDropdown>

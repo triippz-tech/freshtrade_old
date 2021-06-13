@@ -159,6 +159,7 @@ export const getEntitiesWithCriteria: ICrudGetAllActionCriteria<IItem> = (criter
 export const getListPageEntities: ICrudGetAllActionCriteria<IItem> = (criteria: ItemCriteria, page, size, sort) => {
   let requestUrl = `${apiUrl}/list-page?${sort ? `page=${page}&size=${size}&sort=${sort}` : ''}`;
   if (criteria !== null) {
+    console.log(criteria.generateUrl());
     requestUrl = `${apiUrl}/list-page?${criteria.generateUrl()}&${sort ? `page=${page}&size=${size}&sort=${sort}` : ''}`;
   }
 

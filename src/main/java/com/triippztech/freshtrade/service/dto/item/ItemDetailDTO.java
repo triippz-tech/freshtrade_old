@@ -20,6 +20,8 @@ public class ItemDetailDTO implements Serializable {
 
     private String name;
 
+    private String details;
+
     private Condition itemCondition;
 
     private Integer availableTokens;
@@ -61,6 +63,7 @@ public class ItemDetailDTO implements Serializable {
         this.tradeEvent = item.getTradeEvent();
         this.tokens = item.getTokens();
         this.categories = item.getCategories();
+        this.details = item.getDetails();
     }
 
     public ItemDetailDTO(Item item, Integer availableTokens) {
@@ -76,6 +79,7 @@ public class ItemDetailDTO implements Serializable {
         this.tokens = item.getTokens();
         this.categories = item.getCategories();
         this.availableTokens = availableTokens;
+        this.details = item.getDetails();
     }
 
     public UUID getId() {
@@ -172,5 +176,13 @@ public class ItemDetailDTO implements Serializable {
 
     public void setAvailableTokens(Integer availableTokens) {
         this.availableTokens = availableTokens;
+    }
+
+    public String getDetails() {
+        return details;
+    }
+
+    public void setDetails(String details) {
+        this.details = details;
     }
 }

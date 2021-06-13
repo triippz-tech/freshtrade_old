@@ -27,6 +27,12 @@ public interface ItemRepository extends JpaRepository<Item, UUID>, JpaSpecificat
     @Query("select distinct item from Item item left join fetch item.categories left join fetch item.users")
     List<Item> findAllWithEagerRelationships();
 
-    @Query("select item from Item item left join fetch item.categories left join fetch item.users where item.id =:id")
+    @Query(
+        "select item from Item item " +
+        "left join fetch item.categories " +
+        "left join fetch item.users " +
+        "left join fetch item.owner " +
+        "where item.id =:id"
+    )
     Optional<Item> findOneWithEagerRelationships(@Param("id") UUID id);
 }

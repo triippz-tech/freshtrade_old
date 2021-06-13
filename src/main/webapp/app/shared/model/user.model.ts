@@ -10,6 +10,7 @@ export interface IUser {
   createdBy?: string;
   createdDate?: Date | null;
   lastModifiedBy?: string;
+  imageUrl?: string | null;
   lastModifiedDate?: Date | null;
   password?: string;
 }

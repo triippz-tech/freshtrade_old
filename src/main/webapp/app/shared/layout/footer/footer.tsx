@@ -1,43 +1,49 @@
 import './footer.scss';
 
 import React from 'react';
-import { MDBCol, MDBContainer, MDBFooter, MDBRow } from 'mdbreact';
 import { Link } from 'react-router-dom';
+import { Col, Container, Row, Collapse } from 'reactstrap';
+import data from 'app/shared/data/footer.json';
 
-const Footer = props => (
-  <MDBFooter className="text-center text-lg-left ft-footer">
-    <MDBContainer>
-      <MDBRow>
-        <MDBCol md="6">
-          &copy; {new Date().getFullYear()} Copyright:{' '}
-          <a className="text-dark" href="https://freshtrade.io/">
-            FreshTrade
-          </a>
-        </MDBCol>
-        <MDBCol md="6">
-          <div className="copyright-menu text-dark">
-            <ul>
-              <li>
-                <Link to="/" className="text-dark">
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link to="/terms" className="text-dark">
-                  Terms
-                </Link>
-              </li>
-              <li>
-                <Link to="/privacy-policy" className="text-dark">
-                  Privacy Policy
-                </Link>
-              </li>
-            </ul>
-          </div>
-        </MDBCol>
-      </MDBRow>
-    </MDBContainer>
-  </MDBFooter>
-);
+const Footer = props => {
+  const [columnOpen, setColumnOpen] = React.useState({});
+
+  const toggleColumn = (e, name) => {
+    e.preventDefault();
+    setColumnOpen({ ...columnOpen, [name]: !columnOpen[name] });
+  };
+  return (
+    <footer>
+      <div className="py-4 font-weight-light text-muted">
+        <Container>
+          <Row className="align-items-center text-sm text-gray-500">
+            <Col lg="4" className="text-center text-lg-left">
+              <p className="mb-lg-0">&copy; {new Date().getFullYear()} FreshTrade. All rights reserved.</p>
+            </Col>
+            <Col lg="8">
+              <ul className="list-inline mb-0 mt-2 mt-md-0 text-center text-lg-right">
+                <li className="list-inline-item">
+                  <Link className="text-reset" to="/terms">
+                    Terms &amp; Conditions{' '}
+                  </Link>
+                </li>
+                <li className="list-inline-item">
+                  <Link className="text-reset" to="/privacy-policy">
+                    Privacy{' '}
+                  </Link>
+                </li>
+                <li className="list-inline-item">
+                  <Link className="text-reset" to="/about">
+                    About{' '}
+                  </Link>
+                </li>
+              </ul>
+            </Col>
+          </Row>
+        </Container>
+      </div>
+    </footer>
+  );
+};
 
 export default Footer;
