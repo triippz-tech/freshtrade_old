@@ -9,7 +9,7 @@
     <artifactId>freshtrade</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>Freshtrade</name>
+    <name>FreshTrade</name>
 
     <repositories>
         <!-- jhipster-needle-maven-repository -->
@@ -328,7 +328,7 @@
         <dependency>
             <groupId>io.sentry</groupId>
             <artifactId>sentry-logback</artifactId>
-            <version>4.1.0</version>
+            <version>4.3.0</version>
         </dependency>
         <!-- jhipster-needle-maven-add-dependency -->
     </dependencies>
@@ -1026,7 +1026,7 @@
             <id>war</id>
             <build>
                 <plugins>
-                    <plugin>javax.validation
+                    <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-war-plugin</artifactId>
                     </plugin>
