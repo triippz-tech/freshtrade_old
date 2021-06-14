@@ -129,6 +129,12 @@ export const CategoryUpdate = (props: ICategoryUpdateProps) => {
                   <Translate contentKey="freshtradeApp.category.isActive">Is Active</Translate>
                 </Label>
               </AvGroup>
+              <AvGroup check>
+                <Label id="isFeaturedLabel">
+                  <AvInput id="category-isFeatured" data-cy="isFeatured" type="checkbox" className="form-check-input" name="isFeatured" />
+                  <Translate contentKey="freshtradeApp.category.isFeatured">Is Featured</Translate>
+                </Label>
+              </AvGroup>
               <Button tag={Link} id="cancel-save" to="/category" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />
                 &nbsp;
