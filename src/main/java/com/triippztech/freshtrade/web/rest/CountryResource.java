@@ -159,6 +159,18 @@ public class CountryResource {
     }
 
     /**
+     * {@code GET  /countries/all} : get all the countries without criteria or pagination.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of countries in body.
+     */
+    @GetMapping("/countries/all")
+    public ResponseEntity<List<Country>> getAllCountriesNoPage() {
+        log.debug("REST request to get all Countries");
+        List<Country> countries = countryService.findAll();
+        return ResponseEntity.ok().body(countries);
+    }
+
+    /**
      * {@code GET  /countries/count} : count all the countries.
      *
      * @param criteria the criteria which the requested entities should match.

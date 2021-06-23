@@ -1,6 +1,7 @@
 package com.triippztech.freshtrade.repository;
 
 import com.triippztech.freshtrade.domain.Country;
+import java.util.List;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 
@@ -9,4 +10,7 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface CountryRepository extends JpaRepository<Country, Long>, JpaSpecificationExecutor<Country> {}
+public interface CountryRepository extends JpaRepository<Country, Long>, JpaSpecificationExecutor<Country> {
+    @Query("SELECT c FROM Country c")
+    List<Country> findAllNoPage();
+}
