@@ -79,7 +79,7 @@
     "loaders.css": "0.1.2",
     "lodash": "4.17.21",
     "mdbreact": "./mdbreact-5.0.1.tgz",
-    "node-sass": "^6.0.0",
+    "node-sass": "^6.0.1",
     "nouislider-react": "^3.3.7",
     "nprogress": "^0.2.0",
     "object-fit-images": "^3.2.4",
