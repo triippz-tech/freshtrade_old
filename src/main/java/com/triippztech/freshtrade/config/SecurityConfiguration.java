@@ -98,6 +98,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .antMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
             // Countries
             .antMatchers(HttpMethod.GET, "/api/countries/**").permitAll()
+            // User Locations
+            .antMatchers(HttpMethod.GET, "/api/user-location/**").permitAll()
 
             .antMatchers("/api/**").authenticated()
             .antMatchers("/websocket/**").authenticated()

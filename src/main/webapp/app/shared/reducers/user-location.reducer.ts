@@ -54,21 +54,38 @@ export default (state: UserLocationState = initialState, action): UserLocationSt
       };
     }
     case SUCCESS(ACTION_TYPES.GET_LOCATION): {
+      console.log(action.payload.data);
       return {
         ...state,
         loading: false,
         userLocation: {
-          ..._.mapKeys(action.payload.data, (value, key) => _.camelCase(key)),
+          ...action.payload.data,
           distance: 25,
-          conversionType: action.payload.data.country_code === 'US' ? 'MI' : 'KM',
+          conversionType: action.payload.data.countryCode === 'US' ? 'MI' : 'KM',
         },
       };
     }
     case SUCCESS(ACTION_TYPES.SEARCH_ZIPCODE): {
+      if (Object.keys(action.payload.data.results).length === 0) {
+        return {
+          ...state,
+          userLocation: defaultValue,
+        };
+      }
+      const firstItem = _.mapKeys(action.payload.data.results[action.payload.data.query.codes[0]][0], (value, key) => _.camelCase(key));
       return {
         ...state,
         loading: false,
-        userLocation: action.payload,
+        userLocation: {
+          ...state.userLocation,
+          city: firstItem.city,
+          countryCode: firstItem.countryCode,
+          postal: firstItem.postalCode,
+          state: firstItem.state ? firstItem.state : firstItem.province,
+          latitude: firstItem.latitude,
+          longitude: firstItem.longitude,
+          conversionType: firstItem.countryCode === 'US' ? 'MI' : 'KM',
+        },
       };
     }
 
@@ -77,19 +94,10 @@ export default (state: UserLocationState = initialState, action): UserLocationSt
   }
 };
 
-const geoLocationDbAPI = axios.create({
-  baseURL: 'https://geolocation-db.com/',
-});
-
-const zipcodebaseAPI = axios.create({
-  baseURL: 'https://app.zipcodebase.com/api/v1/',
-});
-
 export const getUserLocation = () => {
-  const { GEOLOCATION_DB_TOKEN } = process.env;
   return {
     type: ACTION_TYPES.GET_LOCATION,
-    payload: geoLocationDbAPI.get<UserLocation>(`json/${GEOLOCATION_DB_TOKEN}`),
+    payload: axios.get<UserLocation>(`api/user-location/ip`),
   };
 };
 
@@ -104,26 +112,45 @@ export const findZipCode: any = (
   country: string,
   locationSearchCallback: (wasFound: boolean) => void
 ) => async dispatch => {
-  const { ZIPCODE_BASE_TOKEN } = process.env;
-  const result = await zipcodebaseAPI.get(`search?apikey=${ZIPCODE_BASE_TOKEN}&codes=${zipCode}&country=${country}`);
-  if (Object.keys(result.data.results).length === 0) {
+  const result = await dispatch({
+    type: ACTION_TYPES.SEARCH_ZIPCODE,
+    payload: axios.get(`api/user-location/postal-code?code=${zipCode}&country=${country}`),
+  });
+
+  console.log(result);
+  if (Object.keys(result.value.data.results).length === 0) {
     locationSearchCallback(false);
-    return;
+    return result;
   } else {
     locationSearchCallback(true);
+    return result;
   }
-  const firstItem: LocaleInformation = _.mapKeys(result.data.results[zipCode][0], (value, key) => _.camelCase(key));
-  return await dispatch({
-    type: SUCCESS(ACTION_TYPES.SEARCH_ZIPCODE),
-    payload: {
-      city: firstItem.city,
-      countryCode: firstItem.countryCode,
-      postal: firstItem.postalCode,
-      state: firstItem.state ? firstItem.state : firstItem.province,
-      latitude: firstItem.latitude,
-      longitude: firstItem.longitude,
-      distance: 25,
-      conversionType: firstItem.countryCode === 'US' ? 'MI' : 'KM',
-    },
-  });
 };
+
+// export const findZipCode: any = (
+//   zipCode: string,
+//   country: string,
+//   locationSearchCallback: (wasFound: boolean) => void
+// ) => async dispatch => {
+//   const result = await axios.get(`api/user-location/postal-code?codes=${zipCode}&country=${country}`);
+//   if (Object.keys(result.data.results).length === 0) {toLowerCase
+//     locationSearchCallback(false);
+//     return;
+//   } else {
+//     locationSearchCallback(true);
+//   }
+//   const firstItem: LocaleInformation = _.mapKeys(result.data.results[zipCode][0], (value, key) => _.camelCase(key));
+//   return await dispatch({
+//     type: SUCCESS(ACTION_TYPES.SEARCH_ZIPCODE),
+//     payload: {
+//       city: firstItem.city,
+//       countryCode: firstItem.countryCode,
+//       postal: firstItem.postalCode,
+//       state: firstItem.state ? firstItem.state : firstItem.province,
+//       latitude: firstItem.latitude,
+//       longitude: firstItem.longitude,
+//       distance: 25,
+//       conversionType: firstItem.countryCode === 'US' ? 'MI' : 'KM',
+//     },
+//   });
+// };
