@@ -109,4 +109,6 @@ jhipster:
 # https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
-# application:
+application:
+  geolocation-db-token:
+  zipcode-base-token:
