@@ -73,7 +73,7 @@
     "axios": "0.21.1",
     "bootstrap": "5.0.1",
     "bootswatch": "4.6.0",
-    "dayjs": "1.10.4",
+    "dayjs": "1.10.5",
     "dotenv": "^10.0.0",
     "history": "^4.10.1",
     "leaflet": "^1.7.1",
