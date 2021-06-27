@@ -11,6 +11,7 @@ import com.triippztech.freshtrade.service.dto.item.ItemDetailDTO;
 import com.triippztech.freshtrade.service.dto.item.ListItemDTO;
 import com.triippztech.freshtrade.service.mapper.ItemMapper;
 import com.triippztech.freshtrade.web.rest.errors.BadRequestAlertException;
+import io.swagger.annotations.ApiOperation;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.Principal;
@@ -274,5 +275,22 @@ public class ItemResource {
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    /**
+     * {@code SEARCH  /_search/items?query=:query} : search for the items
+     * to the query.
+     *
+     * @param query    the query of the item search.
+     * @param pageable the pagination information.
+     * @return the result of the search.
+     */
+    @GetMapping("/_search/items")
+    @ApiOperation(value = "Searches for items based on a query string. Utilizes pagination", response = Void.class)
+    public ResponseEntity<List<ListItemDTO>> searchInventories(@RequestParam String query, Pageable pageable) {
+        log.debug("REST request to search for a page of Inventories for query {}", query);
+        Page<Item> page = itemService.search(query, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(itemMapper.itemsToItemDTOs(page.getContent()));
     }
 }

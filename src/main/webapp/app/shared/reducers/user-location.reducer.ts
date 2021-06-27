@@ -54,7 +54,6 @@ export default (state: UserLocationState = initialState, action): UserLocationSt
       };
     }
     case SUCCESS(ACTION_TYPES.GET_LOCATION): {
-      console.log(action.payload.data);
       return {
         ...state,
         loading: false,
@@ -117,7 +116,6 @@ export const findZipCode: any = (
     payload: axios.get(`api/user-location/postal-code?code=${zipCode}&country=${country}`),
   });
 
-  console.log(result);
   if (Object.keys(result.value.data.results).length === 0) {
     locationSearchCallback(false);
     return result;

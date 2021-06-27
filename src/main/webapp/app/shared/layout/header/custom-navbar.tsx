@@ -6,6 +6,7 @@ import LoadingBar from 'react-redux-loading-bar';
 import { Jumbotron } from 'app/shared/layout/header/jumbotron';
 import { ICategory } from 'app/shared/model/category.model';
 import CategoriesHeader from 'app/shared/layout/header/categories-header';
+import { useHistory } from 'react-router-dom';
 
 export interface INavbarProps {
   isAuthenticated: boolean;

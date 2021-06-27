@@ -4,7 +4,7 @@ import { MDBNavbarBrand } from 'mdbreact';
 import AccountMenu from '../menus/account';
 import { AdminMenu } from '../menus/admin';
 import { EntitiesMenu, LocaleMenu } from 'app/shared/layout/menus';
-import { Button, Col, Container, Row } from 'reactstrap';
+import { Button, Col, Container, Input, Row } from 'reactstrap';
 
 export interface JumbotronProps {
   locationName: string;
@@ -22,24 +22,15 @@ export const Jumbotron: React.FC<JumbotronProps> = props => {
     <div className="p-3 text-center bg-white border-bottom">
       <Container fluid={true}>
         <Row>
-          <Col md="3" className="d-flex justify-content-center justify-content-md-start mb-3 mb-md-0">
+          <Col md="4" className="d-flex justify-content-center justify-content-md-start mb-3 mb-md-0">
             <MDBNavbarBrand href="/" className="ms-md-2">
               <img src="content/images/freshtrade500x100.png" alt="LOGO" height="35" />
             </MDBNavbarBrand>
           </Col>
 
-          <Col md="3">
-            <form className="d-flex input-group w-auto my-auto mb-3 mb-md-0">
-              <input autoComplete="off" type="search" className="form-control rounded" placeholder="Search for Goods" />
-              <span className="input-group-text border-0 d-none d-lg-flex" style={{ backgroundColor: '#24A344' }}>
-                <i className="fas fa-search"></i>
-              </span>
-            </form>
-          </Col>
-
-          <Col md="3" className="d-flex justify-content-center justify-content-md-center align-items-center text-sm">
+          <Col md="4" className="d-flex justify-content-center justify-content-md-center align-items-center text-lg">
             <Button
-              size="sm"
+              size="lg"
               color="link"
               className="rounded-pill badge-notification location-button"
               onClick={() => props.onLocationClick()}
@@ -51,7 +42,7 @@ export const Jumbotron: React.FC<JumbotronProps> = props => {
             </Button>
           </Col>
 
-          <Col md="3" className="d-flex justify-content-center justify-content-md-end align-items-center">
+          <Col md="4" className="d-flex justify-content-center justify-content-md-end align-items-center">
             <LocaleMenu currentLocale={props.currentLocale} onClick={props.handleLocaleChange} />
             <AccountMenu isAuthenticated={props.isAuthenticated} />
             {props.isAuthenticated && props.isAdmin && <EntitiesMenu />}

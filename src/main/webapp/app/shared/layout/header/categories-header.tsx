@@ -9,14 +9,14 @@ export interface CategoriesHeaderProps {
 
 export const CategoriesHeader = (props: CategoriesHeaderProps) => {
   return (
-    <MDBNavbar color="white" expand="sm" light>
+    <MDBNavbar color="white" expand="xs" light>
       <MDBNavbarNav>
-        <NavItem>
+        <NavItem className="text-sm">
           <Link to={`/items`}>All</Link>
         </NavItem>
         {props.categories.map((category, idx) => {
           return (
-            <NavItem key={`category-${idx}`}>
+            <NavItem key={`category-${idx}`} className="text-sm">
               <Link to={`/items/${category.slug}`}>{category.name}</Link>
             </NavItem>
           );

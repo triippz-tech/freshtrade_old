@@ -5,14 +5,18 @@ import com.triippztech.freshtrade.repository.ItemRepository;
 import com.triippztech.freshtrade.repository.ItemTokenRepository;
 import com.triippztech.freshtrade.repository.ReservationRepository;
 import com.triippztech.freshtrade.service.dto.item.ItemDetailDTO;
+import com.triippztech.freshtrade.service.dto.item.ListItemDTO;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -248,5 +252,27 @@ public class ItemService {
 
     private String generateReservationNumber() {
         return "FT-" + UUID.randomUUID().toString();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Item> search(String query, Pageable page) {
+        var found = itemRepository.search(query, page);
+        return new PageImpl<>(
+            found
+                .getContent()
+                .stream()
+                .map(
+                    key -> {
+                        Hibernate.initialize(key.getCategories());
+                        Hibernate.initialize(key.getImages());
+                        Hibernate.initialize(key.getLocation());
+                        Hibernate.initialize(key.getTradeEvent());
+                        return key;
+                    }
+                )
+                .collect(Collectors.toList()),
+            page,
+            found.getTotalElements()
+        );
     }
 }

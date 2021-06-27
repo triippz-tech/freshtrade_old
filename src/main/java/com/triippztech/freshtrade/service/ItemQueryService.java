@@ -4,6 +4,7 @@ import com.triippztech.freshtrade.domain.*; // for static metamodels
 import com.triippztech.freshtrade.domain.Item;
 import com.triippztech.freshtrade.repository.ItemRepository;
 import com.triippztech.freshtrade.service.criteria.ItemCriteria;
+import com.triippztech.freshtrade.service.dto.item.ListItemDTO;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.persistence.criteria.JoinType;
