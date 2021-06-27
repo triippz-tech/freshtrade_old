@@ -38,6 +38,15 @@ Add the `help` flag on any command to see how you can use it. For example, `npm 
 
 The `npm run` command will list all of the scripts available to run for this project.
 
+Create a copy of the example env file
+
+```bash
+mv .env.example .env
+```
+
+Add in your secret keys for development. These can be aquired by creating accounts annotated in the Third Part Services section of the readme.
+Export these environment variables in your terminal before running the frontend & backend. Or import them via your IDE.
+
 ### Managing dependencies
 
 For example, to add [Leaflet][] library as a runtime dependency of your application, you would run following command:
@@ -154,6 +163,14 @@ Then run:
 ```
 docker-compose -f src/main/docker/app.yml up -d
 ```
+
+### Third Party Services
+
+[Country Lookup By IP - geolocation-db](geolocation-db.com)
+
+[Maps - Leaflet](https://leafletjs.com/)
+
+[Zip Code Lookup - zipcodebase](https://zipcodebase.com)
 
 [jhipster homepage and latest documentation]: https://www.jhipster.tech
 [jhipster 7.0.1 archive]: https://www.jhipster.tech/documentation-archive/v7.0.1

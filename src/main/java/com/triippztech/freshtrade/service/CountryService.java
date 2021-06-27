@@ -2,6 +2,7 @@ package com.triippztech.freshtrade.service;
 
 import com.triippztech.freshtrade.domain.Country;
 import com.triippztech.freshtrade.repository.CountryRepository;
+import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,6 +73,17 @@ public class CountryService {
     public Page<Country> findAll(Pageable pageable) {
         log.debug("Request to get all Countries");
         return countryRepository.findAll(pageable);
+    }
+
+    /**
+     * Get all the countries.
+     *
+     * @return the list of entities.
+     */
+    @Transactional(readOnly = true)
+    public List<Country> findAll() {
+        log.debug("Request to get all Countries");
+        return countryRepository.findAll();
     }
 
     /**

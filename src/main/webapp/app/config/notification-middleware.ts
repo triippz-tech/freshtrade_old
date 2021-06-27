@@ -103,7 +103,8 @@ export default () => next => action => {
       } else if (error && error.message) {
         toast.error(error.message);
       } else {
-        toast.error('Unknown error!');
+        // I dont like arbitrary error messages popping up
+        // toast.error('Unknown error!');
       }
       return Promise.reject(error);
     });

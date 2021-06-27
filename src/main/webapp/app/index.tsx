@@ -12,6 +12,7 @@ import ErrorBoundary from './shared/error/error-boundary';
 import AppComponent from './app';
 import { loadIcons } from './config/icon-loader';
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import {} from 'dotenv/config';
 
 const devTools = process.env.NODE_ENV === 'development' ? <DevTools /> : null;
 

@@ -6,6 +6,7 @@ import LoadingBar from 'react-redux-loading-bar';
 import { Jumbotron } from 'app/shared/layout/header/jumbotron';
 import { ICategory } from 'app/shared/model/category.model';
 import CategoriesHeader from 'app/shared/layout/header/categories-header';
+import { useHistory } from 'react-router-dom';
 
 export interface INavbarProps {
   isAuthenticated: boolean;
@@ -16,6 +17,9 @@ export interface INavbarProps {
   currentLocale: string;
   onLocaleChange: (langKey: string) => void;
   categories: ReadonlyArray<ICategory>;
+  locationName: string;
+  locationDistance: string;
+  onLocationClick: () => void;
 }
 
 const CustomNavbar = (props: INavbarProps) => {
@@ -45,10 +49,11 @@ const CustomNavbar = (props: INavbarProps) => {
       {renderDevRibbon()}
       <LoadingBar className="loading-bar" />
       <Jumbotron
-        locationName={'Lancaster, PA'}
+        locationName={props.locationName}
+        locationDistance={props.locationDistance}
         isAdmin={props.isAdmin}
         isAuthenticated={props.isAuthenticated}
-        onLocationClick={() => console.log('location click')}
+        onLocationClick={props.onLocationClick}
         isOpenAPIEnabled={props.isOpenAPIEnabled}
         currentLocale={props.currentLocale}
         handleLocaleChange={handleLocaleChange}

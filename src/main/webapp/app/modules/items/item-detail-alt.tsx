@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { IRootState } from 'app/shared/reducers';
-import { getEntityDetail, reserveItems, reset } from 'app/entities/item/item.reducer';
+import { getEntityDetail, reset } from 'app/entities/item/item.reducer';
 import { connect } from 'react-redux';
 import { Container, Row, Col, Breadcrumb, BreadcrumbItem, Form, Label, Button, Input, InputGroup, InputGroupAddon } from 'reactstrap';
 import SwiperGallery from 'app/components/swiper-gallery';
@@ -9,11 +9,18 @@ import ProductBottomTabs from 'app/components/product-bottom-tabs';
 import ReserveConfirmation from 'app/components/reserve-confirmation';
 import SellerBlock from 'app/components/seller-block';
 import NumberInput from 'app/components/number-input';
+import axios from 'axios';
+import { ItemReservationDto } from 'app/shared/model/dto/item/item-reservation-dto';
 
 export interface ItemDetailAltDetail extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
 export const ItemDetailAlt = (props: ItemDetailAltDetail) => {
-  const [alert, setAlert] = React.useState(true);
+  const [{ showAlert, isErr, message, reservationNumber }, setAlert] = React.useState({
+    showAlert: false,
+    isErr: false,
+    message: '',
+    reservationNumber: '',
+  });
   const [reserveAmount, setReserveAmount] = useState<number>(0);
 
   useEffect(() => {
@@ -26,7 +33,34 @@ export const ItemDetailAlt = (props: ItemDetailAltDetail) => {
   };
 
   const onSubmit = () => {
-    props.reserveItems(itemEntity, reserveAmount);
+    // props.reserveItems(itemEntity, reserveAmount, alertCallback);
+    axios
+      .put<ItemReservationDto>(`/api/items/${props.itemEntity.id}/reserve/${reserveAmount}`)
+      .then(response => {
+        if (response.data.wasReserved) {
+          setAlert({
+            showAlert: true,
+            isErr: false,
+            reservationNumber: response.data.reservationNumber,
+            message: `Successfully reserved ${response.data.reservedAmount} ${props.itemEntity.name} for ${props.itemEntity.tradeEvent.startDate} at ${props.itemEntity.tradeEvent.eventName}`,
+          });
+        } else {
+          setAlert({
+            showAlert: true,
+            isErr: true,
+            reservationNumber: '',
+            message: `Error reserving item: ${response.data.errorMessage}`,
+          });
+        }
+      })
+      .catch(err => {
+        setAlert({
+          showAlert: true,
+          isErr: true,
+          reservationNumber: '',
+          message: `An error occurred while reserving item. Please try again.`,
+        });
+      });
   };
 
   const onKeyPress = e => {
@@ -43,7 +77,13 @@ export const ItemDetailAlt = (props: ItemDetailAltDetail) => {
     <React.Fragment>
       <section>
         <Container className="pt-5">
-          <ReserveConfirmation isShowing={alert} setAlert={setAlert} productName={itemEntity.name} />
+          <ReserveConfirmation
+            showAlert={showAlert}
+            isErr={isErr}
+            message={message}
+            reservationNumber={reservationNumber}
+            setAlert={setAlert}
+          />
 
           <Breadcrumb>
             <BreadcrumbItem>
@@ -177,7 +217,6 @@ const mapStateToProps = ({ item, authentication }: IRootState) => ({
 const mapDispatchToProps = {
   getEntityDetail,
   reset,
-  reserveItems,
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
