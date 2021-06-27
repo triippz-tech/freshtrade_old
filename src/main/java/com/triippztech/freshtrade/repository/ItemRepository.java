@@ -35,4 +35,13 @@ public interface ItemRepository extends JpaRepository<Item, UUID>, JpaSpecificat
         "where item.id =:id"
     )
     Optional<Item> findOneWithEagerRelationships(@Param("id") UUID id);
+
+    @Query(
+        value = "SELECT i FROM Item i " +
+        " WHERE lower(i.name) LIKE lower(concat('%', ?1,'%'))" +
+        " OR lower(i.details) LIKE lower(concat('%', ?1,'%'))" +
+        " OR lower(i.tradeEvent.eventName) LIKE lower(concat('%', ?1,'%'))" +
+        " AND i.isActive = true"
+    )
+    Page<Item> search(String query, Pageable pageable);
 }

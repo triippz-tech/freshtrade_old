@@ -11,7 +11,6 @@ export interface ItemTileProps {
 export const ItemTile: React.FC<ItemTileProps> = props => {
   const getImageUrl = () => {
     for (let i = 0; i < props.item.images.length; i++) {
-      console.log(props.item.images[i]);
       if (props.item.images[i].isVisible) return props.item.images[i].imageUrl;
     }
     return 'content/images/logo-gray.png';
