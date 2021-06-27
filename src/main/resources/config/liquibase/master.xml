@@ -32,4 +32,6 @@
     <include file="config/liquibase/changelog/20210530003533_added_entity_constraints_Location.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20210530003633_added_entity_constraints_TradeEvent.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20210530003833_updated_entites.xml" relativeToChangelogFile="false"/>
+    <!-- JUNE 2021 -->
+    <include file="config/liquibase/changelog/Y2021/JUNE/202106270000_remove_constraint_ItemToken.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>

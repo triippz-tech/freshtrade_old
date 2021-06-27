@@ -7,6 +7,7 @@ import static org.mockito.Mockito.*;
 import com.triippztech.freshtrade.IntegrationTest;
 import com.triippztech.freshtrade.config.Constants;
 import com.triippztech.freshtrade.domain.User;
+import com.triippztech.freshtrade.service.mail.MailService;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;

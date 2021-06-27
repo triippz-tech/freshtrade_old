@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}" lang="en">
+  <head>
+    <title th:text="#{email.buyer.reserve.confirm.title}">FreshTrade Reservation</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="icon" th:href="@{|${baseUrl}/favicon.ico|}" />
+
+    <style>
+      body {
+        background-color: white;
+      }
+
+      /* White space is preserved with \n\n\n\n and css class a, span, tr { white-space: pre; } */
+      a,
+      span,
+      tr {
+        white-space: pre;
+      }
+
+      body {
+        color: black;
+        font-family: 'Arial', sans-serif;
+        font-weight: normal;
+        font-style: normal;
+        font-size: x-small;
+      }
+
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      table,
+      th,
+      td {
+        border: 1px solid black;
+      }
+
+      .ten {
+        width: 10%;
+      }
+      .forty {
+        width: 40%;
+      }
+
+      .twenty-five {
+        width: 25%;
+      }
+
+      th {
+        background-color: #24a344;
+        color: black;
+        vertical-align: middle;
+      }
+
+      th,
+      td {
+        padding: 1px;
+        text-align: left;
+        vertical-align: middle;
+      }
+
+      .ft-font-bold {
+        color: black;
+        font-family: 'Arial', sans-serif;
+        font-weight: bold;
+        font-style: normal;
+        font-size: x-small;
+      }
+    </style>
+  </head>
+  <body>
+    <p th:text="#{email.buyer.reserve.confirm.greeting(${user.login})}">Dear</p>
+    <p class="ft-font-bold" th:text="#{email.buyer.reserve.confirm.text1}">
+      This is a confirmation that you have successfully reserved the following item(s):
+    </p>
+    <p th:text="#{email.buyer.reserve.confirm.reservation(${reservationNumber})}"></p>
+    <table>
+      <tr>
+        <th class="twenty-five">Item</th>
+        <th class="ten">Quantity</th>
+        <th class="twenty-five">Seller</th>
+        <th class="forty">Event</th>
+        <th class="forty">Pickup Date</th>
+      </tr>
+      <tr>
+        <td th:text="${itemName}"></td>
+        <td th:text="${quantity}"></td>
+        <td th:text="${seller}"></td>
+        <td th:text="${event}"></td>
+        <td th:text="${pickupDate}"></td>
+      </tr>
+    </table>
+
+    <p>
+      <span th:text="#{email.buyer.reserve.confirm.text2}">Regards, </span>
+      <br />
+      <em th:text="#{email.signature}">FreshTrade.</em>
+      <br />
+      <img src="logo_freshtrade.png" th:src="'cid:' + ${imageResourceName}" alt="FreshTrade Logo" />
+    </p>
+  </body>
+</html>
