@@ -222,11 +222,12 @@ export const updateEntity: ICrudPutAction<IItem> = entity => async dispatch => {
   return result;
 };
 
-export const reserveItems: ICrudReserveAction<IItem> = (entity, quantity) => async dispatch => {
+export const reserveItems: ICrudReserveAction<IItem> = (entity, quantity, callback) => async dispatch => {
   const result = await dispatch({
     type: ACTION_TYPES.UPDATE_ITEM,
     payload: axios.put(`${apiUrl}/${entity.id}/reserve/${quantity}`),
   });
+  callback(result.value.status, quantity);
   return result;
 };
 

@@ -62,7 +62,8 @@ public class Reservation implements Serializable {
     @JsonIgnoreProperties(value = { "location", "items", "reservations" }, allowSetters = true)
     private TradeEvent event;
 
-    @OneToMany
+    @OneToMany(mappedBy = "reservation")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "reservation" }, allowSetters = true)
     private Set<ItemToken> tokens = new HashSet<>();
 

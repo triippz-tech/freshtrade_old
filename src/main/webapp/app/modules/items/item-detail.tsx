@@ -37,17 +37,15 @@ export const ItemDetail = (props: IItemDetail) => {
     else setReserveAmount(value);
   };
 
-  const onSubmit = () => {
-    props.reserveItems(itemEntity, reserveAmount);
-  };
+  const onSubmit = () => {};
 
   const onKeyPress = e => {
-    if (e.key === 'Enter') {
-      const value = +e.target.value;
-      if (isNaN(value)) return;
-      if (value < 1 || value > itemEntity.quantity) return;
-      onSubmit();
-    }
+    // if (e.key === 'Enter') {
+    //   const value = +e.target.value;
+    //   if (isNaN(value)) return;
+    //   if (value < 1 || value > itemEntity.quantity) return;
+    //   onSubmit();
+    // }
   };
 
   const getItems = (): { src: string; altText: string; caption: string }[] => {

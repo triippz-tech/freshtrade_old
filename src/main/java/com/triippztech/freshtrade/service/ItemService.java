@@ -5,6 +5,7 @@ import com.triippztech.freshtrade.repository.ItemRepository;
 import com.triippztech.freshtrade.repository.ItemTokenRepository;
 import com.triippztech.freshtrade.repository.ReservationRepository;
 import com.triippztech.freshtrade.service.dto.item.ItemDetailDTO;
+import com.triippztech.freshtrade.service.dto.item.ItemReservationDTO;
 import com.triippztech.freshtrade.service.dto.item.ListItemDTO;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import liquibase.pro.packaged.D;
 import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,10 +30,21 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ItemService {
 
-    private static class ItemServiceException extends RuntimeException {
+    public static class ItemServiceException extends RuntimeException {
 
-        private ItemServiceException(String message) {
+        private String clientMessage;
+
+        public ItemServiceException(String message) {
             super(message);
+        }
+
+        public ItemServiceException(String message, String clientMessage) {
+            super(message);
+            this.clientMessage = clientMessage;
+        }
+
+        public String getClientMessage() {
+            return clientMessage;
         }
     }
 
@@ -170,19 +183,21 @@ public class ItemService {
      * @return {@link ItemDetailDTO} the updated {@link Item}
      * @throws ItemServiceException Thrown if item is not found or inaalid quantity
      */
-    @Transactional(readOnly = true)
-    public ItemDetailDTO reserveItem(UUID id, Integer quantity, User buyer) throws ItemServiceException {
+    @Transactional(rollbackFor = Exception.class)
+    public ItemReservationDTO reserveItem(UUID id, Integer quantity, User buyer) throws ItemServiceException {
         var foundItem = findOne(id);
-        if (foundItem.isEmpty()) throw new ItemServiceException("Item with ID: " + id + " was not found");
+        if (foundItem.isEmpty()) throw new ItemServiceException("Item with ID: " + id + " was not found", "Item was not found");
 
         // Check if any tokens are available
         if (foundItem.get().getTokens().size() == foundItem.get().getQuantity()) throw new ItemServiceException(
-            "Item with ID: " + id + " is unavailable"
+            "Item with ID: " + id + " is unavailable",
+            "Item was not found"
         );
 
         // Check if there enough tokens to fulfill the request
         var availableTokens = foundItem.get().getQuantity() - foundItem.get().getTokens().size();
         if (quantity > availableTokens) throw new ItemServiceException(
+            String.format("Unable to reserve %d %s(s), only %d available", quantity, foundItem.get().getName(), availableTokens),
             String.format("Unable to reserve %d %s(s), only %d available", quantity, foundItem.get().getName(), availableTokens)
         );
 
@@ -193,16 +208,21 @@ public class ItemService {
         for (int i = 1; i <= quantity; i++) {
             reservation.addToken((generateToken(foundItem.get(), reservation, buyer)));
         }
-        return findOneWithAvailableTokens(foundItem.get().getId()).get();
+        return new ItemReservationDTO()
+            .wasReserved(true)
+            .errorMessage(null)
+            .reservationId(reservation.getId())
+            .reservationNumber(reservation.getReservationNumber())
+            .reservedAmount(quantity);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public ItemToken generateToken(Item item, Reservation reservation, User owner) {
         log.debug("Request to generate new ItemToken");
-        String tokenCode = item.getTokens().stream().findFirst().isEmpty()
+        String tokenCode = item.getTokens().stream().findFirst().isPresent()
             ? item.getTokens().stream().findFirst().get().getTokenCode()
             : generateTokenCode(item);
-        String tokenName = item.getTokens().stream().findFirst().isEmpty()
+        String tokenName = item.getTokens().stream().findFirst().isPresent()
             ? item.getTokens().stream().findFirst().get().getTokenName()
             : generateTokenName(item);
 
