@@ -39,15 +39,6 @@ public class ItemToken implements Serializable {
     @Column(name = "updated_date")
     private ZonedDateTime updatedDate;
 
-    //    @ManyToMany
-    //    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    //    @JoinTable(
-    //        name = "rel_item_token__owner",
-    //        joinColumns = @JoinColumn(name = "item_token_id"),
-    //        inverseJoinColumns = @JoinColumn(name = "owner_id")
-    //    )
-    //    private Set<User> owners = new HashSet<>();
-
     @ManyToOne
     private User owner;
 

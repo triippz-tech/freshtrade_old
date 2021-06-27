@@ -25,4 +25,8 @@ export type ICrudGetAllActionCriteria<T> = (
   sort?: string,
   callback?: () => void
 ) => IPayload<T> | ((dispatch: any) => IPayload<T>);
-export type ICrudReserveAction<T> = (data: T, quantity: number) => IPayload<T> | IPayloadResult<T>;
+export type ICrudReserveAction<T> = (
+  data: T,
+  quantity: number,
+  callback: (status: number, count: number) => void
+) => IPayload<T> | IPayloadResult<T>;

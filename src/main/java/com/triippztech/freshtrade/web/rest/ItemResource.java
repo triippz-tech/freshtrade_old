@@ -8,6 +8,7 @@ import com.triippztech.freshtrade.service.UserService;
 import com.triippztech.freshtrade.service.criteria.ItemCriteria;
 import com.triippztech.freshtrade.service.dto.AdminUserDTO;
 import com.triippztech.freshtrade.service.dto.item.ItemDetailDTO;
+import com.triippztech.freshtrade.service.dto.item.ItemReservationDTO;
 import com.triippztech.freshtrade.service.dto.item.ListItemDTO;
 import com.triippztech.freshtrade.service.mapper.ItemMapper;
 import com.triippztech.freshtrade.web.rest.errors.BadRequestAlertException;
@@ -143,7 +144,7 @@ public class ItemResource {
      * or with status {@code 500 (Internal Server Error)} if the item couldn't be updated.
      */
     @PutMapping("/items/{id}/reserve/{quantity}")
-    public ResponseEntity<ItemDetailDTO> reserveItem(
+    public ResponseEntity<ItemReservationDTO> reserveItem(
         Principal principal,
         @PathVariable(value = "id") final UUID id,
         @PathVariable(value = "quantity") @Min(1) final Integer quantity
@@ -153,8 +154,13 @@ public class ItemResource {
         var user = userService.getUserWithAuthorities();
         if (user.isEmpty()) throw new ItemResourceException("Current User could not be found");
 
-        var item = itemService.reserveItem(id, quantity, user.get());
-        return ResponseEntity.ok().body(item);
+        try {
+            var item = itemService.reserveItem(id, quantity, user.get());
+            return ResponseEntity.ok().body(item);
+        } catch (ItemService.ItemServiceException e) {
+            log.error(e.getMessage(), e);
+            return ResponseEntity.ok().body(new ItemReservationDTO().wasReserved(false).errorMessage(e.getMessage()));
+        }
     }
 
     /**
