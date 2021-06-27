@@ -6,14 +6,13 @@ import com.triippztech.freshtrade.repository.ItemTokenRepository;
 import com.triippztech.freshtrade.repository.ReservationRepository;
 import com.triippztech.freshtrade.service.dto.item.ItemDetailDTO;
 import com.triippztech.freshtrade.service.dto.item.ItemReservationDTO;
-import com.triippztech.freshtrade.service.dto.item.ListItemDTO;
+import com.triippztech.freshtrade.service.mail.BuyerMailService;
+import com.triippztech.freshtrade.service.mail.SellerEmailService;
+import java.io.IOException;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import liquibase.pro.packaged.D;
 import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,10 +55,22 @@ public class ItemService {
 
     private final ItemTokenRepository tokenRepository;
 
-    public ItemService(ItemRepository itemRepository, ReservationRepository reservationRepository, ItemTokenRepository tokenRepository) {
+    private final BuyerMailService buyerMailService;
+
+    private final SellerEmailService sellerMailService;
+
+    public ItemService(
+        ItemRepository itemRepository,
+        ReservationRepository reservationRepository,
+        ItemTokenRepository tokenRepository,
+        BuyerMailService buyerMailService,
+        SellerEmailService sellerMailService
+    ) {
         this.itemRepository = itemRepository;
         this.reservationRepository = reservationRepository;
         this.tokenRepository = tokenRepository;
+        this.buyerMailService = buyerMailService;
+        this.sellerMailService = sellerMailService;
     }
 
     /**
@@ -208,6 +219,14 @@ public class ItemService {
         for (int i = 1; i <= quantity; i++) {
             reservation.addToken((generateToken(foundItem.get(), reservation, buyer)));
         }
+
+        try {
+            buyerMailService.sendBuyerConfirmReservationEmail(reservation, buyer, foundItem.get(), quantity);
+            sellerMailService.sendSellerConfirmReservationEmail(reservation, buyer, foundItem.get(), quantity);
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
+
         return new ItemReservationDTO()
             .wasReserved(true)
             .errorMessage(null)

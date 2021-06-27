@@ -30,7 +30,7 @@ public class ItemToken implements Serializable {
     private String tokenName;
 
     @NotNull
-    @Column(name = "token_code", nullable = false, unique = true)
+    @Column(name = "token_code", nullable = false)
     private String tokenCode;
 
     @Column(name = "created_date")
