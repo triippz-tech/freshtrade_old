@@ -2,7 +2,7 @@ import React from 'react';
 import { Translate, translate } from 'react-jhipster';
 import { NavDropdown, NavDropdownUser } from './menu-components';
 import { DropdownItem } from 'mdbreact';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const accountMenuItemsAuthenticated = (
   <>
@@ -24,7 +24,9 @@ const accountMenuItemsAuthenticated = (
   </>
 );
 
-export const AccountMenuItems = ({ location }) => {
+export const AccountMenuItems = () => {
+  const location = useLocation();
+
   return (
     <>
       <Link
@@ -46,9 +48,9 @@ export const AccountMenuItems = ({ location }) => {
   );
 };
 
-export const AccountMenu = ({ location, isAuthenticated = false, image = undefined }) => (
+export const AccountMenu = ({ isAuthenticated = false, image = undefined }) => (
   <NavDropdownUser name={translate('global.menu.account.main')} id="account-menu" image={image ? image : undefined}>
-    {isAuthenticated ? accountMenuItemsAuthenticated : <AccountMenuItems location={location} />}
+    {isAuthenticated ? accountMenuItemsAuthenticated : <AccountMenuItems />}
   </NavDropdownUser>
 );
 

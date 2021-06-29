@@ -155,7 +155,12 @@ export const ItemDetailAlt = (props: ItemDetailAltDetail) => {
                     </>
                   ) : (
                     <Col className="text-danger">
-                      <Link to="/login">
+                      <Link
+                        to={{
+                          pathname: '/login',
+                          state: location.pathname,
+                        }}
+                      >
                         <strong>Login</strong>
                       </Link>{' '}
                       or{' '}
