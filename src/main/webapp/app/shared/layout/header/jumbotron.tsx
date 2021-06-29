@@ -4,7 +4,7 @@ import { MDBNavbarBrand } from 'mdbreact';
 import AccountMenu from '../menus/account';
 import { AdminMenu } from '../menus/admin';
 import { EntitiesMenu, LocaleMenu } from 'app/shared/layout/menus';
-import { Button, Col, Container, Input, Row } from 'reactstrap';
+import { Button, Col, Container, Row } from 'reactstrap';
 
 export interface JumbotronProps {
   locationName: string;

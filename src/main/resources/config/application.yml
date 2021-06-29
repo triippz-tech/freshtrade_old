@@ -155,12 +155,12 @@ jhipster:
   #   allow-credentials: true
   #   max-age: 1800
   mail:
-    from: freshtrade@localhost
+    from: noreply@freshtrade.io
   api-docs:
     default-include-pattern: ${server.servlet.context-path:}/api/.*
     management-include-pattern: ${server.servlet.context-path:}/management/.*
-    title: freshtrade API
-    description: freshtrade API documentation
+    title: FreshTrade API
+    description: FreshTrade API documentation
     version: 0.0.1
     terms-of-service-url:
     contact-name:

@@ -4,7 +4,7 @@ import 'app/config/dayjs.ts';
 
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { BrowserRouter as Router, RouteComponentProps } from 'react-router-dom';
+import { BrowserRouter as Router, RouteComponentProps, useLocation } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import { hot } from 'react-hot-loader';
 
