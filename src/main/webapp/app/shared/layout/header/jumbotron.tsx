@@ -4,7 +4,8 @@ import { MDBNavbarBrand } from 'mdbreact';
 import AccountMenu from '../menus/account';
 import { AdminMenu } from '../menus/admin';
 import { EntitiesMenu, LocaleMenu } from 'app/shared/layout/menus';
-import { Button, Col, Container, Input, Row } from 'reactstrap';
+import { Button, Col, Container, Row } from 'reactstrap';
+import { useLocation } from 'react-router-dom';
 
 export interface JumbotronProps {
   locationName: string;
@@ -18,6 +19,7 @@ export interface JumbotronProps {
 }
 
 export const Jumbotron: React.FC<JumbotronProps> = props => {
+  const location = useLocation();
   return (
     <div className="p-3 text-center bg-white border-bottom">
       <Container fluid={true}>
@@ -44,7 +46,7 @@ export const Jumbotron: React.FC<JumbotronProps> = props => {
 
           <Col md="4" className="d-flex justify-content-center justify-content-md-end align-items-center">
             <LocaleMenu currentLocale={props.currentLocale} onClick={props.handleLocaleChange} />
-            <AccountMenu isAuthenticated={props.isAuthenticated} />
+            <AccountMenu isAuthenticated={props.isAuthenticated} location={location} />
             {props.isAuthenticated && props.isAdmin && <EntitiesMenu />}
             {props.isAuthenticated && props.isAdmin && <AdminMenu showOpenAPI={props.isOpenAPIEnabled} />}
           </Col>

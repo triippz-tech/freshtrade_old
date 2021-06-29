@@ -23,8 +23,9 @@ export const Login = (props: ILoginProps) => {
   };
 
   const { location, isAuthenticated } = props;
-  const { from } = (location.state as any) || { from: { pathname: '/', search: location.search } };
+  const { from } = (location.state as any) || { from: { pathname: location.state, search: location.search } };
   if (isAuthenticated) {
+    console.log(location.state);
     return <Redirect to={from} />;
   }
   return <LoginModal showModal={showModal} handleLogin={handleLogin} handleClose={handleClose} loginError={props.loginError} />;
