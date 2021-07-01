@@ -95,6 +95,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .antMatchers(HttpMethod.GET, "/api/items/**").permitAll()
             .antMatchers(HttpMethod.PUT, "/api/items/{\\w+}/reserve").hasAuthority(AuthoritiesConstants.BUYER)
             .antMatchers(HttpMethod.GET, "/api/_search/items").permitAll()
+            .antMatchers(HttpMethod.GET, "/api/items/seller").hasAuthority(AuthoritiesConstants.SELLER)
             // Categories
             .antMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
             // Countries

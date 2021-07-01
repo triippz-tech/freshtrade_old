@@ -162,6 +162,14 @@ export const getEntities: ICrudGetAllAction<IItem> = (page, size, sort) => {
   };
 };
 
+export const getSellerEntities: ICrudGetAllAction<IItem> = (page, size, sort) => {
+  const requestUrl = `${apiUrl}/seller?${sort ? `page=${page}&size=${size}&sort=${sort}` : ''}`;
+  return {
+    type: ACTION_TYPES.FETCH_ITEM_LIST,
+    payload: axios.get<IItem>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`),
+  };
+};
+
 export const getEntitiesWithCriteria: ICrudGetAllActionCriteria<IItem> = (criteria: ItemCriteria, page, size, sort) => {
   const requestUrl = `${apiUrl}?${criteria.generateUrl()}&${sort ? `page=${page}&size=${size}&sort=${sort}` : ''}`;
   return {

@@ -6,7 +6,6 @@ import com.triippztech.freshtrade.service.ItemQueryService;
 import com.triippztech.freshtrade.service.ItemService;
 import com.triippztech.freshtrade.service.UserService;
 import com.triippztech.freshtrade.service.criteria.ItemCriteria;
-import com.triippztech.freshtrade.service.dto.AdminUserDTO;
 import com.triippztech.freshtrade.service.dto.item.ItemDetailDTO;
 import com.triippztech.freshtrade.service.dto.item.ItemReservationDTO;
 import com.triippztech.freshtrade.service.dto.item.ListItemDTO;
@@ -210,6 +209,22 @@ public class ItemResource {
     public ResponseEntity<List<Item>> getAllItems(ItemCriteria criteria, Pageable pageable) {
         log.debug("REST request to get Items by criteria: {}", criteria);
         Page<Item> page = itemQueryService.findByCriteria(criteria, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code GET  /items/seller} : get all the items for the current seller
+     *
+     * @param pageable the pagination information.
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of items in body.
+     */
+    @GetMapping("/items/seller")
+    public ResponseEntity<List<Item>> getAllSellerItems(ItemCriteria criteria, Pageable pageable, Principal principal) {
+        log.debug("REST request to get Items by criteria: {}", criteria);
+        var user = userService.getUserWithAuthorities().orElseThrow(() -> new ItemResourceException("User could not be found"));
+        Page<Item> page = itemQueryService.findByCriteria(user, criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

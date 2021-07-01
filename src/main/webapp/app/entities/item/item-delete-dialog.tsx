@@ -16,7 +16,8 @@ export const ItemDeleteDialog = (props: IItemDeleteDialogProps) => {
   }, []);
 
   const handleClose = () => {
-    props.history.push('/item');
+    // props.history.push('/item');
+    props.history.goBack();
   };
 
   useEffect(() => {
@@ -36,7 +37,7 @@ export const ItemDeleteDialog = (props: IItemDeleteDialogProps) => {
         <Translate contentKey="entity.delete.title">Confirm delete operation</Translate>
       </ModalHeader>
       <ModalBody id="freshtradeApp.item.delete.question">
-        <Translate contentKey="freshtradeApp.item.delete.question" interpolate={{ id: itemEntity.id }}>
+        <Translate contentKey="freshtradeApp.item.delete.question" interpolate={{ id: itemEntity.name }}>
           Are you sure you want to delete this Item?
         </Translate>
       </ModalBody>

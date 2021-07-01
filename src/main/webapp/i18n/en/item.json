@@ -8,6 +8,15 @@
         "createOrEditLabel": "Create or edit a Item",
         "notFound": "No Items found"
       },
+      "seller": {
+        "title": "Your Listed Items",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Item",
+        "createOrEditLabel": "Create or edit a Item",
+        "notFound": "No Items found",
+        "createdDate": "Posted Date",
+        "itemCondition": "Condition"
+      },
       "created": "A new Item is created with identifier {{ param }}",
       "updated": "A Item is updated with identifier {{ param }}",
       "deleted": "A Item is deleted with identifier {{ param }}",

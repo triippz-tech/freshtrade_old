@@ -2,26 +2,32 @@ import React, { useState, useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Col, Row, Table } from 'reactstrap';
-import { byteSize, Translate, TextFormat, getSortState, IPaginationBaseState } from 'react-jhipster';
+import { Button, Table } from 'reactstrap';
+import { Translate, TextFormat, getSortState, IPaginationBaseState } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { IRootState } from 'app/shared/reducers';
-import { getEntities, reset } from './item.reducer';
+import { getSellerEntities, reset } from 'app/entities/item/item.reducer';
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import { ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
+import { formatPrice } from 'app/shared/util/transform-utils';
+import { toTitleCase } from 'app/shared/util/string-utils';
 
-export interface IItemProps extends StateProps, DispatchProps, RouteComponentProps<{ url: string }> {}
+interface SellerItemsProps extends StateProps, DispatchProps, RouteComponentProps<{ url: string }> {}
 
-export const Item = (props: IItemProps) => {
+export const SellerItems = (props: SellerItemsProps) => {
   const [paginationState, setPaginationState] = useState(
     overridePaginationStateWithQueryParams(getSortState(props.location, ITEMS_PER_PAGE, 'id'), props.location.search)
   );
   const [sorting, setSorting] = useState(false);
 
   const getAllEntities = () => {
-    props.getEntities(paginationState.activePage - 1, paginationState.itemsPerPage, `${paginationState.sort},${paginationState.order}`);
+    props.getSellerEntities(
+      paginationState.activePage - 1,
+      paginationState.itemsPerPage,
+      `${paginationState.sort},${paginationState.order}`
+    );
   };
 
   const resetAll = () => {
@@ -30,7 +36,7 @@ export const Item = (props: IItemProps) => {
       ...paginationState,
       activePage: 1,
     });
-    props.getEntities();
+    props.getSellerEntities();
   };
 
   useEffect(() => {
@@ -82,16 +88,16 @@ export const Item = (props: IItemProps) => {
   return (
     <div>
       <h2 id="item-heading" data-cy="ItemHeading">
-        <Translate contentKey="freshtradeApp.item.home.title">Items</Translate>
+        <Translate contentKey="freshtradeApp.item.seller.title">Items</Translate>
         <div className="d-flex justify-content-end">
           <Button className="mr-2" color="info" onClick={handleSyncList} disabled={loading}>
             <FontAwesomeIcon icon="sync" spin={loading} />{' '}
-            <Translate contentKey="freshtradeApp.item.home.refreshListLabel">Refresh List</Translate>
+            <Translate contentKey="freshtradeApp.item.seller.refreshListLabel">Refresh List</Translate>
           </Button>
-          <Link to={`${match.url}/update`} className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
+          <Link to={`${match.url}/new`} className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
             <FontAwesomeIcon icon="plus" />
             &nbsp;
-            <Translate contentKey="freshtradeApp.item.home.createLabel">Create new Item</Translate>
+            <Translate contentKey="freshtradeApp.item.seller.createLabel">Create new Item</Translate>
           </Link>
         </div>
       </h2>
@@ -108,9 +114,7 @@ export const Item = (props: IItemProps) => {
             <Table responsive>
               <thead>
                 <tr>
-                  <th className="hand" onClick={sort('id')}>
-                    <Translate contentKey="freshtradeApp.item.id">Id</Translate> <FontAwesomeIcon icon="sort" />
-                  </th>
+                  <th className="hand"></th>
                   <th className="hand" onClick={sort('price')}>
                     <Translate contentKey="freshtradeApp.item.price">Price</Translate> <FontAwesomeIcon icon="sort" />
                   </th>
@@ -120,29 +124,17 @@ export const Item = (props: IItemProps) => {
                   <th className="hand" onClick={sort('name')}>
                     <Translate contentKey="freshtradeApp.item.name">Name</Translate> <FontAwesomeIcon icon="sort" />
                   </th>
-                  <th className="hand" onClick={sort('details')}>
-                    <Translate contentKey="freshtradeApp.item.details">Details</Translate> <FontAwesomeIcon icon="sort" />
-                  </th>
                   <th className="hand" onClick={sort('itemCondition')}>
-                    <Translate contentKey="freshtradeApp.item.itemCondition">Item Condition</Translate> <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('isActive')}>
-                    <Translate contentKey="freshtradeApp.item.isActive">Is Active</Translate> <FontAwesomeIcon icon="sort" />
+                    <Translate contentKey="freshtradeApp.item.seller.itemCondition">Condition</Translate> <FontAwesomeIcon icon="sort" />
                   </th>
                   <th className="hand" onClick={sort('createdDate')}>
-                    <Translate contentKey="freshtradeApp.item.createdDate">Created Date</Translate> <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('updatedDate')}>
-                    <Translate contentKey="freshtradeApp.item.updatedDate">Updated Date</Translate> <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th>
-                    <Translate contentKey="freshtradeApp.item.owner">Owner</Translate> <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th>
-                    <Translate contentKey="freshtradeApp.item.location">Location</Translate> <FontAwesomeIcon icon="sort" />
+                    <Translate contentKey="freshtradeApp.item.seller.createdDate">Posted Date</Translate> <FontAwesomeIcon icon="sort" />
                   </th>
                   <th>
                     <Translate contentKey="freshtradeApp.item.tradeEvent">Trade Event</Translate> <FontAwesomeIcon icon="sort" />
+                  </th>
+                  <th className="hand" onClick={sort('isActive')}>
+                    <Translate contentKey="freshtradeApp.item.isActive">Is Active</Translate> <FontAwesomeIcon icon="sort" />
                   </th>
                   <th />
                 </tr>
@@ -151,26 +143,23 @@ export const Item = (props: IItemProps) => {
                 {itemList.map((item, i) => (
                   <tr key={`entity-${i}`} data-cy="entityTable">
                     <td>
-                      <Button tag={Link} to={`${match.url}/${item.id}`} color="link" size="sm">
-                        {item.id}
-                      </Button>
+                      {item.images && item.images.length > 0 ? (
+                        <img loading="lazy" src={item.images[0].imageUrl} alt="item image" height={50} width={50} />
+                      ) : (
+                        <img loading="lazy" src="content/images/logo-grey-50x50.png" alt="item image" />
+                      )}
                     </td>
-                    <td>{item.price}</td>
+                    <td>{formatPrice(item.price)}</td>
                     <td>{item.quantity}</td>
                     <td>{item.name}</td>
-                    <td>{item.details}</td>
-                    <td>
-                      <Translate contentKey={`freshtradeApp.Condition.${item.itemCondition}`} />
-                    </td>
-                    <td>{item.isActive ? 'true' : 'false'}</td>
+                    <td>{toTitleCase(item.itemCondition.toString())}</td>
                     <td>{item.createdDate ? <TextFormat type="date" value={item.createdDate} format={APP_DATE_FORMAT} /> : null}</td>
-                    <td>{item.updatedDate ? <TextFormat type="date" value={item.updatedDate} format={APP_DATE_FORMAT} /> : null}</td>
-                    <td>{item.owner ? item.owner.id : ''}</td>
-                    <td>{item.location ? <Link to={`location/${item.location.id}`}>{item.location.id}</Link> : ''}</td>
-                    <td>{item.tradeEvent ? <Link to={`trade-event/${item.tradeEvent.id}`}>{item.tradeEvent.id}</Link> : ''}</td>
+                    <td>{item.tradeEvent ? <Link to={`trade-event/${item.tradeEvent.id}`}>{item.tradeEvent.eventName}</Link> : ''}</td>
+                    <td>{item.isActive ? 'Yes' : 'No'}</td>
+
                     <td className="text-right">
                       <div className="btn-group flex-btn-group-container">
-                        <Button tag={Link} to={`${match.url}/${item.id}`} color="info" size="sm" data-cy="entityDetailsButton">
+                        <Button tag={Link} to={`/items/detail/${item.id}`} color="info" size="sm" data-cy="entityDetailsButton">
                           <FontAwesomeIcon icon="eye" />{' '}
                           <span className="d-none d-md-inline">
                             <Translate contentKey="entity.action.view">View</Translate>
@@ -180,12 +169,6 @@ export const Item = (props: IItemProps) => {
                           <FontAwesomeIcon icon="pencil-alt" />{' '}
                           <span className="d-none d-md-inline">
                             <Translate contentKey="entity.action.edit">Edit</Translate>
-                          </span>
-                        </Button>
-                        <Button tag={Link} to={`${match.url}/${item.id}/delete`} color="danger" size="sm" data-cy="entityDeleteButton">
-                          <FontAwesomeIcon icon="trash" />{' '}
-                          <span className="d-none d-md-inline">
-                            <Translate contentKey="entity.action.delete">Delete</Translate>
                           </span>
                         </Button>
                       </div>
@@ -217,11 +200,11 @@ const mapStateToProps = ({ item }: IRootState) => ({
 });
 
 const mapDispatchToProps = {
-  getEntities,
+  getSellerEntities,
   reset,
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;
 
-export default connect(mapStateToProps, mapDispatchToProps)(Item);
+export default connect(mapStateToProps, mapDispatchToProps)(SellerItems);
