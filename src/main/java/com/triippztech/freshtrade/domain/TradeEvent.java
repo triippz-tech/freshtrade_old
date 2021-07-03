@@ -55,7 +55,7 @@ public class TradeEvent implements Serializable {
 
     @OneToMany(mappedBy = "event")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "seller", "buyer", "event" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "com/triippztech/freshtrade/service/dto/seller", "buyer", "event" }, allowSetters = true)
     private Set<Reservation> reservations = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
