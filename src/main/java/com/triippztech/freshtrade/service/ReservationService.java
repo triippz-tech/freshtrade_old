@@ -5,7 +5,12 @@ import com.triippztech.freshtrade.domain.Reservation;
 import com.triippztech.freshtrade.domain.TradeEvent;
 import com.triippztech.freshtrade.domain.User;
 import com.triippztech.freshtrade.repository.ReservationRepository;
+import com.triippztech.freshtrade.service.dto.seller.ReservationMetricsDTO;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.slf4j.Logger;
@@ -114,5 +119,28 @@ public class ReservationService {
     public void delete(UUID id) {
         log.debug("Request to delete Reservation : {}", id);
         reservationRepository.deleteById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public ReservationMetricsDTO getMetrics(User user) {
+        log.debug("Request to metrics for Reservation for User");
+        var days7 = ZonedDateTime.now();
+        days7.plusWeeks(1);
+        var days14 = ZonedDateTime.now();
+        days14.plusWeeks(2);
+
+        var totalActiveReservations = reservationRepository.countReservationsByIsActiveIsTrueAndUser();
+        var totalPastReservations = reservationRepository.countPastReservationsForUser();
+        var totalCancelledReservations = reservationRepository.countCancelledReservationForUser();
+        var total7DReservations = reservationRepository.countReservationsByPickupTimeIsBetweenAndSeller(ZonedDateTime.now(), days7, user);
+        var total2WReservations = reservationRepository.countReservationsByPickupTimeIsBetweenAndSeller(ZonedDateTime.now(), days14, user);
+
+        return new ReservationMetricsDTO(
+            totalActiveReservations,
+            totalPastReservations,
+            totalCancelledReservations,
+            total7DReservations,
+            total2WReservations
+        );
     }
 }
