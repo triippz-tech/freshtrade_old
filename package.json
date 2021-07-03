@@ -13,7 +13,7 @@
     "clean-www": "rimraf target/classes/static/app/{src,target/}",
     "jest": "jest --coverage --logHeapUsage --maxWorkers=2 --config jest.conf.js",
     "jest:update": "npm run jest -- --updateSnapshot",
-    "start": "env-cmd -f dev.env npm run webapp:dev",
+    "start": "npm run webapp:dev",
     "start-tls": "npm run webapp:dev -- --env.tls",
     "pretest": "npm run lint",
     "test": "npm run jest",
