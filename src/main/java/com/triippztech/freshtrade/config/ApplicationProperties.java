@@ -9,4 +9,24 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * See {@link tech.jhipster.config.JHipsterProperties} for a good example.
  */
 @ConfigurationProperties(prefix = "application", ignoreUnknownFields = false)
-public class ApplicationProperties {}
+public class ApplicationProperties {
+
+    private String geolocationDbToken;
+    private String zipcodeBaseToken;
+
+    public String getGeolocationDbToken() {
+        return geolocationDbToken;
+    }
+
+    public void setGeolocationDbToken(String geolocationDbToken) {
+        this.geolocationDbToken = geolocationDbToken;
+    }
+
+    public String getZipcodeBaseToken() {
+        return zipcodeBaseToken;
+    }
+
+    public void setZipcodeBaseToken(String zipcodeBaseToken) {
+        this.zipcodeBaseToken = zipcodeBaseToken;
+    }
+}

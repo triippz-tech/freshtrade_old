@@ -8,9 +8,11 @@ import com.triippztech.freshtrade.service.UserService;
 import com.triippztech.freshtrade.service.criteria.ItemCriteria;
 import com.triippztech.freshtrade.service.dto.AdminUserDTO;
 import com.triippztech.freshtrade.service.dto.item.ItemDetailDTO;
+import com.triippztech.freshtrade.service.dto.item.ItemReservationDTO;
 import com.triippztech.freshtrade.service.dto.item.ListItemDTO;
 import com.triippztech.freshtrade.service.mapper.ItemMapper;
 import com.triippztech.freshtrade.web.rest.errors.BadRequestAlertException;
+import io.swagger.annotations.ApiOperation;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.Principal;
@@ -142,7 +144,7 @@ public class ItemResource {
      * or with status {@code 500 (Internal Server Error)} if the item couldn't be updated.
      */
     @PutMapping("/items/{id}/reserve/{quantity}")
-    public ResponseEntity<ItemDetailDTO> reserveItem(
+    public ResponseEntity<ItemReservationDTO> reserveItem(
         Principal principal,
         @PathVariable(value = "id") final UUID id,
         @PathVariable(value = "quantity") @Min(1) final Integer quantity
@@ -152,8 +154,13 @@ public class ItemResource {
         var user = userService.getUserWithAuthorities();
         if (user.isEmpty()) throw new ItemResourceException("Current User could not be found");
 
-        var item = itemService.reserveItem(id, quantity, user.get());
-        return ResponseEntity.ok().body(item);
+        try {
+            var item = itemService.reserveItem(id, quantity, user.get());
+            return ResponseEntity.ok().body(item);
+        } catch (ItemService.ItemServiceException e) {
+            log.error(e.getMessage(), e);
+            return ResponseEntity.ok().body(new ItemReservationDTO().wasReserved(false).errorMessage(e.getMessage()));
+        }
     }
 
     /**
@@ -274,5 +281,22 @@ public class ItemResource {
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    /**
+     * {@code SEARCH  /_search/items?query=:query} : search for the items
+     * to the query.
+     *
+     * @param query    the query of the item search.
+     * @param pageable the pagination information.
+     * @return the result of the search.
+     */
+    @GetMapping("/_search/items")
+    @ApiOperation(value = "Searches for items based on a query string. Utilizes pagination", response = Void.class)
+    public ResponseEntity<List<ListItemDTO>> searchInventories(@RequestParam String query, Pageable pageable) {
+        log.debug("REST request to search for a page of Inventories for query {}", query);
+        Page<Item> page = itemService.search(query, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(itemMapper.itemsToItemDTOs(page.getContent()));
     }
 }

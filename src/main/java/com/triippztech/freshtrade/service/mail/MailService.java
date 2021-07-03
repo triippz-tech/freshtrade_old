@@ -1,4 +1,4 @@
-package com.triippztech.freshtrade.service;
+package com.triippztech.freshtrade.service.mail;
 
 import com.triippztech.freshtrade.domain.User;
 import java.nio.charset.StandardCharsets;

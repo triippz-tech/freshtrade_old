@@ -105,6 +105,8 @@ module.exports = options =>
             // If you use an API server, in `prod` mode, you will need to enable CORS
             // (see the `jhipster.cors` common JHipster property in the `application-*.yml` configurations)
             SERVER_API_URL: `''`,
+            GEOLOCATION_DB_TOKEN: JSON.stringify(process.env.GEOLOCATION_DB_TOKEN),
+            ZIPCODE_BASE_TOKEN: JSON.stringify(process.env.ZIPCODE_BASE_TOKEN),
           },
         }),
         new ESLintPlugin({

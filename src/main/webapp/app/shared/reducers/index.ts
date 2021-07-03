@@ -4,6 +4,7 @@ import { loadingBarReducer as loadingBar } from 'react-redux-loading-bar';
 import locale, { LocaleState } from './locale';
 import authentication, { AuthenticationState } from './authentication';
 import applicationProfile, { ApplicationProfileState } from './application-profile';
+import userLocation, { UserLocationState } from './user-location.reducer';
 
 import administration, { AdministrationState } from 'app/modules/administration/administration.reducer';
 import userManagement, { UserManagementState } from 'app/modules/administration/user-management/user-management.reducer';
@@ -51,6 +52,7 @@ import userProfile, {
 /* jhipster-needle-add-reducer-import - JHipster will add reducer here */
 
 export interface IRootState {
+  readonly userLocation: UserLocationState;
   readonly authentication: AuthenticationState;
   readonly locale: LocaleState;
   readonly applicationProfile: ApplicationProfileState;
@@ -96,6 +98,7 @@ const rootReducer = combineReducers<IRootState>({
   userProfile,
   /* jhipster-needle-add-reducer-combine - JHipster will add reducer here */
   loadingBar,
+  userLocation,
 });
 
 export default rootReducer;

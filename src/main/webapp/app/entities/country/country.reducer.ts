@@ -12,8 +12,11 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { ICountry, defaultValue } from 'app/shared/model/country.model';
+import { ICrudSearchAction } from 'app/config/redux-action.type';
 
 export const ACTION_TYPES = {
+  SEARCH_COUNTRY_LIST: 'country/SEARCH_COUNTRY_LIST',
+  FETCH_COUNTRY_LIST_NO_PAGE: 'country/FETCH_COUNTRY_LIST_NO_PAGE',
   FETCH_COUNTRY_LIST: 'country/FETCH_COUNTRY_LIST',
   FETCH_COUNTRY: 'country/FETCH_COUNTRY',
   CREATE_COUNTRY: 'country/CREATE_COUNTRY',
@@ -41,6 +44,8 @@ export type CountryState = Readonly<typeof initialState>;
 export default (state: CountryState = initialState, action): CountryState => {
   switch (action.type) {
     case REQUEST(ACTION_TYPES.FETCH_COUNTRY_LIST):
+    case REQUEST(ACTION_TYPES.SEARCH_COUNTRY_LIST):
+    case REQUEST(ACTION_TYPES.FETCH_COUNTRY_LIST_NO_PAGE):
     case REQUEST(ACTION_TYPES.FETCH_COUNTRY):
       return {
         ...state,
@@ -58,6 +63,8 @@ export default (state: CountryState = initialState, action): CountryState => {
         updateSuccess: false,
         updating: true,
       };
+    case FAILURE(ACTION_TYPES.SEARCH_COUNTRY_LIST):
+    case FAILURE(ACTION_TYPES.FETCH_COUNTRY_LIST_NO_PAGE):
     case FAILURE(ACTION_TYPES.FETCH_COUNTRY_LIST):
     case FAILURE(ACTION_TYPES.FETCH_COUNTRY):
     case FAILURE(ACTION_TYPES.CREATE_COUNTRY):
@@ -71,6 +78,14 @@ export default (state: CountryState = initialState, action): CountryState => {
         updateSuccess: false,
         errorMessage: action.payload,
       };
+    case SUCCESS(ACTION_TYPES.SEARCH_COUNTRY_LIST): {
+      return {
+        ...state,
+        loading: false,
+        entities: action.payload.data,
+        totalItems: parseInt(action.payload.headers['x-total-count'], 10),
+      };
+    }
     case SUCCESS(ACTION_TYPES.FETCH_COUNTRY_LIST): {
       const links = parseHeaderForLinks(action.payload.headers.link);
 
@@ -80,6 +95,13 @@ export default (state: CountryState = initialState, action): CountryState => {
         links,
         entities: loadMoreDataWhenScrolled(state.entities, action.payload.data, links),
         totalItems: parseInt(action.payload.headers['x-total-count'], 10),
+      };
+    }
+    case SUCCESS(ACTION_TYPES.FETCH_COUNTRY_LIST_NO_PAGE): {
+      return {
+        ...state,
+        loading: false,
+        entities: action.payload.data,
       };
     }
     case SUCCESS(ACTION_TYPES.FETCH_COUNTRY):
@@ -117,11 +139,26 @@ const apiUrl = 'api/countries';
 
 // Actions
 
+export const searchForEntities: ICrudSearchAction<ICountry> = (search, page, size, sort) => {
+  const requestUrl = `${apiUrl}/?${search}${sort ? `&page=${page}&size=${size}&sort=${sort}` : ''}`;
+  return {
+    type: ACTION_TYPES.SEARCH_COUNTRY_LIST,
+    payload: axios.get<ICountry>(`${requestUrl}${sort && '&'}cacheBuster=${new Date().getTime()}`),
+  };
+};
+
 export const getEntities: ICrudGetAllAction<ICountry> = (page, size, sort) => {
   const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
   return {
     type: ACTION_TYPES.FETCH_COUNTRY_LIST,
     payload: axios.get<ICountry>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`),
+  };
+};
+
+export const getEntitiesNoPage: ICrudGetAllAction<ICountry> = () => {
+  return {
+    type: ACTION_TYPES.FETCH_COUNTRY_LIST_NO_PAGE,
+    payload: axios.get<ICountry>(`${apiUrl}/all`),
   };
 };
 
