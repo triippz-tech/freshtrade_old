@@ -171,6 +171,23 @@ public class ItemService {
         itemRepository.deleteById(id);
     }
 
+    /**
+     * Delete the item by id. Check if the SELLER deleting owns the item first
+     *
+     * @param id the id of the entity.
+     * @throws ItemServiceException unable to delete
+     */
+    public void delete(UUID id, User user) throws ItemServiceException {
+        log.debug("Request by seller: {} to delete Item : {}", user, id);
+        var foundItem = findOne(id);
+        if (foundItem.isEmpty()) throw new ItemServiceException("Item does not exist");
+
+        if (!foundItem.get().getOwner().getId().equals(user.getId())) throw new ItemServiceException(
+            "Unable to delete. You are not the owner of this item."
+        );
+        delete(id);
+    }
+
     @Transactional(readOnly = true)
     public Optional<ItemDetailDTO> findOneWithAvailableTokens(UUID id) {
         log.debug("Request to get Item : {} with available tokens", id);

@@ -2,6 +2,7 @@ package com.triippztech.freshtrade.web.rest;
 
 import com.triippztech.freshtrade.domain.Item;
 import com.triippztech.freshtrade.repository.ItemRepository;
+import com.triippztech.freshtrade.security.AuthoritiesConstants;
 import com.triippztech.freshtrade.service.ItemQueryService;
 import com.triippztech.freshtrade.service.ItemService;
 import com.triippztech.freshtrade.service.UserService;
@@ -223,7 +224,9 @@ public class ItemResource {
     @GetMapping("/items/seller")
     public ResponseEntity<List<Item>> getAllSellerItems(ItemCriteria criteria, Pageable pageable, Principal principal) {
         log.debug("REST request to get Items by criteria: {}", criteria);
-        var user = userService.getUserWithAuthorities().orElseThrow(() -> new ItemResourceException("User could not be found"));
+        var user = userService
+            .getUserWithAuthorities()
+            .orElseThrow(() -> new ItemResourceException("You are not authorized to do perform that action"));
         Page<Item> page = itemQueryService.findByCriteria(user, criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
@@ -289,9 +292,17 @@ public class ItemResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/items/{id}")
-    public ResponseEntity<Void> deleteItem(@PathVariable UUID id) {
+    public ResponseEntity<Void> deleteItem(@PathVariable UUID id, Principal principal) throws ItemService.ItemServiceException {
         log.debug("REST request to delete Item : {}", id);
-        itemService.delete(id);
+        var user = userService
+            .getUserWithAuthorities()
+            .orElseThrow(() -> new ItemResourceException("You are not authorized to do perform that action"));
+
+        if (user.hasRole(AuthoritiesConstants.ADMIN)) {
+            itemService.delete(id);
+        } else {
+            itemService.delete(id, user);
+        }
         return ResponseEntity
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
