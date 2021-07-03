@@ -116,7 +116,7 @@
     "rxjs": "6.6.7",
     "sockjs-client": "1.5.1",
     "swiper": "^5.4.5",
-    "tslib": "2.2.0",
+    "tslib": "2.3.0",
     "uuid": "8.3.2",
     "webstomp-client": "1.2.6"
   },
