@@ -1,6 +1,7 @@
 package com.triippztech.freshtrade.service;
 
 import com.triippztech.freshtrade.domain.*;
+import com.triippztech.freshtrade.repository.ImageRepository;
 import com.triippztech.freshtrade.repository.ItemRepository;
 import com.triippztech.freshtrade.repository.ItemTokenRepository;
 import com.triippztech.freshtrade.repository.ReservationRepository;
@@ -51,6 +52,8 @@ public class ItemService {
 
     private final ItemRepository itemRepository;
 
+    private final ImageRepository imageRepository;
+
     private final ReservationRepository reservationRepository;
 
     private final ItemTokenRepository tokenRepository;
@@ -61,12 +64,14 @@ public class ItemService {
 
     public ItemService(
         ItemRepository itemRepository,
+        ImageRepository imageRepository,
         ReservationRepository reservationRepository,
         ItemTokenRepository tokenRepository,
         BuyerMailService buyerMailService,
         SellerEmailService sellerMailService
     ) {
         this.itemRepository = itemRepository;
+        this.imageRepository = imageRepository;
         this.reservationRepository = reservationRepository;
         this.tokenRepository = tokenRepository;
         this.buyerMailService = buyerMailService;
@@ -81,7 +86,25 @@ public class ItemService {
      */
     public Item save(Item item) {
         log.debug("Request to save Item : {}", item);
+        item.setUpdatedDate(ZonedDateTime.now());
         return itemRepository.save(item);
+    }
+
+    public Item createItem(Item item, User user) {
+        log.debug("Request to save Item : {} for Seller: {}", item, user);
+        item.setOwner(user);
+        var createdItem = save(item);
+        item
+            .getImages()
+            .forEach(
+                image -> {
+                    image.setItem(createdItem);
+                    image.setCreatedDate(ZonedDateTime.now());
+                    image.setIsVisible(true);
+                    imageRepository.save(image);
+                }
+            );
+        return createdItem;
     }
 
     /**
@@ -138,6 +161,18 @@ public class ItemService {
     public Page<Item> findAll(Pageable pageable) {
         log.debug("Request to get all Items");
         return itemRepository.findAll(pageable);
+    }
+
+    /**
+     * Get all the items.
+     *
+     * @param pageable the pagination information.
+     * @return the list of entities.
+     */
+    @Transactional(readOnly = true)
+    public Page<Item> findAllByCurrentUser(User user, Pageable pageable) {
+        log.debug("Request to get all Items for current User: {}", user);
+        return itemRepository.findAllByOwner(user, pageable);
     }
 
     /**

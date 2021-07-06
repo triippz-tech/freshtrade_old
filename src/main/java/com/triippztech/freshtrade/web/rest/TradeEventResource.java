@@ -1,11 +1,13 @@
 package com.triippztech.freshtrade.web.rest;
 
+import com.triippztech.freshtrade.domain.Location;
 import com.triippztech.freshtrade.domain.TradeEvent;
 import com.triippztech.freshtrade.repository.TradeEventRepository;
 import com.triippztech.freshtrade.service.TradeEventQueryService;
 import com.triippztech.freshtrade.service.TradeEventService;
 import com.triippztech.freshtrade.service.criteria.TradeEventCriteria;
 import com.triippztech.freshtrade.web.rest.errors.BadRequestAlertException;
+import io.swagger.annotations.ApiOperation;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -202,5 +204,20 @@ public class TradeEventResource {
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    /**
+     * {@code SEARCH  /_search/trade-events?query=:query} : search for the trade events
+     * to the query.
+     *
+     * @param query    the query of the trade events search.
+     * @return the result of the search.
+     */
+    @GetMapping("/_search/trade-events")
+    @ApiOperation(value = "Searches for Trade Events based on a query string. Utilizes pagination", response = ResponseEntity.class)
+    public ResponseEntity<List<TradeEvent>> searchTradeEvents(@RequestParam String query) {
+        log.debug("REST request to search for a page of TradeEvents for query {}", query);
+        List<TradeEvent> tradeEvents = tradeEventService.search(query);
+        return ResponseEntity.ok().body(tradeEvents);
     }
 }

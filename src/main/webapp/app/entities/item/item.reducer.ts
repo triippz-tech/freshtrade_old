@@ -222,6 +222,14 @@ export const createEntity: ICrudPutAction<IItem> = entity => async dispatch => {
   return result;
 };
 
+export const createSellerEntity: ICrudPutAction<IItem> = entity => async dispatch => {
+  const result = await dispatch({
+    type: ACTION_TYPES.CREATE_ITEM,
+    payload: axios.post(`${apiUrl}/seller`, cleanEntity(entity)),
+  });
+  return result;
+};
+
 export const updateEntity: ICrudPutAction<IItem> = entity => async dispatch => {
   const result = await dispatch({
     type: ACTION_TYPES.UPDATE_ITEM,

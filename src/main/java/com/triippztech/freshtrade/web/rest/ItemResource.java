@@ -16,6 +16,7 @@ import io.swagger.annotations.ApiOperation;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.Principal;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -94,6 +95,7 @@ public class ItemResource {
         if (item.getId() != null) {
             throw new BadRequestAlertException("A new item cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        item.setCreatedDate(ZonedDateTime.now());
         Item result = itemService.save(item);
         return ResponseEntity
             .created(new URI("/api/items/" + result.getId()))
@@ -227,9 +229,33 @@ public class ItemResource {
         var user = userService
             .getUserWithAuthorities()
             .orElseThrow(() -> new ItemResourceException("You are not authorized to do perform that action"));
-        Page<Item> page = itemQueryService.findByCriteria(user, criteria, pageable);
+        Page<Item> page = itemService.findAllByCurrentUser(user, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code POST  /items/seller} : Create a new for a seller.
+     *
+     * @param item the item to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new item, or with status {@code 400 (Bad Request)} if the item has already an ID.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PostMapping("/items/seller")
+    public ResponseEntity<Item> createItemForSeller(@Valid @RequestBody Item item) throws URISyntaxException {
+        log.debug("REST request to save Item : {}", item);
+        if (item.getId() != null) {
+            throw new BadRequestAlertException("A new item cannot already have an ID", ENTITY_NAME, "idexists");
+        }
+        var user = userService
+            .getUserWithAuthorities()
+            .orElseThrow(() -> new ItemResourceException("You are not authorized to do perform that action"));
+        item.setCreatedDate(ZonedDateTime.now());
+        Item result = itemService.createItem(item, user);
+        return ResponseEntity
+            .created(new URI("/api/items/" + result.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
+            .body(result);
     }
 
     /**

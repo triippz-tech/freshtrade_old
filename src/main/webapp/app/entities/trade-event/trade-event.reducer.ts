@@ -12,8 +12,10 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { ITradeEvent, defaultValue } from 'app/shared/model/trade-event.model';
+import { ICrudLoadOptionsAction } from 'app/config/redux-action.type';
 
 export const ACTION_TYPES = {
+  SEARCH_TRADEEVENTS: 'item/SEARCH_TRADEEVENTS',
   FETCH_TRADEEVENT_LIST: 'tradeEvent/FETCH_TRADEEVENT_LIST',
   FETCH_TRADEEVENT: 'tradeEvent/FETCH_TRADEEVENT',
   CREATE_TRADEEVENT: 'tradeEvent/CREATE_TRADEEVENT',
@@ -41,6 +43,7 @@ export type TradeEventState = Readonly<typeof initialState>;
 export default (state: TradeEventState = initialState, action): TradeEventState => {
   switch (action.type) {
     case REQUEST(ACTION_TYPES.FETCH_TRADEEVENT_LIST):
+    case REQUEST(ACTION_TYPES.SEARCH_TRADEEVENTS):
     case REQUEST(ACTION_TYPES.FETCH_TRADEEVENT):
       return {
         ...state,
@@ -58,6 +61,7 @@ export default (state: TradeEventState = initialState, action): TradeEventState 
         updateSuccess: false,
         updating: true,
       };
+    case FAILURE(ACTION_TYPES.SEARCH_TRADEEVENTS):
     case FAILURE(ACTION_TYPES.FETCH_TRADEEVENT_LIST):
     case FAILURE(ACTION_TYPES.FETCH_TRADEEVENT):
     case FAILURE(ACTION_TYPES.CREATE_TRADEEVENT):
@@ -71,6 +75,13 @@ export default (state: TradeEventState = initialState, action): TradeEventState 
         updateSuccess: false,
         errorMessage: action.payload,
       };
+    case SUCCESS(ACTION_TYPES.SEARCH_TRADEEVENTS): {
+      return {
+        ...state,
+        loading: false,
+        entities: action.payload.data,
+      };
+    }
     case SUCCESS(ACTION_TYPES.FETCH_TRADEEVENT_LIST): {
       const links = parseHeaderForLinks(action.payload.headers.link);
 
@@ -123,6 +134,25 @@ export const getEntities: ICrudGetAllAction<ITradeEvent> = (page, size, sort) =>
     type: ACTION_TYPES.FETCH_TRADEEVENT_LIST,
     payload: axios.get<ITradeEvent>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`),
   };
+};
+
+export const loadEvents: ICrudLoadOptionsAction<ITradeEvent> = (inputValue, callBack) => async dispatch => {
+  console.log(inputValue);
+  const requestUrl = `api/_search/trade-events${inputValue ? `?query=${inputValue}` : ''}`;
+  const result = await dispatch({
+    type: ACTION_TYPES.SEARCH_TRADEEVENTS,
+    payload: axios.get<ITradeEvent>(`${requestUrl}`),
+  });
+  callBack(
+    result.value.data.map(val => {
+      return {
+        label: val.eventName,
+        value: val.eventName,
+        event: val,
+      };
+    })
+  );
+  return result;
 };
 
 export const getEntity: ICrudGetAction<ITradeEvent> = id => {

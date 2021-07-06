@@ -2,11 +2,13 @@ package com.triippztech.freshtrade.service;
 
 import com.triippztech.freshtrade.domain.TradeEvent;
 import com.triippztech.freshtrade.repository.TradeEventRepository;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -104,5 +106,10 @@ public class TradeEventService {
     public void delete(UUID id) {
         log.debug("Request to delete TradeEvent : {}", id);
         tradeEventRepository.deleteById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public List<TradeEvent> search(String query) {
+        return tradeEventRepository.findAllByEventNameContainingIgnoreCaseOrderByEventNameAsc(query, PageRequest.of(0, 20));
     }
 }

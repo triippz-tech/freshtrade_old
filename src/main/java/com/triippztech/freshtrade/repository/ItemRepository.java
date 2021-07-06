@@ -1,13 +1,16 @@
 package com.triippztech.freshtrade.repository;
 
 import com.triippztech.freshtrade.domain.Item;
+import com.triippztech.freshtrade.domain.User;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -17,6 +20,8 @@ import org.springframework.stereotype.Repository;
 public interface ItemRepository extends JpaRepository<Item, UUID>, JpaSpecificationExecutor<Item> {
     @Query("select item from Item item where item.owner.login = ?#{principal.username}")
     List<Item> findByOwnerIsCurrentUser();
+
+    Page<Item> findAllByOwner(User owner, Pageable pageable);
 
     @Query(
         value = "select distinct item from Item item left join fetch item.categories left join fetch item.users",

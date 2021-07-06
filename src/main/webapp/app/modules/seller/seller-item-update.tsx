@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { IRootState } from 'app/shared/reducers';
 import { connect } from 'react-redux';
+import AsyncSelect from 'react-select/async';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { getEntities as getLocations } from 'app/entities/location/location.reducer';
-import { getEntities as getTradeEvents } from 'app/entities/trade-event/trade-event.reducer';
+import { getEntities as getLocations, loadLocations } from 'app/entities/location/location.reducer';
+import { getEntities as getTradeEvents, loadEvents } from 'app/entities/trade-event/trade-event.reducer';
 import { getEntities as getCategories } from 'app/entities/category/category.reducer';
-import { createEntity, getEntity, reset, setBlob, updateEntity } from 'app/entities/item/item.reducer';
+import { createSellerEntity as createEntity, getEntity, reset, setBlob, updateEntity } from 'app/entities/item/item.reducer';
 import { setFileData, translate, Translate } from 'react-jhipster';
-import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
+import { convertDateTimeToServer } from 'app/shared/util/date-utils';
 import { mapIdList } from 'app/shared/util/entity-utils';
-import { Button, Row, Col, Label } from 'reactstrap';
-import { AvFeedback, AvForm, AvGroup, AvInput, AvField } from 'availity-reactstrap-validation';
+import { Button, Col, Label, Row } from 'reactstrap';
+import { AvField, AvForm, AvGroup, AvInput } from 'availity-reactstrap-validation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { IImage } from 'app/shared/model/image.model';
+import { ILocation } from 'app/shared/model/location.model';
+import { ITradeEvent } from 'app/shared/model/trade-event.model';
 
 interface PostItemProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
@@ -19,13 +23,17 @@ export const SellerItemUpdate = (props: PostItemProps) => {
   const [idsuser, setIdsuser] = useState([]);
   const [idscategories, setIdscategories] = useState([]);
   const [isNew] = useState(!props.match.params || !props.match.params.id);
+  const [inputs, setInputs] = useState<Array<string>>(['input-0']);
+  const [selectedLocation, setLocation] = useState<ILocation>(null);
+  const [selectedEvent, setEvent] = useState<ITradeEvent>(null);
+  const [{ isTradeErr, isLocationErr }, setErrs] = useState({ isTradeErr: false, isLocationErr: false });
 
   const { itemEntity, users, locations, tradeEvents, categories, loading, updating } = props;
 
   const { details } = itemEntity;
 
   const handleClose = () => {
-    props.history.push('/item');
+    props.history.push('/seller/items');
   };
 
   useEffect(() => {
@@ -37,6 +45,11 @@ export const SellerItemUpdate = (props: PostItemProps) => {
     props.getTradeEvents();
     props.getCategories();
   }, []);
+
+  useEffect(() => {
+    setLocation(itemEntity.location);
+    setEvent(itemEntity.tradeEvent);
+  }, [itemEntity]);
 
   const onBlobChange = (isAnImage, name) => event => {
     setFileData(event, (contentType, data) => props.setBlob(name, data, contentType), isAnImage);
@@ -53,20 +66,39 @@ export const SellerItemUpdate = (props: PostItemProps) => {
   }, [props.updateSuccess]);
 
   const saveEntity = (event, errors, values) => {
+    setErrs(prevState => ({ ...prevState, isLocationErr: selectedLocation === null }));
+    setErrs(prevState => ({ ...prevState, isTradeErr: selectedEvent === null }));
+
+    if (selectedEvent === null || selectedLocation === null) return;
+
     values.createdDate = convertDateTimeToServer(values.createdDate);
     values.updatedDate = convertDateTimeToServer(values.updatedDate);
+
+    const images: Array<IImage> = inputs
+      .map((val, idx) => {
+        const value = values[val] === null ? null : values[val];
+        delete values[val];
+        const img: IImage = {
+          imageUrl: value,
+        };
+        return img;
+      })
+      .filter(function (el) {
+        return el != null;
+      });
 
     if (errors.length === 0) {
       const entity = {
         ...itemEntity,
         ...values,
-        users: mapIdList(values.users),
         categories: mapIdList(values.categories),
         owner: props.currentUser,
-        location: locations.find(it => it.id.toString() === values.locationId.toString()),
-        tradeEvent: tradeEvents.find(it => it.id.toString() === values.tradeEventId.toString()),
+        location: selectedLocation,
+        tradeEvent: selectedEvent,
+        images: images,
       };
 
+      console.log(entity);
       if (isNew) {
         props.createEntity(entity);
       } else {
@@ -74,6 +106,54 @@ export const SellerItemUpdate = (props: PostItemProps) => {
       }
     }
   };
+
+  const addAnotherImage = () => {
+    const lastIn: string = inputs[inputs.length - 1];
+    const num: number = Number.parseInt(lastIn[lastIn.length - 1]);
+    const newNum = num + 1;
+
+    setInputs([...inputs, `input-${newNum}`]);
+  };
+
+  const onEventSelect = val => setEvent(val === null ? null : val.event);
+
+  const onLocationSelect = val => setLocation(val === null ? null : val.loc);
+
+  const locationOptions = () =>
+    props.locations.map(val => {
+      return {
+        label: val.shortName ? val.shortName : val.address,
+        value: val.shortName ? val.shortName : val.address,
+        loc: val,
+      };
+    });
+
+  const getLocationOption = () =>
+    selectedLocation === null || selectedLocation === undefined
+      ? {}
+      : {
+          label: selectedLocation.shortName ? selectedLocation.shortName : selectedLocation.address,
+          value: selectedLocation.shortName ? selectedLocation.shortName : selectedLocation.address,
+          loc: selectedLocation,
+        };
+
+  const eventOptions = () =>
+    props.tradeEvents.map(val => {
+      return {
+        label: val.eventName,
+        value: val.eventName,
+        event: val,
+      };
+    });
+
+  const getEventOption = () =>
+    selectedEvent === null || selectedEvent === undefined
+      ? {}
+      : {
+          label: selectedEvent.eventName,
+          value: selectedEvent.eventName,
+          event: selectedEvent,
+        };
 
   return (
     <div>
@@ -88,30 +168,22 @@ export const SellerItemUpdate = (props: PostItemProps) => {
           </h2>
         </Col>
       </Row>
-      <Row className="justify-content-center">
-        <Col md="4"></Col>
-        <Col md="8">
-          {loading ? (
-            <p>Loading...</p>
-          ) : (
-            <AvForm model={isNew ? {} : itemEntity} onSubmit={saveEntity}>
-              {!isNew ? (
-                <AvGroup hidden>
-                  <Label for="item-id">
-                    <Translate contentKey="freshtradeApp.item.id">Id</Translate>
-                  </Label>
-                  <AvInput id="item-id" type="text" className="form-control" name="id" required readOnly />
-                </AvGroup>
-              ) : null}
+
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <AvForm model={isNew ? {} : itemEntity} onSubmit={saveEntity} className="w-100 form-outline">
+          <Row className="justify-content-center">
+            <Col md="6">
               <AvGroup>
-                <Label id="priceLabel" for="item-price">
+                <Label id="priceLabel" for="item-price" class="form-label">
                   <Translate contentKey="freshtradeApp.item.price">Price</Translate>
                 </Label>
                 <AvField
                   id="item-price"
                   data-cy="price"
                   type="string"
-                  className="form-control"
+                  className="form-control form-outline"
                   name="price"
                   validate={{
                     required: { value: true, errorMessage: translate('entity.validation.required') },
@@ -165,6 +237,43 @@ export const SellerItemUpdate = (props: PostItemProps) => {
                 />
               </AvGroup>
               <AvGroup>
+                {inputs.map((val, idx) => (
+                  <div key={val}>
+                    <Label id="detailsLabel" for={val}>
+                      Image {idx + 1}
+                    </Label>
+                    <AvInput
+                      id={val}
+                      data-cy={val}
+                      type="string"
+                      name={val}
+                      validate={{
+                        pattern: {
+                          value: '[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)',
+                          errorMessage: 'Must provide a valid URL for image',
+                        },
+                      }}
+                    />
+                  </div>
+                ))}
+              </AvGroup>
+              <AvGroup>
+                <Button onClick={addAnotherImage} size="sm">
+                  Add More Images
+                </Button>
+              </AvGroup>
+            </Col>
+            <Col md="6">
+              {!isNew ? (
+                <AvGroup hidden>
+                  <Label for="item-id">
+                    <Translate contentKey="freshtradeApp.item.id">Id</Translate>
+                  </Label>
+                  <AvInput id="item-id" type="text" className="form-control" name="id" required readOnly />
+                </AvGroup>
+              ) : null}
+
+              <AvGroup>
                 <Label id="itemConditionLabel" for="item-itemCondition">
                   <Translate contentKey="freshtradeApp.item.itemCondition">Item Condition</Translate>
                 </Label>
@@ -184,41 +293,60 @@ export const SellerItemUpdate = (props: PostItemProps) => {
                   <option value="FOR_PARTS">{translate('freshtradeApp.Condition.FOR_PARTS')}</option>
                 </AvInput>
               </AvGroup>
-              <AvGroup check>
-                <Label id="isActiveLabel">
-                  <AvInput id="item-isActive" data-cy="isActive" type="checkbox" className="form-check-input" name="isActive" />
-                  <Translate contentKey="freshtradeApp.item.isActive">Is Active</Translate>
-                </Label>
-              </AvGroup>
               <AvGroup>
                 <Label for="item-location">
                   <Translate contentKey="freshtradeApp.item.location">Location</Translate>
                 </Label>
-                <AvInput id="item-location" data-cy="location" type="select" className="form-control" name="locationId">
-                  <option value="" key="0" />
-                  {locations
-                    ? locations.map(otherEntity => (
-                        <option value={otherEntity.id} key={otherEntity.id}>
-                          {otherEntity.shortName}
-                        </option>
-                      ))
-                    : null}
-                </AvInput>
+                <AsyncSelect
+                  isClearable={true}
+                  loadOptions={props.loadLocations}
+                  name="item-location"
+                  defaultOptions={locationOptions()}
+                  onChange={onLocationSelect}
+                  value={getLocationOption()}
+                  styles={{
+                    menuPortal: base => ({ ...base, zIndex: 9999 }),
+                    menu: provided => ({ ...provided, zIndex: '9999 !important' }),
+                  }}
+                />
+                {isLocationErr && <div className="text-danger">Must Select a Location</div>}
               </AvGroup>
               <AvGroup>
                 <Label for="item-tradeEvent">
                   <Translate contentKey="freshtradeApp.item.tradeEvent">Trade Event</Translate>
                 </Label>
-                <AvInput id="item-tradeEvent" data-cy="tradeEvent" type="select" className="form-control" name="tradeEventId">
-                  <option value="" key="0" />
-                  {tradeEvents
-                    ? tradeEvents.map(otherEntity => (
-                        <option value={otherEntity.id} key={otherEntity.id}>
-                          {otherEntity.eventName}
-                        </option>
-                      ))
-                    : null}
-                </AvInput>
+                <AsyncSelect
+                  isClearable={true}
+                  loadOptions={props.loadEvents}
+                  name="item-tradeEvent"
+                  defaultOptions={eventOptions()}
+                  onChange={onEventSelect}
+                  value={getEventOption()}
+                  styles={{
+                    menuPortal: base => ({ ...base, zIndex: 9999 }),
+                    menu: provided => ({ ...provided, zIndex: '9999 !important' }),
+                  }}
+                />
+                {isTradeErr && <div className="text-danger">Must Select an Event</div>}
+                {/*<AvInput*/}
+                {/*  id="item-tradeEvent"*/}
+                {/*  data-cy="tradeEvent"*/}
+                {/*  type="select"*/}
+                {/*  className="form-control"*/}
+                {/*  name="tradeEventId"*/}
+                {/*  validate={{*/}
+                {/*    required: {value: true, errorMessage: translate('entity.validation.required')},*/}
+                {/*  }}*/}
+                {/*>*/}
+                {/*  <option value="" key="0"/>*/}
+                {/*  {tradeEvents*/}
+                {/*    ? tradeEvents.map(otherEntity => (*/}
+                {/*      <option value={otherEntity.id} key={otherEntity.id}>*/}
+                {/*        {otherEntity.eventName}*/}
+                {/*      </option>*/}
+                {/*    ))*/}
+                {/*    : null}*/}
+                {/*</AvInput>*/}
               </AvGroup>
               <AvGroup>
                 <Label for="item-categories">
@@ -232,6 +360,9 @@ export const SellerItemUpdate = (props: PostItemProps) => {
                   className="form-control"
                   name="categories"
                   value={!isNew && itemEntity.categories && itemEntity.categories.map(e => e.id)}
+                  validate={{
+                    required: { value: true, errorMessage: translate('entity.validation.required') },
+                  }}
                 >
                   <option value="" key="0" />
                   {categories
@@ -243,23 +374,33 @@ export const SellerItemUpdate = (props: PostItemProps) => {
                     : null}
                 </AvInput>
               </AvGroup>
-              <Button tag={Link} id="cancel-save" to="/item" replace color="info">
-                <FontAwesomeIcon icon="arrow-left" />
-                &nbsp;
-                <span className="d-none d-md-inline">
-                  <Translate contentKey="entity.action.back">Back</Translate>
-                </span>
-              </Button>
+            </Col>
+            <Row className="justify-content-center">
+              <AvGroup check>
+                <Label id="isActiveLabel">
+                  <AvInput id="item-isActive" data-cy="isActive" type="checkbox" className="form-check-input" name="isActive" />
+                  <Translate contentKey="freshtradeApp.item.isActive">Is Active</Translate>
+                </Label>
+              </AvGroup>
+            </Row>
+          </Row>
+          <Row className="justify-content-center">
+            <Button tag={Link} id="cancel-save" to="/seller/items" replace color="info">
+              <FontAwesomeIcon icon="arrow-left" />
               &nbsp;
-              <Button color="primary" id="save-entity" data-cy="entityCreateSaveButton" type="submit" disabled={updating}>
-                <FontAwesomeIcon icon="save" />
-                &nbsp;
-                <Translate contentKey="entity.action.save">Save</Translate>
-              </Button>
-            </AvForm>
-          )}
-        </Col>
-      </Row>
+              <span className="d-none d-md-inline">
+                <Translate contentKey="entity.action.back">Back</Translate>
+              </span>
+            </Button>
+            &nbsp;
+            <Button color="primary" id="save-entity" data-cy="entityCreateSaveButton" type="submit" disabled={updating}>
+              <FontAwesomeIcon icon="save" />
+              &nbsp;
+              <Translate contentKey="entity.action.save">Save</Translate>
+            </Button>
+          </Row>
+        </AvForm>
+      )}
     </div>
   );
 };
@@ -285,6 +426,8 @@ const mapDispatchToProps = {
   setBlob,
   createEntity,
   reset,
+  loadEvents,
+  loadLocations,
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
