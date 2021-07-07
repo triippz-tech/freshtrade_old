@@ -34,4 +34,8 @@
     <include file="config/liquibase/changelog/20210530003833_updated_entites.xml" relativeToChangelogFile="false"/>
     <!-- JUNE 2021 -->
     <include file="config/liquibase/changelog/Y2021/JUNE/202106270000_remove_constraint_ItemToken.xml" relativeToChangelogFile="false"/>
+    <!-- JULY 2021 -->
+    <include file="config/liquibase/changelog/Y2021/JULY/202107060000_update_Reservation_entity.xml" relativeToChangelogFile="false"/>
+
+
 </databaseChangeLog>

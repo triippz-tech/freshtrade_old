@@ -6,7 +6,7 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import { getEntities as getLocations, loadLocations } from 'app/entities/location/location.reducer';
 import { getEntities as getTradeEvents, loadEvents } from 'app/entities/trade-event/trade-event.reducer';
 import { getEntities as getCategories } from 'app/entities/category/category.reducer';
-import { createSellerEntity as createEntity, getEntity, reset, setBlob, updateEntity } from 'app/entities/item/item.reducer';
+import { createSellerEntity as createEntity, getEntity, reset, setBlob, updateEntityForSeller } from 'app/entities/item/item.reducer';
 import { setFileData, translate, Translate } from 'react-jhipster';
 import { convertDateTimeToServer } from 'app/shared/util/date-utils';
 import { mapIdList } from 'app/shared/util/entity-utils';
@@ -98,18 +98,17 @@ export const SellerItemUpdate = (props: PostItemProps) => {
         images: images,
       };
 
-      console.log(entity);
       if (isNew) {
         props.createEntity(entity);
       } else {
-        props.updateEntity(entity);
+        props.updateEntityForSeller(entity);
       }
     }
   };
 
   const addAnotherImage = () => {
     const lastIn: string = inputs[inputs.length - 1];
-    const num: number = Number.parseInt(lastIn[lastIn.length - 1]);
+    const num: number = Number.parseInt(lastIn[lastIn.length - 1], 2);
     const newNum = num + 1;
 
     setInputs([...inputs, `input-${newNum}`]);
@@ -422,7 +421,7 @@ const mapDispatchToProps = {
   getTradeEvents,
   getCategories,
   getEntity,
-  updateEntity,
+  updateEntityForSeller,
   setBlob,
   createEntity,
   reset,

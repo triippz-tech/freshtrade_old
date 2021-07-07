@@ -1,6 +1,9 @@
 {
   "freshtradeApp": {
     "reservation": {
+      "sellers": {
+        "title": "Seller Reservations"
+      },
       "home": {
         "title": "Reservations",
         "refreshListLabel": "Refresh list",

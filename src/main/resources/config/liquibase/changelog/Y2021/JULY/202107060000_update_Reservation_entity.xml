@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <!--
+        Add Columns.
+    -->
+    <changeSet id="202107060000-1" author="mgtripoli">
+        <addColumn tableName="reservation">
+            <column name="total_price" type="double">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="reservation">
+            <column name="price_per" type="double">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="reservation">
+            <column name="item_id" type="${uuidType}">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <!--
+        Add FK.
+    -->
+    <changeSet id="202107060000-2" author="mgtripoli">
+        <addForeignKeyConstraint baseColumnNames="item_id"
+                                 baseTableName="reservation"
+                                 constraintName="fk_reservation_item_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="item"/>
+    </changeSet>
+
+</databaseChangeLog>

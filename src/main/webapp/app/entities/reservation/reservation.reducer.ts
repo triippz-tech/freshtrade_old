@@ -137,6 +137,14 @@ export const getEntities: ICrudGetAllAction<IReservation> = (page, size, sort) =
   };
 };
 
+export const getSellerReservations: ICrudGetAllAction<IReservation> = (page, size, sort) => {
+  const requestUrl = `${apiUrl}/seller${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
+  return {
+    type: ACTION_TYPES.FETCH_RESERVATION_LIST,
+    payload: axios.get<IReservation>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`),
+  };
+};
+
 export const getEntity: ICrudGetAction<IReservation> = id => {
   const requestUrl = `${apiUrl}/${id}`;
   return {

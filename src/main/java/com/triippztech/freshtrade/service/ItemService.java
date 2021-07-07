@@ -14,6 +14,7 @@ import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import javax.persistence.EntityNotFoundException;
 import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,6 +106,32 @@ public class ItemService {
                 }
             );
         return createdItem;
+    }
+
+    public Item sellerUpdate(Item item, User user) {
+        log.debug("Request to update Item : {} for Seller: {}", item, user);
+
+        var foundItem = findOne(item.getId());
+        if (foundItem.isEmpty()) throw new EntityNotFoundException("Item was not found");
+
+        if (!foundItem.get().getOwner().getId().equals(user.getId())) throw new ItemServiceException("You are not the owner of this item.");
+
+        item
+            .getImages()
+            .forEach(
+                image -> {
+                    if (
+                        image.getId() == null ||
+                        foundItem.get().getImages().stream().noneMatch(image1 -> image1.getImageUrl().equals(image.getImageUrl()))
+                    ) {
+                        image.setItem(foundItem.get());
+                        image.setCreatedDate(ZonedDateTime.now());
+                        image.setIsVisible(true);
+                        imageRepository.save(image);
+                    }
+                }
+            );
+        return save(item);
     }
 
     /**
@@ -265,7 +292,14 @@ public class ItemService {
         );
 
         // Create the reservation
-        Reservation reservation = generatedNewReservation(buyer, foundItem.get().getOwner(), foundItem.get().getTradeEvent(), null);
+        Reservation reservation = generatedNewReservation(
+            foundItem.get(),
+            quantity,
+            buyer,
+            foundItem.get().getOwner(),
+            foundItem.get().getTradeEvent(),
+            null
+        );
 
         // Create x number of tokens and assign them to the user
         for (int i = 1; i <= quantity; i++) {
@@ -327,7 +361,14 @@ public class ItemService {
     }
 
     @Transactional(readOnly = true)
-    public Reservation generatedNewReservation(User buyer, User seller, TradeEvent event, ZonedDateTime pickupTime) {
+    public Reservation generatedNewReservation(
+        Item item,
+        Integer totalItems,
+        User buyer,
+        User seller,
+        TradeEvent event,
+        ZonedDateTime pickupTime
+    ) {
         log.debug("Request to generate new Reservation");
         Reservation reservation = new Reservation()
             .reservationNumber(generateReservationNumber())
@@ -337,6 +378,9 @@ public class ItemService {
             .isActive(true)
             .createdDate(ZonedDateTime.now())
             .isCancelled(false)
+            .item(item)
+            .pricePer(item.getPrice())
+            .totalPrice(totalItems * item.getPrice())
             .pickupTime(pickupTime);
         return reservationRepository.save(reservation);
     }

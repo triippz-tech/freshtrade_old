@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import javax.persistence.*;
@@ -52,13 +53,35 @@ public class Reservation implements Serializable {
     @Column(name = "updated_date")
     private ZonedDateTime updatedDate;
 
+    @Column(name = "total_price")
+    private Double totalPrice;
+
+    @Column(name = "price_per")
+    private Double pricePer;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnoreProperties(value = { "tokens", "owner", "location", "tradeEvent", "categories", "users" }, allowSetters = true)
+    private Item item;
+
     @ManyToOne
+    @JsonIgnoreProperties(
+        value = {
+            "langKey", "activated", "email", "password", "firstName", "lastName", "activationKey", "resetKey", "resetDate", "authorities",
+        },
+        allowSetters = true
+    )
     private User seller;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnoreProperties(
+        value = {
+            "langKey", "activated", "email", "password", "firstName", "lastName", "activationKey", "resetKey", "resetDate", "authorities",
+        },
+        allowSetters = true
+    )
     private User buyer;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnoreProperties(value = { "location", "items", "reservations" }, allowSetters = true)
     private TradeEvent event;
 
@@ -236,6 +259,45 @@ public class Reservation implements Serializable {
         this.tokens = tokens;
     }
 
+    public Reservation totalPrice(Double totalPrice) {
+        this.totalPrice = totalPrice;
+        return this;
+    }
+
+    public Double getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(Double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public Reservation pricePer(Double pricePer) {
+        this.pricePer = pricePer;
+        return this;
+    }
+
+    public Double getPricePer() {
+        return pricePer;
+    }
+
+    public void setPricePer(Double pricePer) {
+        this.pricePer = pricePer;
+    }
+
+    public Reservation item(Item item) {
+        this.item = item;
+        return this;
+    }
+
+    public Item getItem() {
+        return item;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -249,22 +311,62 @@ public class Reservation implements Serializable {
 
     @Override
     public int hashCode() {
-        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
-        return getClass().hashCode();
+        return Objects.hash(
+            id,
+            reservationNumber,
+            isActive,
+            isCancelled,
+            cancellationNote,
+            pickupTime,
+            createdDate,
+            updatedDate,
+            totalPrice,
+            pricePer,
+            item,
+            seller,
+            buyer,
+            event,
+            tokens
+        );
     }
 
-    // prettier-ignore
     @Override
     public String toString() {
-        return "Reservation{" +
-            "id=" + getId() +
-            ", reservationNumber='" + getReservationNumber() + "'" +
-            ", isActive='" + getIsActive() + "'" +
-            ", isCancelled='" + getIsCancelled() + "'" +
-            ", cancellationNote='" + getCancellationNote() + "'" +
-            ", pickupTime='" + getPickupTime() + "'" +
-            ", createdDate='" + getCreatedDate() + "'" +
-            ", updatedDate='" + getUpdatedDate() + "'" +
-            "}";
+        return (
+            "Reservation{" +
+            "id=" +
+            id +
+            ", reservationNumber='" +
+            reservationNumber +
+            '\'' +
+            ", isActive=" +
+            isActive +
+            ", isCancelled=" +
+            isCancelled +
+            ", cancellationNote='" +
+            cancellationNote +
+            '\'' +
+            ", pickupTime=" +
+            pickupTime +
+            ", createdDate=" +
+            createdDate +
+            ", updatedDate=" +
+            updatedDate +
+            ", totalPrice=" +
+            totalPrice +
+            ", pricePer=" +
+            pricePer +
+            ", item=" +
+            item +
+            ", seller=" +
+            seller +
+            ", buyer=" +
+            buyer +
+            ", event=" +
+            event +
+            ", tokens=" +
+            tokens +
+            '}'
+        );
     }
 }

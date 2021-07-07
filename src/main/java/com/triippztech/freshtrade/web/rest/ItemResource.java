@@ -243,7 +243,7 @@ public class ItemResource {
      */
     @PostMapping("/items/seller")
     public ResponseEntity<Item> createItemForSeller(@Valid @RequestBody Item item) throws URISyntaxException {
-        log.debug("REST request to save Item : {}", item);
+        log.debug("REST request to save Item : {} for current user", item);
         if (item.getId() != null) {
             throw new BadRequestAlertException("A new item cannot already have an ID", ENTITY_NAME, "idexists");
         }
@@ -255,6 +255,43 @@ public class ItemResource {
         return ResponseEntity
             .created(new URI("/api/items/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
+            .body(result);
+    }
+
+    /**
+     * {@code PUT  /items/:id/seller} : Updates an existing item.
+     *
+     * @param id the id of the item to save.
+     * @param item the item to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated item,
+     * or with status {@code 400 (Bad Request)} if the item is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the item couldn't be updated.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PutMapping("/items/{id}/seller")
+    public ResponseEntity<Item> updateItemForSeller(
+        @PathVariable(value = "id", required = false) final UUID id,
+        @Valid @RequestBody Item item
+    ) throws URISyntaxException {
+        log.debug("REST request to update Item : {}, {}", id, item);
+        if (item.getId() == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        if (!Objects.equals(id, item.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
+
+        if (!itemRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+        var user = userService
+            .getUserWithAuthorities()
+            .orElseThrow(() -> new ItemResourceException("You are not authorized to do perform that action"));
+
+        Item result = itemService.sellerUpdate(item, user);
+        return ResponseEntity
+            .ok()
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, item.getId().toString()))
             .body(result);
     }
 

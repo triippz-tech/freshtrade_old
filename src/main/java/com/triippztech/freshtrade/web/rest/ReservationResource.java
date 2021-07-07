@@ -4,6 +4,7 @@ import com.triippztech.freshtrade.domain.Reservation;
 import com.triippztech.freshtrade.repository.ReservationRepository;
 import com.triippztech.freshtrade.service.ReservationQueryService;
 import com.triippztech.freshtrade.service.ReservationService;
+import com.triippztech.freshtrade.service.UserService;
 import com.triippztech.freshtrade.service.criteria.ReservationCriteria;
 import com.triippztech.freshtrade.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
@@ -20,7 +21,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -35,6 +35,13 @@ import tech.jhipster.web.util.ResponseUtil;
 @RequestMapping("/api")
 public class ReservationResource {
 
+    private static class ReservationResourceException extends RuntimeException {
+
+        private ReservationResourceException(String message) {
+            super(message);
+        }
+    }
+
     private final Logger log = LoggerFactory.getLogger(ReservationResource.class);
 
     private static final String ENTITY_NAME = "reservation";
@@ -48,14 +55,18 @@ public class ReservationResource {
 
     private final ReservationQueryService reservationQueryService;
 
+    private final UserService userService;
+
     public ReservationResource(
         ReservationService reservationService,
         ReservationRepository reservationRepository,
-        ReservationQueryService reservationQueryService
+        ReservationQueryService reservationQueryService,
+        UserService userService
     ) {
         this.reservationService = reservationService;
         this.reservationRepository = reservationRepository;
         this.reservationQueryService = reservationQueryService;
+        this.userService = userService;
     }
 
     /**
@@ -159,6 +170,24 @@ public class ReservationResource {
     public ResponseEntity<List<Reservation>> getAllReservations(ReservationCriteria criteria, Pageable pageable) {
         log.debug("REST request to get Reservations by criteria: {}", criteria);
         Page<Reservation> page = reservationQueryService.findByCriteria(criteria, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code GET  /reservations/seller} : get all the reservations for the current user.
+     *
+     * @param pageable the pagination information.
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of reservations in body.
+     */
+    @GetMapping("/reservations/seller")
+    public ResponseEntity<List<Reservation>> getCurrentUserReservations(ReservationCriteria criteria, Pageable pageable) {
+        log.debug("REST request to get Reservations by criteria: {}", criteria);
+        var user = userService
+            .getUserWithAuthorities()
+            .orElseThrow(() -> new ReservationResourceException("You are not authorized to do perform that action"));
+        Page<Reservation> page = reservationQueryService.findByCriteria(user, criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

@@ -1,9 +1,14 @@
 package com.triippztech.freshtrade.repository;
 
 import com.triippztech.freshtrade.domain.Reservation;
+import com.triippztech.freshtrade.domain.User;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.*;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
 /**
