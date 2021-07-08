@@ -1,6 +1,7 @@
 package com.triippztech.freshtrade.repository;
 
 import com.triippztech.freshtrade.domain.ItemToken;
+import com.triippztech.freshtrade.domain.Reservation;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -25,4 +26,6 @@ public interface ItemTokenRepository extends JpaRepository<ItemToken, Long>, Jpa
 
     @Query("select itemToken from ItemToken itemToken left join fetch itemToken.owner where itemToken.id =:id")
     Optional<ItemToken> findOneWithEagerRelationships(@Param("id") Long id);
+
+    List<ItemToken> findAllByReservation(Reservation reservation);
 }

@@ -1,10 +1,10 @@
 package com.triippztech.freshtrade.service;
 
-import com.triippztech.freshtrade.domain.Item;
 import com.triippztech.freshtrade.domain.Reservation;
-import com.triippztech.freshtrade.domain.TradeEvent;
 import com.triippztech.freshtrade.domain.User;
+import com.triippztech.freshtrade.repository.ItemTokenRepository;
 import com.triippztech.freshtrade.repository.ReservationRepository;
+import com.triippztech.freshtrade.service.dto.reservation.CancelReservationDTO;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -22,12 +22,33 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ReservationService {
 
+    public static class ReservationServiceException extends RuntimeException {
+
+        private String clientMessage;
+
+        public ReservationServiceException(String message) {
+            super(message);
+        }
+
+        public ReservationServiceException(String message, String clientMessage) {
+            super(message);
+            this.clientMessage = clientMessage;
+        }
+
+        public String getClientMessage() {
+            return clientMessage;
+        }
+    }
+
     private final Logger log = LoggerFactory.getLogger(ReservationService.class);
 
     private final ReservationRepository reservationRepository;
 
-    public ReservationService(ReservationRepository reservationRepository) {
+    private final ItemTokenRepository itemTokenRepository;
+
+    public ReservationService(ReservationRepository reservationRepository, ItemTokenRepository itemTokenRepository) {
         this.reservationRepository = reservationRepository;
+        this.itemTokenRepository = itemTokenRepository;
     }
 
     /**
@@ -38,6 +59,7 @@ public class ReservationService {
      */
     public Reservation save(Reservation reservation) {
         log.debug("Request to save Reservation : {}", reservation);
+        reservation.setUpdatedDate(ZonedDateTime.now());
         return reservationRepository.save(reservation);
     }
 
@@ -80,6 +102,27 @@ public class ReservationService {
                 }
             )
             .map(reservationRepository::save);
+    }
+
+    public Reservation cancelReservation(CancelReservationDTO reservationCancel, User user) {
+        var foundRes = findOne(reservationCancel.getId());
+        if (foundRes.isEmpty()) throw new ReservationServiceException("Reservation not found");
+
+        if (!foundRes.get().getSeller().getId().equals(user.getId())) throw new ReservationServiceException(
+            "You are not the owner of this reservation"
+        );
+
+        // remove the tokens
+        itemTokenRepository.findAllByReservation(foundRes.get()).forEach(itemTokenRepository::delete);
+
+        // update the res
+        var res = foundRes.get();
+        res.setIsActive(false);
+        res.setIsCancelled(true);
+        res.setCancellationNote(reservationCancel.getCancellationNote());
+
+        // Add thread to send email to seller/buyer
+        return save(res);
     }
 
     /**

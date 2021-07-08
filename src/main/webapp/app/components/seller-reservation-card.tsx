@@ -13,6 +13,8 @@ interface SellerReservationCardProps {
   onCancelReservation: (reservation: IReservation) => void;
 }
 
+const getBGColor = (isActive: boolean, isCancelled: boolean) => {};
+
 export const SellerReservationCard: React.FC<SellerReservationCardProps> = props => (
   <Card>
     <CardHeader className="bg-gray">
@@ -83,18 +85,31 @@ export const SellerReservationCard: React.FC<SellerReservationCardProps> = props
             <TextFormat type="date" value={props.reservation.pickupTime} format={APP_DATE_FORMAT_MM_DD_YYYY} />
           </Row>
         </Col>
+
         <Col className="float-right">
-          <div className="btn-group-vertical float-right">
-            <Button outline color="secondary" size="sm" onClick={() => props.onExchangeItem(props.reservation)}>
-              Exchange
-            </Button>
-            <Button outline color="secondary" size="sm" onClick={() => props.onMessageBuyer(props.reservation)}>
-              Message Seller
-            </Button>
-            <Button outline size="sm" color="danger" onClick={() => props.onCancelReservation(props.reservation)}>
-              Cancel Reservation
-            </Button>
-          </div>
+          {props.reservation.isActive && !props.reservation.isCancelled ? (
+            <div className="btn-group-vertical float-right">
+              <Button outline color="secondary" size="sm" onClick={() => props.onExchangeItem(props.reservation)}>
+                Exchange
+              </Button>
+              <Button outline color="secondary" size="sm" onClick={() => props.onMessageBuyer(props.reservation)}>
+                Message Seller
+              </Button>
+              <Button outline size="sm" color="danger" onClick={() => props.onCancelReservation(props.reservation)}>
+                Cancel Reservation
+              </Button>
+            </div>
+          ) : (
+            <div className="text-center">
+              <Row>
+                <strong>Status</strong>
+              </Row>
+              <Row>
+                {!props.reservation.isActive && !props.reservation.isCancelled && 'COMPLETE'}
+                {!props.reservation.isActive && props.reservation.isCancelled && 'CANCELLED'}
+              </Row>
+            </div>
+          )}
         </Col>
       </Row>
     </CardBody>

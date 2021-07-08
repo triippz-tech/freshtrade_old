@@ -6,6 +6,7 @@ import com.triippztech.freshtrade.service.ReservationQueryService;
 import com.triippztech.freshtrade.service.ReservationService;
 import com.triippztech.freshtrade.service.UserService;
 import com.triippztech.freshtrade.service.criteria.ReservationCriteria;
+import com.triippztech.freshtrade.service.dto.reservation.CancelReservationDTO;
 import com.triippztech.freshtrade.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -190,6 +191,44 @@ public class ReservationResource {
         Page<Reservation> page = reservationQueryService.findByCriteria(user, criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code PUT  /reservations/:id/seller/cancel} : Updates an existing reservation.
+     *
+     * @param id the id of the reservation to save.
+     * @param reservationCancel the reservation to cancel.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated reservation,
+     * or with status {@code 400 (Bad Request)} if the reservation is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the reservation couldn't be updated.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PutMapping("/reservations/{id}/seller/cancel")
+    public ResponseEntity<Reservation> sellerCancelReservation(
+        @PathVariable(value = "id", required = false) final UUID id,
+        @Valid @RequestBody CancelReservationDTO reservationCancel
+    ) throws URISyntaxException {
+        log.debug("REST request to cancel Reservation : {}, {}", id, reservationCancel);
+        if (reservationCancel.getId() == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        if (!Objects.equals(id, reservationCancel.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
+
+        if (!reservationRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
+        var user = userService
+            .getUserWithAuthorities()
+            .orElseThrow(() -> new ReservationResourceException("You are not authorized to do perform that action"));
+
+        Reservation result = reservationService.cancelReservation(reservationCancel, user);
+        return ResponseEntity
+            .ok()
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, reservationCancel.getId().toString()))
+            .body(result);
     }
 
     /**

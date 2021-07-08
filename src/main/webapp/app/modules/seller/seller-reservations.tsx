@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { Col, Container, Row } from 'reactstrap';
 import { getSortState, Translate } from 'react-jhipster';
 import SellerReservationCard from 'app/components/seller-reservation-card';
-import { getSellerReservations, reset } from 'app/entities/reservation/reservation.reducer';
+import { cancelReservation, getSellerReservations, reset } from 'app/entities/reservation/reservation.reducer';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
 import { RouteComponentProps } from 'react-router-dom';
@@ -13,6 +13,7 @@ import { IReservation } from 'app/shared/model/reservation.model';
 import MessageUserDialog from 'app/components/message-user-dialog';
 import CancelReservationDialog from 'app/components/cancel-reservation-dialog';
 import ExchangeReservationDialog from 'app/components/exchange-reservation-dialog';
+import { toast } from 'react-toastify';
 
 interface SellerReservationsProps extends StateProps, DispatchProps, RouteComponentProps {}
 
@@ -105,12 +106,22 @@ export const SellerReservations = (props: SellerReservationsProps) => {
 
   const sendBuyerMessage = () => {
     console.log(`Sending Message to User: ${messageValue}`);
+    toast.success('Message Sent!');
     setMessageDialogOpen(false);
   };
 
   const cancelReservation = () => {
-    console.log(`Sending Cancellation Message to User: ${cancelMessage}`);
-    setCancelDialogOpen(false);
+    props.cancelReservation(
+      {
+        id: selectedReservation.id,
+        cancellationNote: cancelMessage,
+      },
+      () => {
+        setCancelMessage('');
+        setCancelDialogOpen(false);
+        getAllEntities();
+      }
+    );
   };
 
   return (
@@ -164,7 +175,7 @@ export const SellerReservations = (props: SellerReservationsProps) => {
             {props.reservations.map((reservation, idx) => (
               <SellerReservationCard
                 reservation={reservation}
-                key={idx}
+                key={reservation.id}
                 onCancelReservation={reservation1 => {
                   setSelectedReservation(reservation1);
                   setCancelDialogOpen(true);
@@ -199,6 +210,7 @@ const mapStateToProps = ({ authentication, reservation }: IRootState) => ({
 const mapDispatchToProps = {
   getSellerReservations,
   reset,
+  cancelReservation,
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
