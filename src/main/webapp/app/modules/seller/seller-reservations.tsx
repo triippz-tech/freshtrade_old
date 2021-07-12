@@ -132,7 +132,7 @@ export const SellerReservations = (props: SellerReservationsProps) => {
         onSubmit={sendBuyerMessage}
         isOpen={messageDialogOpen}
         toggle={() => setMessageDialogOpen(!messageDialogOpen)}
-        userName={selectedReservation ? selectedReservation.buyer.login : ''}
+        userName={selectedReservation && selectedReservation.buyer ? selectedReservation.buyer.login : ''}
       />
 
       {selectedReservation && (

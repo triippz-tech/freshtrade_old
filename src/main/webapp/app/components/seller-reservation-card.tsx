@@ -43,7 +43,7 @@ export const SellerReservationCard: React.FC<SellerReservationCardProps> = props
           <Row className="text-sm">
             <strong>Buyer</strong>
           </Row>
-          <Row className="text-sm">{props.reservation.buyer.login}</Row>
+          <Row className="text-sm">{props.reservation.buyer && props.reservation.buyer.login}</Row>
         </Col>
         <Col>
           <p className="text-sm">Reservation Number: {props.reservation.reservationNumber}</p>
