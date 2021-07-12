@@ -5,8 +5,11 @@ export const enumToArray = (enumVals): Array<string> => {
   return generatedValues.map(value => toTitleCase(value));
 };
 
-export const formatPrice = (price: number): string =>
-  price.toLocaleString('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  });
+export const formatPrice = (price: number | null): string => {
+  if (price)
+    return price.toLocaleString('en-US', {
+      style: 'currency',
+      currency: 'USD',
+    });
+  return '$0.00';
+};
