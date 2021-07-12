@@ -88,6 +88,7 @@ export const SellerItemUpdate = (props: PostItemProps) => {
       });
 
     if (errors.length === 0) {
+      /* eslint object-shorthand: 0 */
       const entity = {
         ...itemEntity,
         ...values,
@@ -327,25 +328,6 @@ export const SellerItemUpdate = (props: PostItemProps) => {
                   }}
                 />
                 {isTradeErr && <div className="text-danger">Must Select an Event</div>}
-                {/*<AvInput*/}
-                {/*  id="item-tradeEvent"*/}
-                {/*  data-cy="tradeEvent"*/}
-                {/*  type="select"*/}
-                {/*  className="form-control"*/}
-                {/*  name="tradeEventId"*/}
-                {/*  validate={{*/}
-                {/*    required: {value: true, errorMessage: translate('entity.validation.required')},*/}
-                {/*  }}*/}
-                {/*>*/}
-                {/*  <option value="" key="0"/>*/}
-                {/*  {tradeEvents*/}
-                {/*    ? tradeEvents.map(otherEntity => (*/}
-                {/*      <option value={otherEntity.id} key={otherEntity.id}>*/}
-                {/*        {otherEntity.eventName}*/}
-                {/*      </option>*/}
-                {/*    ))*/}
-                {/*    : null}*/}
-                {/*</AvInput>*/}
               </AvGroup>
               <AvGroup>
                 <Label for="item-categories">

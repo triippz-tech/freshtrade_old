@@ -110,7 +110,7 @@ export const SellerReservations = (props: SellerReservationsProps) => {
     setMessageDialogOpen(false);
   };
 
-  const cancelReservation = () => {
+  const cancelReservations = () => {
     props.cancelReservation(
       {
         id: selectedReservation.id,
@@ -139,7 +139,7 @@ export const SellerReservations = (props: SellerReservationsProps) => {
         <CancelReservationDialog
           value={cancelMessage}
           onChange={val => setCancelMessage(val)}
-          onSubmit={cancelReservation}
+          onSubmit={cancelReservations}
           isOpen={cancelDialogOpen}
           toggle={() => setCancelDialogOpen(!cancelDialogOpen)}
           reservation={selectedReservation}

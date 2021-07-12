@@ -110,6 +110,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             //Reservations
             .antMatchers(HttpMethod.GET, "/api/reservations/seller").hasAuthority(AuthoritiesConstants.SELLER)
             .antMatchers(HttpMethod.GET, "/api//reservations/{id}/seller/cancel").hasAuthority(AuthoritiesConstants.SELLER)
+            // Seller Metrics
+            .antMatchers( "/api/metrics/seller/**").hasAuthority(AuthoritiesConstants.SELLER)
 
             .antMatchers("/api/**").authenticated()
             .antMatchers("/websocket/**").authenticated()

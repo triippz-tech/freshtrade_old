@@ -178,7 +178,7 @@ export const cancelReservation: ICrudPutActionCB<{
     type: ACTION_TYPES.UPDATE_RESERVATION,
     payload: axios.put(`${apiUrl}/${entity.id}/seller/cancel`, entity),
   });
-  await callback();
+  callback();
   return result;
 };
 

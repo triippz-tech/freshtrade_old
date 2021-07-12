@@ -2,7 +2,7 @@ import React from 'react';
 import { IRootState } from 'app/shared/reducers';
 import { connect } from 'react-redux';
 
-interface SellerMessagesProps {}
+interface SellerMessagesProps extends StateProps, DispatchProps {}
 
 export const SellerMessages = (props: SellerMessagesProps) => {
   return <h1>SELLER Messages</h1>;
