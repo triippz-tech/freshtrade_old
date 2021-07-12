@@ -16,7 +16,9 @@ export type ICrudSearchAction<T> = (
   size?: number,
   sort?: string
 ) => IPayload<T> | ((dispatch: any) => IPayload<T>);
+export type ICrudLoadOptionsAction<T> = (inputValue: string, callback: (data?) => void) => IPayload<T> | IPayloadResult<T>;
 export type ICrudPutAction<T> = (data?: T) => IPayload<T> | IPayloadResult<T>;
+export type ICrudPutActionCB<T> = (data?: T, callback?: () => void) => IPayload<T> | IPayloadResult<T>;
 export type ICrudDeleteAction<T> = (id?: string | number) => IPayload<T> | IPayloadResult<T>;
 export type ICrudGetAllActionCriteria<T> = (
   criteria?: Criteria,

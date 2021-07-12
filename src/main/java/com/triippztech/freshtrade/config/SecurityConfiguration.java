@@ -95,12 +95,23 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .antMatchers(HttpMethod.GET, "/api/items/**").permitAll()
             .antMatchers(HttpMethod.PUT, "/api/items/{\\w+}/reserve").hasAuthority(AuthoritiesConstants.BUYER)
             .antMatchers(HttpMethod.GET, "/api/_search/items").permitAll()
+            .antMatchers(HttpMethod.GET, "/api/items/seller").hasAuthority(AuthoritiesConstants.SELLER)
+            .antMatchers(HttpMethod.POST, "/api/items/seller").hasAuthority(AuthoritiesConstants.SELLER)
+            .antMatchers(HttpMethod.POST, "/api/items").hasAuthority(AuthoritiesConstants.ADMIN)
+            .antMatchers(HttpMethod.PATCH, "/api/items/{id}").hasAuthority(AuthoritiesConstants.ADMIN)
+            .antMatchers(HttpMethod.PUT, "/api/items/{id}").hasAuthority(AuthoritiesConstants.ADMIN)
+            .antMatchers(HttpMethod.DELETE, "/api/items/{id}").hasAnyAuthority(AuthoritiesConstants.ADMIN, AuthoritiesConstants.SELLER)
             // Categories
             .antMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
             // Countries
             .antMatchers(HttpMethod.GET, "/api/countries/**").permitAll()
             // User Locations
             .antMatchers(HttpMethod.GET, "/api/user-location/**").permitAll()
+            //Reservations
+            .antMatchers(HttpMethod.GET, "/api/reservations/seller").hasAuthority(AuthoritiesConstants.SELLER)
+            .antMatchers(HttpMethod.GET, "/api//reservations/{id}/seller/cancel").hasAuthority(AuthoritiesConstants.SELLER)
+            // Seller Metrics
+            .antMatchers( "/api/metrics/seller/**").hasAuthority(AuthoritiesConstants.SELLER)
 
             .antMatchers("/api/**").authenticated()
             .antMatchers("/websocket/**").authenticated()

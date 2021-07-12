@@ -12,8 +12,10 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { ILocation, defaultValue } from 'app/shared/model/location.model';
+import { ICrudLoadOptionsAction, ICrudSearchAction } from 'app/config/redux-action.type';
 
 export const ACTION_TYPES = {
+  SEARCH_LOCATIONS: 'locations/SEARCH_LOCATIONS',
   FETCH_LOCATION_LIST: 'location/FETCH_LOCATION_LIST',
   FETCH_LOCATION: 'location/FETCH_LOCATION',
   CREATE_LOCATION: 'location/CREATE_LOCATION',
@@ -41,6 +43,7 @@ export type LocationState = Readonly<typeof initialState>;
 export default (state: LocationState = initialState, action): LocationState => {
   switch (action.type) {
     case REQUEST(ACTION_TYPES.FETCH_LOCATION_LIST):
+    case REQUEST(ACTION_TYPES.SEARCH_LOCATIONS):
     case REQUEST(ACTION_TYPES.FETCH_LOCATION):
       return {
         ...state,
@@ -59,6 +62,7 @@ export default (state: LocationState = initialState, action): LocationState => {
         updating: true,
       };
     case FAILURE(ACTION_TYPES.FETCH_LOCATION_LIST):
+    case FAILURE(ACTION_TYPES.SEARCH_LOCATIONS):
     case FAILURE(ACTION_TYPES.FETCH_LOCATION):
     case FAILURE(ACTION_TYPES.CREATE_LOCATION):
     case FAILURE(ACTION_TYPES.UPDATE_LOCATION):
@@ -80,6 +84,13 @@ export default (state: LocationState = initialState, action): LocationState => {
         links,
         entities: loadMoreDataWhenScrolled(state.entities, action.payload.data, links),
         totalItems: parseInt(action.payload.headers['x-total-count'], 10),
+      };
+    }
+    case SUCCESS(ACTION_TYPES.SEARCH_LOCATIONS): {
+      return {
+        ...state,
+        loading: false,
+        entities: action.payload.data,
       };
     }
     case SUCCESS(ACTION_TYPES.FETCH_LOCATION):
@@ -123,6 +134,24 @@ export const getEntities: ICrudGetAllAction<ILocation> = (page, size, sort) => {
     type: ACTION_TYPES.FETCH_LOCATION_LIST,
     payload: axios.get<ILocation>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`),
   };
+};
+
+export const loadLocations: ICrudLoadOptionsAction<ILocation> = (inputValue, callBack) => async dispatch => {
+  const requestUrl = `api/_search/locations${inputValue ? `?query=${inputValue}` : ''}`;
+  const result = await dispatch({
+    type: ACTION_TYPES.SEARCH_LOCATIONS,
+    payload: axios.get<ILocation>(`${requestUrl}&cacheBuster=${new Date().getTime()}`),
+  });
+  callBack(
+    result.value.data.map(val => {
+      return {
+        label: val.shortName ? val.shortName : val.address,
+        value: val.shortName ? val.shortName : val.address,
+        loc: val,
+      };
+    })
+  );
+  return result;
 };
 
 export const getEntity: ICrudGetAction<ILocation> = id => {

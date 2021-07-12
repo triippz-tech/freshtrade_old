@@ -2,12 +2,12 @@
   "freshtradeApp": {
     "Condition": {
       "null": "",
-      "NEW": "NEW",
-      "OPEN_BOX": "OPEN_BOX",
-      "LIKE_NEW": "LIKE_NEW",
-      "USED": "USED",
-      "DAMAGED": "DAMAGED",
-      "FOR_PARTS": "FOR_PARTS"
+      "NEW": "New",
+      "OPEN_BOX": "Open Box",
+      "LIKE_NEW": "Like New",
+      "USED": "Used",
+      "DAMAGED": "Damaged",
+      "FOR_PARTS": "For Parts"
     }
   }
 }

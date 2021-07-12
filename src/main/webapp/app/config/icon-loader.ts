@@ -31,12 +31,15 @@ import { faUserPlus } from '@fortawesome/free-solid-svg-icons/faUserPlus';
 import { faUsers } from '@fortawesome/free-solid-svg-icons/faUsers';
 import { faUsersCog } from '@fortawesome/free-solid-svg-icons/faUsersCog';
 import { faWrench } from '@fortawesome/free-solid-svg-icons/faWrench';
-
+import { faDollarSign } from '@fortawesome/free-solid-svg-icons/faDollarSign';
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { library } from '@fortawesome/fontawesome-svg-core';
 
 export const loadIcons = () => {
   library.add(
+    faDollarSign,
     faArrowLeft,
+    faArrowRight,
     faAsterisk,
     faBan,
     faBell,

@@ -8,6 +8,30 @@
         "createOrEditLabel": "Create or edit a Item",
         "notFound": "No Items found"
       },
+      "seller": {
+        "title": "Your Listed Items",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Item",
+        "editLabel": "Edit Item",
+        "createOrEditLabel": "Create or edit a Item",
+        "notFound": "No Items found",
+        "createdDate": "Posted Date",
+        "itemCondition": "Condition"
+      },
+      "create": {
+        "price": "What's the price per item?",
+        "quantity": "How many of these are you selling?",
+        "name": "What's the name of this item? (ex. iPhone 11 64GB)",
+        "details": "Write some details of the item so others have a good idea of the item you're selling.",
+        "itemCondition": "What is the condition of this Item?",
+        "isActive": "Do you want to publish this item?",
+        "images": "Images",
+        "location": "Where is this Item located?",
+        "tradeEvent": "Which event will you be selling this Item at?",
+        "categories": "What categories does this Item fall in?",
+        "next": "Next",
+        "back": "Back"
+      },
       "created": "A new Item is created with identifier {{ param }}",
       "updated": "A Item is updated with identifier {{ param }}",
       "deleted": "A Item is deleted with identifier {{ param }}",

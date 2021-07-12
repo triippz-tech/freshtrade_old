@@ -3,7 +3,7 @@ import { MDBNavbarBrand } from 'mdbreact';
 
 import AccountMenu from '../menus/account';
 import { AdminMenu } from '../menus/admin';
-import { EntitiesMenu, LocaleMenu } from 'app/shared/layout/menus';
+import { SellerMenu, EntitiesMenu, LocaleMenu } from 'app/shared/layout/menus';
 import { Button, Col, Container, Row } from 'reactstrap';
 
 export interface JumbotronProps {
@@ -12,6 +12,8 @@ export interface JumbotronProps {
   onLocationClick: () => void;
   isAuthenticated: boolean;
   isAdmin: boolean;
+  isSeller: boolean;
+  isBuyer: boolean;
   isOpenAPIEnabled: boolean;
   currentLocale: string;
   handleLocaleChange: (event) => void;
@@ -44,9 +46,10 @@ export const Jumbotron: React.FC<JumbotronProps> = props => {
 
           <Col md="4" className="d-flex justify-content-center justify-content-md-end align-items-center">
             <LocaleMenu currentLocale={props.currentLocale} onClick={props.handleLocaleChange} />
-            <AccountMenu isAuthenticated={props.isAuthenticated} />
+            {props.isAuthenticated && props.isSeller && <SellerMenu />}
             {props.isAuthenticated && props.isAdmin && <EntitiesMenu />}
             {props.isAuthenticated && props.isAdmin && <AdminMenu showOpenAPI={props.isOpenAPIEnabled} />}
+            <AccountMenu isAuthenticated={props.isAuthenticated} />
           </Col>
         </Row>
       </Container>

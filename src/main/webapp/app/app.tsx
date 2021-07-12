@@ -64,6 +64,8 @@ export const App = (props: IAppProps) => {
             onLocationClick={() => setIsLocationOpen(true)}
             isAuthenticated={props.isAuthenticated}
             isAdmin={props.isAdmin}
+            isSeller={props.isSeller}
+            isBuyer={props.isBuyer}
             currentLocale={props.currentLocale}
             onLocaleChange={props.setLocale}
             ribbonEnv={props.ribbonEnv}
@@ -97,6 +99,8 @@ const mapStateToProps = ({ authentication, applicationProfile, locale, category,
   currentLocale: locale.currentLocale,
   isAuthenticated: authentication.isAuthenticated,
   isAdmin: hasAnyAuthority(authentication.account.authorities, [AUTHORITIES.ADMIN]),
+  isSeller: hasAnyAuthority(authentication.account.authorities, [AUTHORITIES.SELLER]),
+  isBuyer: hasAnyAuthority(authentication.account.authorities, [AUTHORITIES.BUYER]),
   ribbonEnv: applicationProfile.ribbonEnv,
   isInProduction: applicationProfile.inProduction,
   isOpenAPIEnabled: applicationProfile.isOpenAPIEnabled,

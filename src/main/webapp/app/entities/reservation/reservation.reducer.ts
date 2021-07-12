@@ -12,6 +12,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IReservation, defaultValue } from 'app/shared/model/reservation.model';
+import { ICrudPutActionCB } from 'app/config/redux-action.type';
 
 export const ACTION_TYPES = {
   FETCH_RESERVATION_LIST: 'reservation/FETCH_RESERVATION_LIST',
@@ -137,6 +138,14 @@ export const getEntities: ICrudGetAllAction<IReservation> = (page, size, sort) =
   };
 };
 
+export const getSellerReservations: ICrudGetAllAction<IReservation> = (page, size, sort) => {
+  const requestUrl = `${apiUrl}/seller${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
+  return {
+    type: ACTION_TYPES.FETCH_RESERVATION_LIST,
+    payload: axios.get<IReservation>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`),
+  };
+};
+
 export const getEntity: ICrudGetAction<IReservation> = id => {
   const requestUrl = `${apiUrl}/${id}`;
   return {
@@ -158,6 +167,18 @@ export const updateEntity: ICrudPutAction<IReservation> = entity => async dispat
     type: ACTION_TYPES.UPDATE_RESERVATION,
     payload: axios.put(`${apiUrl}/${entity.id}`, cleanEntity(entity)),
   });
+  return result;
+};
+
+export const cancelReservation: ICrudPutActionCB<{
+  id: string;
+  cancellationNote: string;
+}> = (entity, callback) => async dispatch => {
+  const result = await dispatch({
+    type: ACTION_TYPES.UPDATE_RESERVATION,
+    payload: axios.put(`${apiUrl}/${entity.id}/seller/cancel`, entity),
+  });
+  callback();
   return result;
 };
 

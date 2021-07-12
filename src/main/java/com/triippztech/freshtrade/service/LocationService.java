@@ -2,10 +2,12 @@ package com.triippztech.freshtrade.service;
 
 import com.triippztech.freshtrade.domain.Location;
 import com.triippztech.freshtrade.repository.LocationRepository;
+import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -103,5 +105,10 @@ public class LocationService {
     public void delete(Long id) {
         log.debug("Request to delete Location : {}", id);
         locationRepository.deleteById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Location> search(String query) {
+        return locationRepository.findAllByShortNameContainingIgnoreCaseOrderByShortName(query, PageRequest.of(0, 20));
     }
 }

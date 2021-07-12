@@ -1,0 +1,210 @@
+import React, { useState, useEffect } from 'react';
+import InfiniteScroll from 'react-infinite-scroller';
+import { connect } from 'react-redux';
+import { Link, RouteComponentProps } from 'react-router-dom';
+import { Button, Table } from 'reactstrap';
+import { Translate, TextFormat, getSortState, IPaginationBaseState } from 'react-jhipster';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import { IRootState } from 'app/shared/reducers';
+import { getSellerEntities, reset } from 'app/entities/item/item.reducer';
+import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import { ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
+import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
+import { formatPrice } from 'app/shared/util/transform-utils';
+import { toTitleCase } from 'app/shared/util/string-utils';
+
+interface SellerItemsProps extends StateProps, DispatchProps, RouteComponentProps<{ url: string }> {}
+
+export const SellerItems = (props: SellerItemsProps) => {
+  const [paginationState, setPaginationState] = useState(
+    overridePaginationStateWithQueryParams(getSortState(props.location, ITEMS_PER_PAGE, 'id'), props.location.search)
+  );
+  const [sorting, setSorting] = useState(false);
+
+  const getAllEntities = () => {
+    props.getSellerEntities(
+      paginationState.activePage - 1,
+      paginationState.itemsPerPage,
+      `${paginationState.sort},${paginationState.order}`
+    );
+  };
+
+  const resetAll = () => {
+    props.reset();
+    setPaginationState({
+      ...paginationState,
+      activePage: 1,
+    });
+    props.getSellerEntities();
+  };
+
+  useEffect(() => {
+    resetAll();
+  }, []);
+
+  useEffect(() => {
+    if (props.updateSuccess) {
+      resetAll();
+    }
+  }, [props.updateSuccess]);
+
+  useEffect(() => {
+    getAllEntities();
+  }, [paginationState.activePage]);
+
+  const handleLoadMore = () => {
+    if ((window as any).pageYOffset > 0) {
+      setPaginationState({
+        ...paginationState,
+        activePage: paginationState.activePage + 1,
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (sorting) {
+      getAllEntities();
+      setSorting(false);
+    }
+  }, [sorting]);
+
+  const sort = p => () => {
+    props.reset();
+    setPaginationState({
+      ...paginationState,
+      activePage: 1,
+      order: paginationState.order === 'asc' ? 'desc' : 'asc',
+      sort: p,
+    });
+    setSorting(true);
+  };
+
+  const handleSyncList = () => {
+    resetAll();
+  };
+
+  const { itemList, match, loading } = props;
+  return (
+    <div>
+      <h2 id="item-heading" data-cy="ItemHeading">
+        <Translate contentKey="freshtradeApp.item.seller.title">Items</Translate>
+        <div className="d-flex justify-content-end">
+          <Button className="mr-2" color="info" onClick={handleSyncList} disabled={loading}>
+            <FontAwesomeIcon icon="sync" spin={loading} />{' '}
+            <Translate contentKey="freshtradeApp.item.seller.refreshListLabel">Refresh List</Translate>
+          </Button>
+          <Link to={`${match.url}/new`} className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
+            <FontAwesomeIcon icon="plus" />
+            &nbsp;
+            <Translate contentKey="freshtradeApp.item.seller.createLabel">Create new Item</Translate>
+          </Link>
+        </div>
+      </h2>
+      <div className="table-responsive">
+        <InfiniteScroll
+          pageStart={paginationState.activePage}
+          loadMore={handleLoadMore}
+          hasMore={paginationState.activePage - 1 < props.links.next}
+          loader={<div className="loader">Loading ...</div>}
+          threshold={0}
+          initialLoad={false}
+        >
+          {itemList && itemList.length > 0 ? (
+            <Table responsive>
+              <thead>
+                <tr>
+                  <th className="hand"></th>
+                  <th className="hand" onClick={sort('price')}>
+                    <Translate contentKey="freshtradeApp.item.price">Price</Translate> <FontAwesomeIcon icon="sort" />
+                  </th>
+                  <th className="hand" onClick={sort('quantity')}>
+                    <Translate contentKey="freshtradeApp.item.quantity">Quantity</Translate> <FontAwesomeIcon icon="sort" />
+                  </th>
+                  <th className="hand" onClick={sort('name')}>
+                    <Translate contentKey="freshtradeApp.item.name">Name</Translate> <FontAwesomeIcon icon="sort" />
+                  </th>
+                  <th className="hand" onClick={sort('itemCondition')}>
+                    <Translate contentKey="freshtradeApp.item.seller.itemCondition">Condition</Translate> <FontAwesomeIcon icon="sort" />
+                  </th>
+                  <th className="hand" onClick={sort('createdDate')}>
+                    <Translate contentKey="freshtradeApp.item.seller.createdDate">Posted Date</Translate> <FontAwesomeIcon icon="sort" />
+                  </th>
+                  <th>
+                    <Translate contentKey="freshtradeApp.item.tradeEvent">Trade Event</Translate> <FontAwesomeIcon icon="sort" />
+                  </th>
+                  <th className="hand" onClick={sort('isActive')}>
+                    <Translate contentKey="freshtradeApp.item.isActive">Is Active</Translate> <FontAwesomeIcon icon="sort" />
+                  </th>
+                  <th />
+                </tr>
+              </thead>
+              <tbody>
+                {itemList.map((item, i) => (
+                  <tr key={`entity-${i}`} data-cy="entityTable">
+                    <td>
+                      {item.images && item.images.length > 0 ? (
+                        <img loading="lazy" src={item.images[0].imageUrl} alt="item image" height={50} width={50} />
+                      ) : (
+                        <img loading="lazy" src="content/images/logo-grey-50x50.png" alt="item image" />
+                      )}
+                    </td>
+                    <td>{formatPrice(item.price)}</td>
+                    <td>{item.quantity}</td>
+                    <td>{item.name}</td>
+                    <td>{toTitleCase(item.itemCondition.toString())}</td>
+                    <td>{item.createdDate ? <TextFormat type="date" value={item.createdDate} format={APP_DATE_FORMAT} /> : null}</td>
+                    <td>{item.tradeEvent ? <Link to={`trade-event/${item.tradeEvent.id}`}>{item.tradeEvent.eventName}</Link> : ''}</td>
+                    <td>{item.isActive ? 'Yes' : 'No'}</td>
+
+                    <td className="text-right">
+                      <div className="btn-group flex-btn-group-container">
+                        <Button tag={Link} to={`/items/detail/${item.id}`} color="info" size="sm" data-cy="entityDetailsButton">
+                          <FontAwesomeIcon icon="eye" />{' '}
+                          <span className="d-none d-md-inline">
+                            <Translate contentKey="entity.action.view">View</Translate>
+                          </span>
+                        </Button>
+                        <Button tag={Link} to={`${match.url}/${item.id}/edit`} color="primary" size="sm" data-cy="entityEditButton">
+                          <FontAwesomeIcon icon="pencil-alt" />{' '}
+                          <span className="d-none d-md-inline">
+                            <Translate contentKey="entity.action.edit">Edit</Translate>
+                          </span>
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          ) : (
+            !loading && (
+              <div className="alert alert-warning">
+                <Translate contentKey="freshtradeApp.item.home.notFound">No Items found</Translate>
+              </div>
+            )
+          )}
+        </InfiniteScroll>
+      </div>
+    </div>
+  );
+};
+
+const mapStateToProps = ({ item }: IRootState) => ({
+  itemList: item.entities,
+  loading: item.loading,
+  totalItems: item.totalItems,
+  links: item.links,
+  entity: item.entity,
+  updateSuccess: item.updateSuccess,
+});
+
+const mapDispatchToProps = {
+  getSellerEntities,
+  reset,
+};
+
+type StateProps = ReturnType<typeof mapStateToProps>;
+type DispatchProps = typeof mapDispatchToProps;
+
+export default connect(mapStateToProps, mapDispatchToProps)(SellerItems);

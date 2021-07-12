@@ -49,9 +49,10 @@ import tradeEvent, {
 import userProfile, {
   UserProfileState
 } from 'app/entities/user-profile/user-profile.reducer';
-/* jhipster-needle-add-reducer-import - JHipster will add reducer here */
+import sellerMetrics, { SellerMetricsState } from 'app/modules/seller/seller-metrics.reducer';
 
 export interface IRootState {
+  readonly sellerMetrics: SellerMetricsState;
   readonly userLocation: UserLocationState;
   readonly authentication: AuthenticationState;
   readonly locale: LocaleState;
@@ -99,6 +100,7 @@ const rootReducer = combineReducers<IRootState>({
   /* jhipster-needle-add-reducer-combine - JHipster will add reducer here */
   loadingBar,
   userLocation,
+  sellerMetrics,
 });
 
 export default rootReducer;

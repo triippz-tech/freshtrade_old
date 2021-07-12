@@ -30,7 +30,12 @@ const Admin = Loadable({
 });
 
 const Items = Loadable({
-  loader: () => import(/* webpackChunkName: "administration" */ 'app/modules/items'),
+  loader: () => import(/* webpackChunkName: "items" */ 'app/modules/items'),
+  loading: () => <div>loading ...</div>,
+});
+
+const Seller = Loadable({
+  loader: () => import(/* webpackChunkName: "seller" */ 'app/modules/seller'),
   loading: () => <div>loading ...</div>,
 });
 
@@ -52,6 +57,7 @@ const Routes = () => {
         <ErrorBoundaryRoute path="/account/activate/:key?" component={Activate} />
         <ErrorBoundaryRoute path="/account/reset/request" component={PasswordResetInit} />
         <ErrorBoundaryRoute path="/account/reset/finish/:key?" component={PasswordResetFinish} />
+        <PrivateRoute path="/seller" component={Seller} hasAnyAuthorities={[AUTHORITIES.SELLER]} />
         <PrivateRoute path="/admin" component={Admin} hasAnyAuthorities={[AUTHORITIES.ADMIN]} />
         <PrivateRoute path="/account" component={Account} hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.BUYER]} />
         <ErrorBoundaryRoute path="/" exact component={Home} />

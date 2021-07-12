@@ -1,11 +1,14 @@
 package com.triippztech.freshtrade.web.rest;
 
+import com.triippztech.freshtrade.domain.Item;
 import com.triippztech.freshtrade.domain.Location;
 import com.triippztech.freshtrade.repository.LocationRepository;
 import com.triippztech.freshtrade.service.LocationQueryService;
 import com.triippztech.freshtrade.service.LocationService;
 import com.triippztech.freshtrade.service.criteria.LocationCriteria;
+import com.triippztech.freshtrade.service.dto.item.ListItemDTO;
 import com.triippztech.freshtrade.web.rest.errors.BadRequestAlertException;
+import io.swagger.annotations.ApiOperation;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -201,5 +204,20 @@ public class LocationResource {
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    /**
+     * {@code SEARCH  /_search/locations?query=:query} : search for the locations
+     * to the query.
+     *
+     * @param query    the query of the location search.
+     * @return the result of the search.
+     */
+    @GetMapping("/_search/locations")
+    @ApiOperation(value = "Searches for Locations based on a query string. Utilizes pagination", response = ResponseEntity.class)
+    public ResponseEntity<List<Location>> searchLocations(@RequestParam String query) {
+        log.debug("REST request to search for a page of Inventories for query {}", query);
+        List<Location> locations = locationService.search(query);
+        return ResponseEntity.ok().body(locations);
     }
 }

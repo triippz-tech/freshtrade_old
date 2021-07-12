@@ -39,6 +39,13 @@
         "database": "Base de données",
         "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)"
       },
+      "seller": {
+        "main": "Les vendeurs",
+        "dashboard": "Tableau de bord",
+        "post": "L'article",
+        "reservations": "Réservations",
+        "messages": "Messages"
+      },
       "language": "Langue"
     },
     "form": {

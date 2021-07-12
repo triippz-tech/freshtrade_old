@@ -1,10 +1,8 @@
 import React from 'react';
 
 import ErrorBoundaryRoute from 'app/shared/error/error-boundary-route';
-// import Items from './items';
 import ItemsAlt from 'app/modules/items/items-alt';
 
-import ItemDetail from 'app/modules/items/item-detail';
 import ItemDetailAlt from 'app/modules/items/item-detail-alt';
 
 const Routes = ({ match }) => (

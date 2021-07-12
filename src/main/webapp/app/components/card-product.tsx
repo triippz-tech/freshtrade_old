@@ -42,7 +42,7 @@ const CardProduct = ({ product, masonry }: CardProductProps) => {
             <a className="text-dark">{product.name}</a>
           </Link>
         </h3>
-        <span className="text-gray-500 text-sm">${product.price}.00</span>
+        <span className="text-gray-500 text-sm">${product.price}</span>
         <span className="text-gray-500 text-sm">
           {product.tradeEvent && (
             <div>

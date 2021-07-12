@@ -11,6 +11,8 @@ import { useHistory } from 'react-router-dom';
 export interface INavbarProps {
   isAuthenticated: boolean;
   isAdmin: boolean;
+  isSeller: boolean;
+  isBuyer: boolean;
   ribbonEnv: string;
   isInProduction: boolean;
   isOpenAPIEnabled: boolean;
@@ -49,6 +51,8 @@ const CustomNavbar = (props: INavbarProps) => {
       {renderDevRibbon()}
       <LoadingBar className="loading-bar" />
       <Jumbotron
+        isBuyer={props.isBuyer}
+        isSeller={props.isSeller}
         locationName={props.locationName}
         locationDistance={props.locationDistance}
         isAdmin={props.isAdmin}

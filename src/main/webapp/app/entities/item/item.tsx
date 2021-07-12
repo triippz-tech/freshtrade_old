@@ -88,7 +88,7 @@ export const Item = (props: IItemProps) => {
             <FontAwesomeIcon icon="sync" spin={loading} />{' '}
             <Translate contentKey="freshtradeApp.item.home.refreshListLabel">Refresh List</Translate>
           </Button>
-          <Link to={`${match.url}/new`} className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
+          <Link to={`${match.url}/update`} className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
             <FontAwesomeIcon icon="plus" />
             &nbsp;
             <Translate contentKey="freshtradeApp.item.home.createLabel">Create new Item</Translate>

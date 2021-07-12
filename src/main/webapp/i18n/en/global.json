@@ -39,6 +39,13 @@
         "database": "Database",
         "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)"
       },
+      "seller": {
+        "main": "Sellers",
+        "dashboard": "Dashboard",
+        "post": "Items",
+        "reservations": "Reservations",
+        "messages": "Messages"
+      },
       "language": "Language"
     },
     "form": {

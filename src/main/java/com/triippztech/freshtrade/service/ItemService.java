@@ -1,6 +1,7 @@
 package com.triippztech.freshtrade.service;
 
 import com.triippztech.freshtrade.domain.*;
+import com.triippztech.freshtrade.repository.ImageRepository;
 import com.triippztech.freshtrade.repository.ItemRepository;
 import com.triippztech.freshtrade.repository.ItemTokenRepository;
 import com.triippztech.freshtrade.repository.ReservationRepository;
@@ -13,6 +14,7 @@ import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import javax.persistence.EntityNotFoundException;
 import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +53,8 @@ public class ItemService {
 
     private final ItemRepository itemRepository;
 
+    private final ImageRepository imageRepository;
+
     private final ReservationRepository reservationRepository;
 
     private final ItemTokenRepository tokenRepository;
@@ -61,12 +65,14 @@ public class ItemService {
 
     public ItemService(
         ItemRepository itemRepository,
+        ImageRepository imageRepository,
         ReservationRepository reservationRepository,
         ItemTokenRepository tokenRepository,
         BuyerMailService buyerMailService,
         SellerEmailService sellerMailService
     ) {
         this.itemRepository = itemRepository;
+        this.imageRepository = imageRepository;
         this.reservationRepository = reservationRepository;
         this.tokenRepository = tokenRepository;
         this.buyerMailService = buyerMailService;
@@ -81,7 +87,51 @@ public class ItemService {
      */
     public Item save(Item item) {
         log.debug("Request to save Item : {}", item);
+        item.setUpdatedDate(ZonedDateTime.now());
         return itemRepository.save(item);
+    }
+
+    public Item createItem(Item item, User user) {
+        log.debug("Request to save Item : {} for Seller: {}", item, user);
+        item.setOwner(user);
+        var createdItem = save(item);
+        item
+            .getImages()
+            .forEach(
+                image -> {
+                    image.setItem(createdItem);
+                    image.setCreatedDate(ZonedDateTime.now());
+                    image.setIsVisible(true);
+                    imageRepository.save(image);
+                }
+            );
+        return createdItem;
+    }
+
+    public Item sellerUpdate(Item item, User user) {
+        log.debug("Request to update Item : {} for Seller: {}", item, user);
+
+        var foundItem = findOne(item.getId());
+        if (foundItem.isEmpty()) throw new EntityNotFoundException("Item was not found");
+
+        if (!foundItem.get().getOwner().getId().equals(user.getId())) throw new ItemServiceException("You are not the owner of this item.");
+
+        item
+            .getImages()
+            .forEach(
+                image -> {
+                    if (
+                        image.getId() == null ||
+                        foundItem.get().getImages().stream().noneMatch(image1 -> image1.getImageUrl().equals(image.getImageUrl()))
+                    ) {
+                        image.setItem(foundItem.get());
+                        image.setCreatedDate(ZonedDateTime.now());
+                        image.setIsVisible(true);
+                        imageRepository.save(image);
+                    }
+                }
+            );
+        return save(item);
     }
 
     /**
@@ -141,6 +191,18 @@ public class ItemService {
     }
 
     /**
+     * Get all the items.
+     *
+     * @param pageable the pagination information.
+     * @return the list of entities.
+     */
+    @Transactional(readOnly = true)
+    public Page<Item> findAllByCurrentUser(User user, Pageable pageable) {
+        log.debug("Request to get all Items for current User: {}", user);
+        return itemRepository.findAllByOwner(user, pageable);
+    }
+
+    /**
      * Get all the items with eager load of many-to-many relationships.
      * @param pageable {@link Pageable} Page
      * @return the list of entities.
@@ -169,6 +231,23 @@ public class ItemService {
     public void delete(UUID id) {
         log.debug("Request to delete Item : {}", id);
         itemRepository.deleteById(id);
+    }
+
+    /**
+     * Delete the item by id. Check if the SELLER deleting owns the item first
+     *
+     * @param id the id of the entity.
+     * @throws ItemServiceException unable to delete
+     */
+    public void delete(UUID id, User user) throws ItemServiceException {
+        log.debug("Request by seller: {} to delete Item : {}", user, id);
+        var foundItem = findOne(id);
+        if (foundItem.isEmpty()) throw new ItemServiceException("Item does not exist");
+
+        if (!foundItem.get().getOwner().getId().equals(user.getId())) throw new ItemServiceException(
+            "Unable to delete. You are not the owner of this item."
+        );
+        delete(id);
     }
 
     @Transactional(readOnly = true)
@@ -213,7 +292,14 @@ public class ItemService {
         );
 
         // Create the reservation
-        Reservation reservation = generatedNewReservation(buyer, foundItem.get().getOwner(), foundItem.get().getTradeEvent(), null);
+        Reservation reservation = generatedNewReservation(
+            foundItem.get(),
+            quantity,
+            buyer,
+            foundItem.get().getOwner(),
+            foundItem.get().getTradeEvent(),
+            null
+        );
 
         // Create x number of tokens and assign them to the user
         for (int i = 1; i <= quantity; i++) {
@@ -275,7 +361,14 @@ public class ItemService {
     }
 
     @Transactional(readOnly = true)
-    public Reservation generatedNewReservation(User buyer, User seller, TradeEvent event, ZonedDateTime pickupTime) {
+    public Reservation generatedNewReservation(
+        Item item,
+        Integer totalItems,
+        User buyer,
+        User seller,
+        TradeEvent event,
+        ZonedDateTime pickupTime
+    ) {
         log.debug("Request to generate new Reservation");
         Reservation reservation = new Reservation()
             .reservationNumber(generateReservationNumber())
@@ -285,6 +378,9 @@ public class ItemService {
             .isActive(true)
             .createdDate(ZonedDateTime.now())
             .isCancelled(false)
+            .item(item)
+            .pricePer(item.getPrice())
+            .totalPrice(totalItems * item.getPrice())
             .pickupTime(pickupTime);
         return reservationRepository.save(reservation);
     }

@@ -1,6 +1,9 @@
 {
   "freshtradeApp": {
     "reservation": {
+      "sellers": {
+        "title": "Réservations du vendeur"
+      },
       "home": {
         "title": "Reservations",
         "refreshListLabel": "Actualiser la liste",

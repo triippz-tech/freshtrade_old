@@ -14,10 +14,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tech.jhipster.service.QueryService;
+import tech.jhipster.service.filter.LongFilter;
 
 /**
  * Service for executing complex queries for {@link Item} entities in the database.
@@ -58,6 +60,28 @@ public class ItemQueryService extends QueryService<Item> {
     @Transactional(readOnly = true)
     public Page<Item> findByCriteria(ItemCriteria criteria, Pageable page) {
         log.debug("find by criteria : {}, page: {}", criteria, page);
+        final Specification<Item> specification = createSpecification(criteria);
+        return itemRepository.findAll(specification, page);
+    }
+
+    /**
+     * Return a {@link Page} of {@link Item} which matches the criteria from the database.
+     * @param criteria The object which holds all the filters, which the entities should match.
+     * @param page The page, which should be returned.
+     * @param user The currently logged in user
+     * @return the matching entities.
+     */
+    @Transactional(readOnly = true)
+    public Page<Item> findByCriteria(User user, ItemCriteria criteria, Pageable page) {
+        log.debug("find by criteria : {}, page: {}", criteria, page);
+        if (criteria == null) {
+            criteria = new ItemCriteria();
+        }
+
+        var lf = new LongFilter();
+        lf.setEquals(user.getId());
+        criteria.setUserId(lf);
+
         final Specification<Item> specification = createSpecification(criteria);
         return itemRepository.findAll(specification, page);
     }

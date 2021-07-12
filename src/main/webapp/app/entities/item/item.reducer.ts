@@ -1,17 +1,17 @@
 import axios from 'axios';
 import {
-  parseHeaderForLinks,
-  loadMoreDataWhenScrolled,
+  ICrudDeleteAction,
   ICrudGetAction,
   ICrudGetAllAction,
   ICrudPutAction,
-  ICrudDeleteAction,
+  loadMoreDataWhenScrolled,
+  parseHeaderForLinks,
 } from 'react-jhipster';
 
 import { cleanEntity } from 'app/shared/util/entity-utils';
-import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
+import { FAILURE, REQUEST, SUCCESS } from 'app/shared/reducers/action-type.util';
 
-import { IItem, defaultValue } from 'app/shared/model/item.model';
+import { defaultValue, IItem } from 'app/shared/model/item.model';
 import { ICrudGetAllActionCriteria, ICrudReserveAction, ICrudSearchAction } from 'app/config/redux-action.type';
 import { ItemCriteria } from 'app/shared/criteria/item-criteria';
 
@@ -162,6 +162,14 @@ export const getEntities: ICrudGetAllAction<IItem> = (page, size, sort) => {
   };
 };
 
+export const getSellerEntities: ICrudGetAllAction<IItem> = (page, size, sort) => {
+  const requestUrl = `${apiUrl}/seller?${sort ? `page=${page}&size=${size}&sort=${sort}` : ''}`;
+  return {
+    type: ACTION_TYPES.FETCH_ITEM_LIST,
+    payload: axios.get<IItem>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`),
+  };
+};
+
 export const getEntitiesWithCriteria: ICrudGetAllActionCriteria<IItem> = (criteria: ItemCriteria, page, size, sort) => {
   const requestUrl = `${apiUrl}?${criteria.generateUrl()}&${sort ? `page=${page}&size=${size}&sort=${sort}` : ''}`;
   return {
@@ -212,6 +220,21 @@ export const createEntity: ICrudPutAction<IItem> = entity => async dispatch => {
     payload: axios.post(apiUrl, cleanEntity(entity)),
   });
   return result;
+};
+
+export const createSellerEntity: ICrudPutAction<IItem> = entity => async dispatch => {
+  const result = await dispatch({
+    type: ACTION_TYPES.CREATE_ITEM,
+    payload: axios.post(`${apiUrl}/seller`, cleanEntity(entity)),
+  });
+  return result;
+};
+
+export const updateEntityForSeller: ICrudPutAction<IItem> = entity => async dispatch => {
+  return await dispatch({
+    type: ACTION_TYPES.UPDATE_ITEM,
+    payload: axios.put(`${apiUrl}/${entity.id}/seller`, cleanEntity(entity)),
+  });
 };
 
 export const updateEntity: ICrudPutAction<IItem> = entity => async dispatch => {

@@ -1,6 +1,7 @@
 package com.triippztech.freshtrade.repository;
 
 import com.triippztech.freshtrade.domain.Item;
+import com.triippztech.freshtrade.domain.User;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Repository;
 public interface ItemRepository extends JpaRepository<Item, UUID>, JpaSpecificationExecutor<Item> {
     @Query("select item from Item item where item.owner.login = ?#{principal.username}")
     List<Item> findByOwnerIsCurrentUser();
+
+    Page<Item> findAllByOwner(User owner, Pageable pageable);
 
     @Query(
         value = "select distinct item from Item item left join fetch item.categories left join fetch item.users",
@@ -44,4 +47,13 @@ public interface ItemRepository extends JpaRepository<Item, UUID>, JpaSpecificat
         " AND i.isActive = true"
     )
     Page<Item> search(String query, Pageable pageable);
+
+    @Query(
+        value = "SELECT new com.triippztech.freshtrade.service.dto.metrics.TopSellingItemsDTO (it.item, COUNT(it.item)) FROM ItemToken it" +
+        " left join it.item" +
+        " WHERE it.item.owner = :user" +
+        " GROUP BY it.item" +
+        " ORDER BY COUNT(it.item) DESC"
+    )
+    List<com.triippztech.freshtrade.service.dto.metrics.TopSellingItemsDTO> findTopSellingItemsForUser(@Param("user") User user);
 }

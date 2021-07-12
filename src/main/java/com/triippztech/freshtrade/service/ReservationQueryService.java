@@ -3,17 +3,22 @@ package com.triippztech.freshtrade.service;
 import com.triippztech.freshtrade.domain.*; // for static metamodels
 import com.triippztech.freshtrade.domain.Reservation;
 import com.triippztech.freshtrade.repository.ReservationRepository;
+import com.triippztech.freshtrade.service.criteria.ItemCriteria;
 import com.triippztech.freshtrade.service.criteria.ReservationCriteria;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.criteria.JoinType;
+import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tech.jhipster.service.QueryService;
+import tech.jhipster.service.filter.LongFilter;
 
 /**
  * Service for executing complex queries for {@link Reservation} entities in the database.
@@ -56,6 +61,43 @@ public class ReservationQueryService extends QueryService<Reservation> {
         log.debug("find by criteria : {}, page: {}", criteria, page);
         final Specification<Reservation> specification = createSpecification(criteria);
         return reservationRepository.findAll(specification, page);
+    }
+
+    /**
+     * Return a {@link Page} of {@link Reservation} which matches the criteria from the database.
+     * @param user The current user
+     * @param criteria The object which holds all the filters, which the entities should match.
+     * @param page The page, which should be returned.
+     * @return the matching entities.
+     */
+    @Transactional(readOnly = true)
+    public Page<Reservation> findByCriteria(User user, ReservationCriteria criteria, Pageable page) {
+        log.debug("find by criteria : {}, page: {}", criteria, page);
+        final Specification<Reservation> specification = createSpecification(criteria);
+
+        if (criteria == null) {
+            criteria = new ReservationCriteria();
+        }
+
+        var lf = new LongFilter();
+        lf.setEquals(user.getId());
+        criteria.setSellerId(lf);
+
+        var found = reservationRepository.findAll(specification, page);
+        return new PageImpl<>(
+            found
+                .getContent()
+                .stream()
+                .peek(
+                    key -> {
+                        Hibernate.initialize(key.getBuyer());
+                        Hibernate.initialize(key.getTokens());
+                    }
+                )
+                .collect(Collectors.toList()),
+            page,
+            found.getTotalElements()
+        );
     }
 
     /**

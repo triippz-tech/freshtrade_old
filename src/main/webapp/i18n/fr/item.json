@@ -8,6 +8,30 @@
         "createOrEditLabel": "Créer ou éditer un Item",
         "notFound": "Aucun Item trouvé"
       },
+      "seller": {
+        "title": "Vos articles listés",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Item",
+        "editLabel": "Modifier l'article",
+        "createOrEditLabel": "Créer ou éditer un Item",
+        "notFound": "Aucun Item trouvé",
+        "createdDate": "Date de publication",
+        "itemCondition": "État"
+      },
+      "create": {
+        "price": "Quel est le prix par article ?",
+        "quantity": "Combien en vendez-vous ?",
+        "name": "Quel est le nom de cet article ? (ex. iPhone 11 64GB)",
+        "details": "Écrivez quelques détails sur l'article afin que les autres aient une bonne idée de l'article que vous vendez.",
+        "itemCondition": "Dans quel état est cet article?",
+        "isActive": "Voulez-vous publier cet article?",
+        "images": "Images",
+        "location": "Où se trouve cet article?",
+        "tradeEvent": "À quel événement vendrez-vous cet article ?",
+        "categories": "Dans quelles catégories cet article appartient-il ?",
+        "next": "Suivant",
+        "back": "Dos"
+      },
       "created": "Un nouveau Item a été créé avec l'identifiant {{ param }}",
       "updated": "Le Item avec l'identifiant {{ param }} a été mis à jour",
       "deleted": "Le Item avec l'identifiant {{ param }} a été supprimé",
