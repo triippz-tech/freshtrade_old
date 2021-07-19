@@ -73,7 +73,6 @@ public class ReservationQueryService extends QueryService<Reservation> {
     @Transactional(readOnly = true)
     public Page<Reservation> findByCriteria(User user, ReservationCriteria criteria, Pageable page) {
         log.debug("find by criteria : {}, page: {}", criteria, page);
-        final Specification<Reservation> specification = createSpecification(criteria);
 
         if (criteria == null) {
             criteria = new ReservationCriteria();
@@ -83,6 +82,7 @@ public class ReservationQueryService extends QueryService<Reservation> {
         lf.setEquals(user.getId());
         criteria.setSellerId(lf);
 
+        final Specification<Reservation> specification = createSpecification(criteria);
         var found = reservationRepository.findAll(specification, page);
         return new PageImpl<>(
             found

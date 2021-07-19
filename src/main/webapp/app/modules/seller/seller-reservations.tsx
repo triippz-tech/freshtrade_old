@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { IRootState } from 'app/shared/reducers';
 import InfiniteScroll from 'react-infinite-scroller';
 import { connect } from 'react-redux';
-import { Col, Container, Row } from 'reactstrap';
+import { Container, Row } from 'reactstrap';
 import { getSortState, Translate } from 'react-jhipster';
 import SellerReservationCard from 'app/components/seller-reservation-card';
 import { cancelReservation, getSellerReservations, reset } from 'app/entities/reservation/reservation.reducer';
@@ -164,33 +164,39 @@ export const SellerReservations = (props: SellerReservationsProps) => {
 
       <Row>
         <Container>
-          <InfiniteScroll
-            pageStart={paginationState.activePage}
-            loadMore={handleLoadMore}
-            hasMore={paginationState.activePage - 1 < props.links.next}
-            loader={<div className="loader">Loading ...</div>}
-            threshold={0}
-            initialLoad={false}
-          >
-            {props.reservations.map((reservation, idx) => (
-              <SellerReservationCard
-                reservation={reservation}
-                key={reservation.id}
-                onCancelReservation={reservation1 => {
-                  setSelectedReservation(reservation1);
-                  setCancelDialogOpen(true);
-                }}
-                onMessageBuyer={reservation1 => {
-                  setSelectedReservation(reservation1);
-                  setMessageDialogOpen(true);
-                }}
-                onExchangeItem={reservation1 => {
-                  setSelectedReservation(reservation1);
-                  setExchangeDialogOpen(true);
-                }}
-              />
-            ))}
-          </InfiniteScroll>
+          {props.reservations.length > 0 ? (
+            <InfiniteScroll
+              pageStart={paginationState.activePage}
+              loadMore={handleLoadMore}
+              hasMore={paginationState.activePage - 1 < props.links.next}
+              loader={<div className="loader">Loading ...</div>}
+              threshold={0}
+              initialLoad={false}
+            >
+              {props.reservations.map((reservation, idx) => (
+                <SellerReservationCard
+                  reservation={reservation}
+                  key={reservation.id}
+                  onCancelReservation={reservation1 => {
+                    setSelectedReservation(reservation1);
+                    setCancelDialogOpen(true);
+                  }}
+                  onMessageBuyer={reservation1 => {
+                    setSelectedReservation(reservation1);
+                    setMessageDialogOpen(true);
+                  }}
+                  onExchangeItem={reservation1 => {
+                    setSelectedReservation(reservation1);
+                    setExchangeDialogOpen(true);
+                  }}
+                />
+              ))}
+            </InfiniteScroll>
+          ) : (
+            <div className="alert alert-warning">
+              <Translate contentKey="freshtradeApp.item.home.notFound">No Items found</Translate>
+            </div>
+          )}
         </Container>
       </Row>
     </div>
