@@ -2,12 +2,16 @@ package com.triippztech.freshtrade.repository;
 
 import com.triippztech.freshtrade.domain.Reservation;
 import com.triippztech.freshtrade.domain.User;
+import com.triippztech.freshtrade.service.criteria.ReservationCriteria;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -23,6 +27,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, UUID>,
 
     @Query("select reservation from Reservation reservation where reservation.buyer.login = ?#{principal.username}")
     List<Reservation> findByBuyerIsCurrentUser();
+
+    Page<Reservation> findAllBySeller(User user, Specification<Reservation> specification, Pageable page);
 
     /**
      * Gets the total revenue of a seller
@@ -89,7 +95,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, UUID>,
      */
     Integer countAllBySellerAndIsActiveIsFalseAndIsCancelledIsTrue(User user);
 
-    @Query(value = "SELECT COUNT(DISTINCT res.buyer) FROM Reservation res" + " WHERE res.seller = :user")
+    @Query(value = "SELECT COUNT(DISTINCT res.buyer) FROM Reservation res WHERE res.seller = :user")
     Integer getUniqueBuyers(@Param("user") User user);
 
     @Query(
