@@ -18,7 +18,7 @@ import defaultImage from 'app/assets/img/default-user.png';
 export const NavDropdown = props => (
   <Dropdown id={props.id}>
     <DropdownToggle tag="menu" className="text-reset dropdown-toggle d-flex align-items-center hidden-arrow">
-      {props.icon ? <i className={props.icon}></i> : props.name}
+      {props.icon ? <i className={props.icon}>{` ${props.name}`}</i> : props.name}
     </DropdownToggle>
     <DropdownMenu right style={props.style}>
       {props.children}
