@@ -40,7 +40,7 @@
         "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)"
       },
       "seller": {
-        "main": "Les vendeurs",
+        "main": "Vente",
         "dashboard": "Tableau de bord",
         "post": "L'article",
         "reservations": "Réservations",
