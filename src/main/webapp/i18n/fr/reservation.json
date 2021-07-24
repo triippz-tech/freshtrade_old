@@ -4,6 +4,9 @@
       "sellers": {
         "title": "Réservations du vendeur"
       },
+      "buyers": {
+        "title": "Réservations"
+      },
       "home": {
         "title": "Reservations",
         "refreshListLabel": "Actualiser la liste",
@@ -13,6 +16,7 @@
       },
       "created": "Un nouveau Reservation a été créé avec l'identifiant {{ param }}",
       "updated": "Le Reservation avec l'identifiant {{ param }} a été mis à jour",
+      "redeemed": "Réservation : {{ param }} a été utilisée avec succès",
       "deleted": "Le Reservation avec l'identifiant {{ param }} a été supprimé",
       "delete": {
         "question": "Etes-vous certain de vouloir supprimer le Reservation {{ id }} ?"

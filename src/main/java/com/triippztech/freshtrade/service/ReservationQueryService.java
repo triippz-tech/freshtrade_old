@@ -71,7 +71,7 @@ public class ReservationQueryService extends QueryService<Reservation> {
      * @return the matching entities.
      */
     @Transactional(readOnly = true)
-    public Page<Reservation> findByCriteria(User user, ReservationCriteria criteria, Pageable page) {
+    public Page<Reservation> findByCriteriaSeller(User user, ReservationCriteria criteria, Pageable page) {
         log.debug("find by criteria : {}, page: {}", criteria, page);
 
         if (criteria == null) {
@@ -81,6 +81,43 @@ public class ReservationQueryService extends QueryService<Reservation> {
         var lf = new LongFilter();
         lf.setEquals(user.getId());
         criteria.setSellerId(lf);
+
+        final Specification<Reservation> specification = createSpecification(criteria);
+        var found = reservationRepository.findAll(specification, page);
+        return new PageImpl<>(
+            found
+                .getContent()
+                .stream()
+                .peek(
+                    key -> {
+                        Hibernate.initialize(key.getBuyer());
+                        Hibernate.initialize(key.getTokens());
+                    }
+                )
+                .collect(Collectors.toList()),
+            page,
+            found.getTotalElements()
+        );
+    }
+
+    /**
+     * Return a {@link Page} of {@link Reservation} which matches the criteria from the database.
+     * @param user The current user
+     * @param criteria The object which holds all the filters, which the entities should match.
+     * @param page The page, which should be returned.
+     * @return the matching entities.
+     */
+    @Transactional(readOnly = true)
+    public Page<Reservation> findByCriteriaBuyer(User user, ReservationCriteria criteria, Pageable page) {
+        log.debug("find by criteria : {}, page: {}", criteria, page);
+
+        if (criteria == null) {
+            criteria = new ReservationCriteria();
+        }
+
+        var lf = new LongFilter();
+        lf.setEquals(user.getId());
+        criteria.setBuyerId(lf);
 
         final Specification<Reservation> specification = createSpecification(criteria);
         var found = reservationRepository.findAll(specification, page);

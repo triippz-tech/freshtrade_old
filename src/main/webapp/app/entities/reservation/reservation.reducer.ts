@@ -19,6 +19,7 @@ export const ACTION_TYPES = {
   FETCH_RESERVATION: 'reservation/FETCH_RESERVATION',
   CREATE_RESERVATION: 'reservation/CREATE_RESERVATION',
   UPDATE_RESERVATION: 'reservation/UPDATE_RESERVATION',
+  REDEEM_RESERVATION: 'reservation/REDEEM_RESERVATION',
   PARTIAL_UPDATE_RESERVATION: 'reservation/PARTIAL_UPDATE_RESERVATION',
   DELETE_RESERVATION: 'reservation/DELETE_RESERVATION',
   SET_BLOB: 'reservation/SET_BLOB',
@@ -34,6 +35,7 @@ const initialState = {
   updating: false,
   totalItems: 0,
   updateSuccess: false,
+  redeemSuccess: false,
 };
 
 export type ReservationState = Readonly<typeof initialState>;
@@ -42,6 +44,13 @@ export type ReservationState = Readonly<typeof initialState>;
 
 export default (state: ReservationState = initialState, action): ReservationState => {
   switch (action.type) {
+    case REQUEST(ACTION_TYPES.REDEEM_RESERVATION):
+      return {
+        ...state,
+        errorMessage: null,
+        redeemSuccess: false,
+        updating: true,
+      };
     case REQUEST(ACTION_TYPES.FETCH_RESERVATION_LIST):
     case REQUEST(ACTION_TYPES.FETCH_RESERVATION):
       return {
@@ -73,6 +82,14 @@ export default (state: ReservationState = initialState, action): ReservationStat
         updateSuccess: false,
         errorMessage: action.payload,
       };
+    case FAILURE(ACTION_TYPES.REDEEM_RESERVATION):
+      return {
+        ...state,
+        loading: false,
+        updating: false,
+        redeemSuccess: false,
+        errorMessage: action.payload,
+      };
     case SUCCESS(ACTION_TYPES.FETCH_RESERVATION_LIST): {
       const links = parseHeaderForLinks(action.payload.headers.link);
 
@@ -98,6 +115,12 @@ export default (state: ReservationState = initialState, action): ReservationStat
         updating: false,
         updateSuccess: true,
         entity: action.payload.data,
+      };
+    case SUCCESS(ACTION_TYPES.REDEEM_RESERVATION):
+      return {
+        ...state,
+        updating: false,
+        redeemSuccess: true,
       };
     case SUCCESS(ACTION_TYPES.DELETE_RESERVATION):
       return {
@@ -146,6 +169,14 @@ export const getSellerReservations: ICrudGetAllAction<IReservation> = (page, siz
   };
 };
 
+export const getBuyerReservations: ICrudGetAllAction<IReservation> = (page, size, sort) => {
+  const requestUrl = `${apiUrl}/buyer${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
+  return {
+    type: ACTION_TYPES.FETCH_RESERVATION_LIST,
+    payload: axios.get<IReservation>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`),
+  };
+};
+
 export const getEntity: ICrudGetAction<IReservation> = id => {
   const requestUrl = `${apiUrl}/${id}`;
   return {
@@ -170,6 +201,14 @@ export const updateEntity: ICrudPutAction<IReservation> = entity => async dispat
   return result;
 };
 
+export const redeemReservation: ICrudPutAction<string> = reservationNumber => async dispatch => {
+  const result = await dispatch({
+    type: ACTION_TYPES.UPDATE_RESERVATION,
+    payload: axios.put(`${apiUrl}/buyer/redeem/${reservationNumber}`),
+  });
+  return result;
+};
+
 export const cancelReservation: ICrudPutActionCB<{
   id: string;
   cancellationNote: string;
@@ -177,6 +216,18 @@ export const cancelReservation: ICrudPutActionCB<{
   const result = await dispatch({
     type: ACTION_TYPES.UPDATE_RESERVATION,
     payload: axios.put(`${apiUrl}/${entity.id}/seller/cancel`, entity),
+  });
+  callback();
+  return result;
+};
+
+export const buyerCancelReservation: ICrudPutActionCB<{
+  id: string;
+  cancellationNote: string;
+}> = (entity, callback) => async dispatch => {
+  const result = await dispatch({
+    type: ACTION_TYPES.UPDATE_RESERVATION,
+    payload: axios.put(`${apiUrl}/${entity.id}/buyer/cancel`, entity),
   });
   callback();
   return result;

@@ -6,6 +6,14 @@ import { Link, useLocation } from 'react-router-dom';
 
 const accountMenuItemsAuthenticated = (
   <>
+    <Link to="/account/reservations">
+      <DropdownItem>
+        <Translate contentKey="global.menu.account.reservations">Reservations</Translate>
+      </DropdownItem>
+    </Link>
+    <DropdownItem>
+      <hr className="dropdown-divider" />
+    </DropdownItem>
     <Link to="/account/settings">
       <DropdownItem>
         <Translate contentKey="global.menu.account.settings">Settings</Translate>

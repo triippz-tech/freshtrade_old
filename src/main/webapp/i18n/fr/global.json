@@ -25,7 +25,8 @@
         "sessions": "Sessions",
         "login": "S'authentifier",
         "logout": "Déconnexion",
-        "register": "Créer un compte"
+        "register": "Créer un compte",
+        "reservations": "Réservations"
       },
       "admin": {
         "main": "Administration",

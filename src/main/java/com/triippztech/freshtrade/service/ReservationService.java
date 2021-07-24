@@ -4,10 +4,12 @@ import com.triippztech.freshtrade.domain.Reservation;
 import com.triippztech.freshtrade.domain.User;
 import com.triippztech.freshtrade.repository.ItemTokenRepository;
 import com.triippztech.freshtrade.repository.ReservationRepository;
+import com.triippztech.freshtrade.security.AuthoritiesConstants;
 import com.triippztech.freshtrade.service.dto.reservation.CancelReservationDTO;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.UUID;
+import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -104,13 +106,21 @@ public class ReservationService {
             .map(reservationRepository::save);
     }
 
-    public Reservation cancelReservation(CancelReservationDTO reservationCancel, User user) {
+    public Reservation cancelReservation(CancelReservationDTO reservationCancel, User user, String authority) {
         var foundRes = findOne(reservationCancel.getId());
         if (foundRes.isEmpty()) throw new ReservationServiceException("Reservation not found");
 
-        if (!foundRes.get().getSeller().getId().equals(user.getId())) throw new ReservationServiceException(
-            "You are not the owner of this reservation"
-        );
+        if (authority.equals(AuthoritiesConstants.SELLER)) {
+            if (!foundRes.get().getSeller().getId().equals(user.getId())) throw new ReservationServiceException(
+                "You are not the owner of this reservation"
+            );
+        } else if (authority.equals(AuthoritiesConstants.BUYER)) {
+            if (!foundRes.get().getBuyer().getId().equals(user.getId())) throw new ReservationServiceException(
+                "You are not the buyer of this reservation"
+            );
+        } else {
+            throw new ReservationServiceException("You are not authorized to do that");
+        }
 
         // remove the tokens
         itemTokenRepository.findAllByReservation(foundRes.get()).forEach(itemTokenRepository::delete);
@@ -157,5 +167,35 @@ public class ReservationService {
     public void delete(UUID id) {
         log.debug("Request to delete Reservation : {}", id);
         reservationRepository.deleteById(id);
+    }
+
+    /**
+     * Redeems a reservation for a buyer
+     * @param reservationNumber the reservation number of the reservation to redeem
+     * @return Reservation
+     */
+    public Reservation redeemReservation(String reservationNumber, User user) {
+        log.debug("Request to redeem Reservation : {}", reservationNumber);
+        var foundRes = reservationRepository.findByReservationNumber(reservationNumber);
+        if (foundRes.isEmpty()) throw new ReservationServiceException("Reservation not found with given Reservation Number");
+
+        if (!foundRes.get().getBuyer().getId().equals(user.getId())) throw new ReservationServiceException(
+            "You are not the buyer of this reservation"
+        );
+
+        if (!foundRes.get().getIsActive()) throw new ReservationServiceException("This reservation is no longer active");
+
+        // remove the tokens
+        itemTokenRepository.findAllByReservation(foundRes.get()).forEach(itemTokenRepository::delete);
+
+        // update the res
+        var res = foundRes.get();
+        res.setIsActive(false);
+        res.setIsCancelled(false);
+
+        // Add thread to send email to seller/buyer that item was successfully redeemed
+        var reserv = save(res);
+        Hibernate.initialize(reserv.getItem().getImages());
+        return reserv;
     }
 }
