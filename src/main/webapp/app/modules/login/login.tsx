@@ -28,7 +28,7 @@ export const Login = (props: ILoginProps) => {
     // @ts-ignore
     if (location.state && location.state.from === undefined && location.state.includes('logout')) return <Redirect to="/" />;
     // @ts-ignore
-    else if (location.state.from) {
+    else if (location.state.from !== undefined && location.state.from) {
       // @ts-ignore
       return <Redirect to={location.state.from} />;
     }
