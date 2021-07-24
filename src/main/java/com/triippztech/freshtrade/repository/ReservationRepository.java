@@ -41,9 +41,9 @@ public interface ReservationRepository extends JpaRepository<Reservation, UUID>,
 
     /**
      *
-     * @param user
-     * @param startDate
-     * @param endDate
+     * @param user {@link User}
+     * @param startDate {@link Date}
+     * @param endDate {@link Date}
      * @return
      */
     @Query(
@@ -56,8 +56,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, UUID>,
 
     /**
      *
-     * @param user
-     * @param sevenDaysLater
+     * @param user {@link User}
+     * @param sevenDaysLater {@link ZonedDateTime}
      * @return
      */
     @Query(

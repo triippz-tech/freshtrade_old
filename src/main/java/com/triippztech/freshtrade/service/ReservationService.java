@@ -172,6 +172,7 @@ public class ReservationService {
     /**
      * Redeems a reservation for a buyer
      * @param reservationNumber the reservation number of the reservation to redeem
+     * @param user {@link User}
      * @return Reservation
      */
     public Reservation redeemReservation(String reservationNumber, User user) {

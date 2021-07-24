@@ -221,6 +221,7 @@ public class ItemResource {
      *
      * @param pageable the pagination information.
      * @param criteria the criteria which the requested entities should match.
+     * @param principal {@link Principal}
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of items in body.
      */
     @GetMapping("/items/seller")
@@ -352,6 +353,7 @@ public class ItemResource {
      * {@code DELETE  /items/:id} : delete the "id" item.
      *
      * @param id the id of the item to delete.
+     * @param principal {@link Principal}
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/items/{id}")

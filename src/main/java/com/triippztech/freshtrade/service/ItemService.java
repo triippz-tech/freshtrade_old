@@ -193,6 +193,7 @@ public class ItemService {
     /**
      * Get all the items.
      *
+     * @param user {@link User}
      * @param pageable the pagination information.
      * @return the list of entities.
      */
@@ -237,6 +238,7 @@ public class ItemService {
      * Delete the item by id. Check if the SELLER deleting owns the item first
      *
      * @param id the id of the entity.
+     * @param user {@link User}
      * @throws ItemServiceException unable to delete
      */
     public void delete(UUID id, User user) throws ItemServiceException {

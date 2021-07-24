@@ -294,7 +294,7 @@ public class ReservationResource {
      * @param reservationNumber the reservationNumber of the reservation to redeem.
      * or with status {@code 400 (Bad Request)} if the reservation is not valid,
      * or with status {@code 500 (Internal Server Error)} if the reservation couldn't be redeemed.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     * @return {@link ResponseEntity}
      */
     @PutMapping("/reservations/buyer/redeem/{reservationNumber}")
     public ResponseEntity<Reservation> redeemReservation(@PathVariable(value = "reservationNumber") final String reservationNumber) {
