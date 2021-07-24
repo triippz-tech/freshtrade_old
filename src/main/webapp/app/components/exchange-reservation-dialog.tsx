@@ -37,7 +37,7 @@ export const ExchangeReservationDialog = (props: ExchangeReservationDialogProps)
           <Row>
             <Col className="text-center">
               <QRCode
-                value={`https://freshtrade.io/items/redeem/${props.reservation.reservationNumber}`}
+                value={`https://freshtrade.io/account/reservations/redeem/${props.reservation.reservationNumber}`}
                 logoImage="content/images/freshtrade-logo.png"
                 qrStyle="dots"
                 logoOpacity={-1}

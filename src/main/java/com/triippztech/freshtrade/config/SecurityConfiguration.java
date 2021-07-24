@@ -109,7 +109,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .antMatchers(HttpMethod.GET, "/api/user-location/**").permitAll()
             //Reservations
             .antMatchers(HttpMethod.GET, "/api/reservations/seller").hasAuthority(AuthoritiesConstants.SELLER)
-            .antMatchers(HttpMethod.GET, "/api//reservations/{id}/seller/cancel").hasAuthority(AuthoritiesConstants.SELLER)
+            .antMatchers(HttpMethod.GET, "/api/reservations/buyer").hasAuthority(AuthoritiesConstants.BUYER)
+            .antMatchers(HttpMethod.GET, "/api/reservations/{id}/seller/cancel").hasAuthority(AuthoritiesConstants.SELLER)
+            .antMatchers(HttpMethod.GET, "/api/reservations/{id}/buyer/cancel").hasAuthority(AuthoritiesConstants.BUYER)
+            .antMatchers(HttpMethod.GET, "/api/reservations/buyer/redeem/{reservationNumber}").hasAuthority(AuthoritiesConstants.BUYER)
             // Seller Metrics
             .antMatchers( "/api/metrics/seller/**").hasAuthority(AuthoritiesConstants.SELLER)
 

@@ -1,7 +1,9 @@
 package com.triippztech.freshtrade.web.rest;
 
+import com.triippztech.freshtrade.config.HeaderUtil;
 import com.triippztech.freshtrade.domain.Reservation;
 import com.triippztech.freshtrade.repository.ReservationRepository;
+import com.triippztech.freshtrade.security.AuthoritiesConstants;
 import com.triippztech.freshtrade.service.ReservationQueryService;
 import com.triippztech.freshtrade.service.ReservationService;
 import com.triippztech.freshtrade.service.UserService;
@@ -25,7 +27,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
 
@@ -183,12 +184,30 @@ public class ReservationResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of reservations in body.
      */
     @GetMapping("/reservations/seller")
-    public ResponseEntity<List<Reservation>> getCurrentUserReservations(ReservationCriteria criteria, Pageable pageable) {
+    public ResponseEntity<List<Reservation>> getCurrentSellerReservations(ReservationCriteria criteria, Pageable pageable) {
         log.debug("REST request to get Reservations by criteria: {}", criteria);
         var user = userService
             .getUserWithAuthorities()
             .orElseThrow(() -> new ReservationResourceException("You are not authorized to do perform that action"));
-        Page<Reservation> page = reservationQueryService.findByCriteria(user, criteria, pageable);
+        Page<Reservation> page = reservationQueryService.findByCriteriaSeller(user, criteria, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code GET  /reservations/buyer} : get all the reservations for the current user(buyer).
+     *
+     * @param pageable the pagination information.
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of reservations in body.
+     */
+    @GetMapping("/reservations/buyer")
+    public ResponseEntity<List<Reservation>> getCurrentBuyerReservations(ReservationCriteria criteria, Pageable pageable) {
+        log.debug("REST request to get buyer Reservations by criteria: {}", criteria);
+        var user = userService
+            .getUserWithAuthorities()
+            .orElseThrow(() -> new ReservationResourceException("You are not authorized to do perform that action"));
+        Page<Reservation> page = reservationQueryService.findByCriteriaBuyer(user, criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -224,11 +243,87 @@ public class ReservationResource {
             .getUserWithAuthorities()
             .orElseThrow(() -> new ReservationResourceException("You are not authorized to do perform that action"));
 
-        Reservation result = reservationService.cancelReservation(reservationCancel, user);
+        Reservation result = reservationService.cancelReservation(reservationCancel, user, AuthoritiesConstants.BUYER);
         return ResponseEntity
             .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, reservationCancel.getId().toString()))
             .body(result);
+    }
+
+    /**
+     * {@code PUT  /reservations/:id/buyer/cancel} : Updates an existing reservation.
+     *
+     * @param id the id of the reservation to save.
+     * @param reservationCancel the reservation to cancel.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated reservation,
+     * or with status {@code 400 (Bad Request)} if the reservation is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the reservation couldn't be updated.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PutMapping("/reservations/{id}/buyer/cancel")
+    public ResponseEntity<Reservation> buyerCancelReservation(
+        @PathVariable(value = "id", required = false) final UUID id,
+        @Valid @RequestBody CancelReservationDTO reservationCancel
+    ) throws URISyntaxException {
+        log.debug("REST request to cancel Reservation : {}, {}", id, reservationCancel);
+        if (reservationCancel.getId() == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        if (!Objects.equals(id, reservationCancel.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
+
+        if (!reservationRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
+        var user = userService
+            .getUserWithAuthorities()
+            .orElseThrow(() -> new ReservationResourceException("You are not authorized to do perform that action"));
+
+        Reservation result = reservationService.cancelReservation(reservationCancel, user, AuthoritiesConstants.BUYER);
+        return ResponseEntity
+            .ok()
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, reservationCancel.getId().toString()))
+            .body(result);
+    }
+
+    /**
+     * {@code PUT  /reservations/buyer/redeem/:reservationNumber} : Redeems a reservation.
+     *
+     * @param reservationNumber the reservationNumber of the reservation to redeem.
+     * or with status {@code 400 (Bad Request)} if the reservation is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the reservation couldn't be redeemed.
+     * @return {@link ResponseEntity}
+     */
+    @PutMapping("/reservations/buyer/redeem/{reservationNumber}")
+    public ResponseEntity<Reservation> redeemReservation(@PathVariable(value = "reservationNumber") final String reservationNumber) {
+        log.debug("REST request to redeem Reservation : {}", reservationNumber);
+        if (reservationNumber == null) {
+            throw new BadRequestAlertException("Invalid Reservation Number", ENTITY_NAME, "idnull");
+        }
+
+        if (!reservationRepository.existsByReservationNumber(reservationNumber)) {
+            throw new BadRequestAlertException("Reservation not found", ENTITY_NAME, "idnotfound");
+        }
+
+        var user = userService
+            .getUserWithAuthorities()
+            .orElseThrow(() -> new ReservationResourceException("You are not authorized to do perform that action"));
+
+        try {
+            Reservation result = reservationService.redeemReservation(reservationNumber, user);
+            return ResponseEntity
+                .ok()
+                .headers(HeaderUtil.createEntityRedeemedAlert(applicationName, true, ENTITY_NAME, reservationNumber))
+                .body(result);
+        } catch (ReservationService.ReservationServiceException ex) {
+            log.error(ex.getMessage(), ex);
+            return ResponseEntity
+                .badRequest()
+                .headers(HeaderUtil.createRedeemFailureAlert(applicationName, true, ENTITY_NAME, "reservation", ex.getMessage()))
+                .body(null);
+        }
     }
 
     /**

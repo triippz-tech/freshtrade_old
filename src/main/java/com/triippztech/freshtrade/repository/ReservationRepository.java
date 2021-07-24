@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,9 +41,9 @@ public interface ReservationRepository extends JpaRepository<Reservation, UUID>,
 
     /**
      *
-     * @param user
-     * @param startDate
-     * @param endDate
+     * @param user {@link User}
+     * @param startDate {@link Date}
+     * @param endDate {@link Date}
      * @return
      */
     @Query(
@@ -55,8 +56,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, UUID>,
 
     /**
      *
-     * @param user
-     * @param sevenDaysLater
+     * @param user {@link User}
+     * @param sevenDaysLater {@link ZonedDateTime}
      * @return
      */
     @Query(
@@ -102,4 +103,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, UUID>,
         value = "SELECT COUNT(res) FROM Reservation res" + " WHERE res.seller = :user" + " GROUP BY res.buyer" + " HAVING COUNT(res) > 1"
     )
     List<Long> getReturningBuyers(@Param("user") User user);
+
+    Boolean existsByReservationNumber(String reservationNumber);
+
+    Optional<Reservation> findByReservationNumber(String reservationNumber);
 }

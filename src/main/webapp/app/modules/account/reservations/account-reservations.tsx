@@ -4,8 +4,8 @@ import InfiniteScroll from 'react-infinite-scroller';
 import { connect } from 'react-redux';
 import { Container, Row } from 'reactstrap';
 import { getSortState, Translate } from 'react-jhipster';
-import SellerReservationCard from 'app/components/seller-reservation-card';
-import { cancelReservation, getSellerReservations, reset } from 'app/entities/reservation/reservation.reducer';
+import BuyerReservationCard from 'app/components/buyer-reservation-card';
+import { buyerCancelReservation, getBuyerReservations, reset } from 'app/entities/reservation/reservation.reducer';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
 import { RouteComponentProps } from 'react-router-dom';
@@ -15,9 +15,9 @@ import CancelReservationDialog from 'app/components/cancel-reservation-dialog';
 import ExchangeReservationDialog from 'app/components/exchange-reservation-dialog';
 import { toast } from 'react-toastify';
 
-interface SellerReservationsProps extends StateProps, DispatchProps, RouteComponentProps {}
+interface AccountReservationssProps extends StateProps, DispatchProps, RouteComponentProps {}
 
-export const SellerReservations = (props: SellerReservationsProps) => {
+export const AccountReservations = (props: AccountReservationssProps) => {
   const [paginationState, setPaginationState] = useState(
     overridePaginationStateWithQueryParams(getSortState(props.location, ITEMS_PER_PAGE, 'id'), props.location.search)
   );
@@ -43,7 +43,7 @@ export const SellerReservations = (props: SellerReservationsProps) => {
   }, [messageDialogOpen]);
 
   const getAllEntities = () => {
-    props.getSellerReservations(
+    props.getBuyerReservations(
       paginationState.activePage - 1,
       paginationState.itemsPerPage,
       `${paginationState.sort},${paginationState.order}`
@@ -56,7 +56,7 @@ export const SellerReservations = (props: SellerReservationsProps) => {
       ...paginationState,
       activePage: 1,
     });
-    props.getSellerReservations();
+    props.getBuyerReservations();
   };
 
   useEffect(() => {
@@ -105,12 +105,13 @@ export const SellerReservations = (props: SellerReservationsProps) => {
   };
 
   const sendBuyerMessage = () => {
+    console.log(`Sending Message to User: ${messageValue}`);
     toast.success('Message Sent!');
     setMessageDialogOpen(false);
   };
 
   const cancelReservations = () => {
-    props.cancelReservation(
+    props.buyerCancelReservation(
       {
         id: selectedReservation.id,
         cancellationNote: cancelMessage,
@@ -156,7 +157,7 @@ export const SellerReservations = (props: SellerReservationsProps) => {
       <Row className="justify-content-center">
         <Container>
           <h2 id="freshtradeApp.item.home.createOrEditLabel" data-cy="ItemCreateUpdateHeading">
-            <Translate contentKey="freshtradeApp.reservation.sellers.title">Create New Item</Translate>
+            <Translate contentKey="freshtradeApp.reservation.buyers.title">Reservations</Translate>
           </h2>
         </Container>
       </Row>
@@ -173,14 +174,14 @@ export const SellerReservations = (props: SellerReservationsProps) => {
               initialLoad={false}
             >
               {props.reservations.map((reservation, idx) => (
-                <SellerReservationCard
+                <BuyerReservationCard
                   reservation={reservation}
                   key={reservation.id}
                   onCancelReservation={reservation1 => {
                     setSelectedReservation(reservation1);
                     setCancelDialogOpen(true);
                   }}
-                  onMessageBuyer={reservation1 => {
+                  onMessageSeller={reservation1 => {
                     setSelectedReservation(reservation1);
                     setMessageDialogOpen(true);
                   }}
@@ -213,12 +214,12 @@ const mapStateToProps = ({ authentication, reservation }: IRootState) => ({
 });
 
 const mapDispatchToProps = {
-  getSellerReservations,
+  getBuyerReservations,
   reset,
-  cancelReservation,
+  buyerCancelReservation,
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;
 
-export default connect(mapStateToProps, mapDispatchToProps)(SellerReservations);
+export default connect(mapStateToProps, mapDispatchToProps)(AccountReservations);

@@ -6,17 +6,17 @@ import { APP_DATE_FORMAT_MM_DD_YYYY } from 'app/config/constants';
 import { TextFormat } from 'react-jhipster';
 import { formatPrice } from 'app/shared/util/transform-utils';
 
-interface SellerReservationCardProps {
+interface BuyerReservationCardProps {
   reservation: IReservation;
-  onMessageBuyer: (reservation: IReservation) => void;
+  onMessageSeller: (reservation: IReservation) => void;
   onExchangeItem: (reservation: IReservation) => void;
   onCancelReservation: (reservation: IReservation) => void;
 }
 
 const getBGColor = (isActive: boolean, isCancelled: boolean) => {};
 
-export const SellerReservationCard: React.FC<SellerReservationCardProps> = props => (
-  <Card>
+export const BuyerReservationCard: React.FC<BuyerReservationCardProps> = props => (
+  <Card className="mt-2">
     <CardHeader className="bg-gray">
       <Row>
         <Col>
@@ -41,9 +41,9 @@ export const SellerReservationCard: React.FC<SellerReservationCardProps> = props
         </Col>
         <Col>
           <Row className="text-sm">
-            <strong>Buyer</strong>
+            <strong>Seller</strong>
           </Row>
-          <Row className="text-sm">{props.reservation.buyer && props.reservation.buyer.login}</Row>
+          <Row className="text-sm">{props.reservation.seller && props.reservation.seller.login}</Row>
         </Col>
         <Col>
           <p className="text-sm">Reservation Number: {props.reservation.reservationNumber}</p>
@@ -92,8 +92,8 @@ export const SellerReservationCard: React.FC<SellerReservationCardProps> = props
               <Button outline color="secondary" size="sm" onClick={() => props.onExchangeItem(props.reservation)}>
                 Exchange
               </Button>
-              <Button outline color="secondary" size="sm" onClick={() => props.onMessageBuyer(props.reservation)}>
-                Message Buyer
+              <Button outline color="secondary" size="sm" onClick={() => props.onMessageSeller(props.reservation)}>
+                Message Seller
               </Button>
               <Button outline size="sm" color="danger" onClick={() => props.onCancelReservation(props.reservation)}>
                 Cancel Reservation
@@ -116,4 +116,4 @@ export const SellerReservationCard: React.FC<SellerReservationCardProps> = props
   </Card>
 );
 
-export default SellerReservationCard;
+export default BuyerReservationCard;
