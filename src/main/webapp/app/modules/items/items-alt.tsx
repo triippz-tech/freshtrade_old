@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Link, RouteComponentProps, useHistory, useLocation } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import { IRootState } from 'app/shared/reducers';
 import InfiniteScroll from 'react-infinite-scroller';
-import { getListPageEntities, reset, searchItems } from 'app/entities/item/item.reducer';
+import { getListPageEntities, reset } from 'app/entities/item/item.reducer';
 import { connect } from 'react-redux';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { getSortState } from 'react-jhipster';
@@ -244,7 +244,7 @@ export const ItemsAlt = (props: IItemsProps) => {
                     <CardProduct product={val} />
                   </Col>
                 ))}
-              {itemList.slice(0, -2).map((product, index) => (
+              {itemList.slice(0).map((product, index) => (
                 <Col key={index} sm="4" xl="2" xs="6">
                   <CardProduct product={product} />
                 </Col>
