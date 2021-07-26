@@ -88,7 +88,7 @@ export const Item = (props: IItemProps) => {
             <FontAwesomeIcon icon="sync" spin={loading} />{' '}
             <Translate contentKey="freshtradeApp.item.home.refreshListLabel">Refresh List</Translate>
           </Button>
-          <Link to={`${match.url}/update`} className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
+          <Link to={`${match.url}/new`} className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
             <FontAwesomeIcon icon="plus" />
             &nbsp;
             <Translate contentKey="freshtradeApp.item.home.createLabel">Create new Item</Translate>
@@ -127,7 +127,7 @@ export const Item = (props: IItemProps) => {
                     <Translate contentKey="freshtradeApp.item.itemCondition">Item Condition</Translate> <FontAwesomeIcon icon="sort" />
                   </th>
                   <th className="hand" onClick={sort('isActive')}>
-                    <Translate contentKey="freshtradeApp.item.isActive">Is Active</Translate> <FontAwesomeIcon icon="sort" />
+                    <Translate contentKey="freshtradeApp.item.isActive">Is Published</Translate> <FontAwesomeIcon icon="sort" />
                   </th>
                   <th className="hand" onClick={sort('createdDate')}>
                     <Translate contentKey="freshtradeApp.item.createdDate">Created Date</Translate> <FontAwesomeIcon icon="sort" />

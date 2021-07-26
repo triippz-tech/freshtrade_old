@@ -133,43 +133,48 @@ export const ItemDetailAlt = (props: ItemDetailAltDetail) => {
                   </Col>
                 </Row>
                 <InputGroup className="w-100 mb-4">
-                  {props.isAuthenticated ? (
-                    <>
-                      <NumberInput
-                        min={1}
-                        className="detail-quantity"
-                        max={itemEntity.availableQuantity}
-                        onChange={value => onChange(value)}
-                        onPressEnter={onKeyPress}
-                        placeholder="Choose how many you'd like to reserve"
-                        id={itemEntity.id}
-                        name="items"
-                        value={reserveAmount}
-                        defaultValue={reserveAmount}
-                      />
-                      <InputGroupAddon addonType="append" className="flex-grow-1">
-                        <Button color="dark" block onClick={() => onSubmit()}>
-                          <i className="fa fa-shopping-cart mr-2"></i>Reserve Item(s)
-                        </Button>
-                      </InputGroupAddon>
-                    </>
-                  ) : (
-                    <Col className="text-danger">
-                      <Link
-                        to={{
-                          pathname: '/login',
-                          state: location.pathname,
-                        }}
-                      >
-                        <strong>Login</strong>
-                      </Link>{' '}
-                      or{' '}
-                      <Link to="/account/register">
-                        <strong>Register</strong>
-                      </Link>{' '}
-                      to reserve an item
-                    </Col>
-                  )}
+                  <Row>
+                    <Label>Available Quantity: {`${props.itemEntity.availableTokens ? props.itemEntity.availableTokens : 'N/A'}`}</Label>
+                  </Row>
+                  <Row>
+                    {props.isAuthenticated ? (
+                      <>
+                        <NumberInput
+                          min={1}
+                          className="detail-quantity"
+                          max={itemEntity.availableTokens}
+                          onChange={value => onChange(value)}
+                          onPressEnter={onKeyPress}
+                          placeholder="Choose how many you'd like to reserve"
+                          id={itemEntity.id}
+                          name="items"
+                          value={reserveAmount}
+                          defaultValue={reserveAmount}
+                        />
+                        <InputGroupAddon addonType="append" className="flex-grow-1">
+                          <Button color="dark" block onClick={() => onSubmit()}>
+                            <i className="fa fa-shopping-cart mr-2"></i>Reserve Item(s)
+                          </Button>
+                        </InputGroupAddon>
+                      </>
+                    ) : (
+                      <Col className="text-danger">
+                        <Link
+                          to={{
+                            pathname: '/login',
+                            state: location.pathname,
+                          }}
+                        >
+                          <strong>Login</strong>
+                        </Link>{' '}
+                        or{' '}
+                        <Link to="/account/register">
+                          <strong>Register</strong>
+                        </Link>{' '}
+                        to reserve an item
+                      </Col>
+                    )}
+                  </Row>
                 </InputGroup>
                 <Row className="mb-4">
                   <Col xs="8">
