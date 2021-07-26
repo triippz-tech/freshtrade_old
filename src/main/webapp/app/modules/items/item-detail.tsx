@@ -140,7 +140,7 @@ export const ItemDetail = (props: IItemDetail) => {
                   <label htmlFor="number-input">Enter Quantity</label>
                   <NumberInput
                     min={1}
-                    max={itemEntity.availableQuantity}
+                    max={itemEntity.availableTokens}
                     onChange={value => onChange(value)}
                     onPressEnter={onKeyPress}
                     placeholder="Choose how many you'd like to reserve"

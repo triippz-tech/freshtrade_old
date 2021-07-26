@@ -50,7 +50,7 @@ const ProductBottomTabs = (props: ProductBottomTabsProps) => {
                   <strong>Event:</strong> {props.item.tradeEvent.eventName}
                 </p>
                 <p>
-                  <strong>Address:</strong> {props.item.tradeEvent.location.address}{' '}
+                  <strong>Address:</strong> {props.item.tradeEvent.location && props.item.tradeEvent.location.address}{' '}
                 </p>
                 <p>
                   <strong>Start Date:</strong> {props.item.tradeEvent.startDate}
@@ -58,18 +58,16 @@ const ProductBottomTabs = (props: ProductBottomTabsProps) => {
                 <p>
                   <strong>End Date:</strong> {props.item.tradeEvent.endDate}
                 </p>
-                <Row>
-                  {props.item.tradeEvent ? (
-                    <CustomMap
-                      key={props.item.tradeEvent.location.id}
-                      lat={props.item.tradeEvent.location.latLocation}
-                      lng={props.item.tradeEvent.location.longLocation}
-                      popupText={props.item.tradeEvent.location.address}
-                    />
-                  ) : (
-                    <CustomMap popupText="Location is not specified" />
-                  )}
-                </Row>
+                {props.item.tradeEvent && props.item.tradeEvent.location ? (
+                  <CustomMap
+                    key={props.item.tradeEvent.location.id}
+                    lat={props.item.tradeEvent.location.latLocation}
+                    lng={props.item.tradeEvent.location.longLocation}
+                    popupText={props.item.tradeEvent.location.address}
+                  />
+                ) : (
+                  <CustomMap popupText="Location is not specified" />
+                )}
               </>
             ) : (
               <h5>No Event for this item..</h5>
