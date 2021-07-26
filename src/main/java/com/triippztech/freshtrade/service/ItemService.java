@@ -93,6 +93,8 @@ public class ItemService {
 
     public Item createItem(Item item, User user) {
         log.debug("Request to save Item : {} for Seller: {}", item, user);
+        item.setCreatedDate(ZonedDateTime.now());
+        item.isActive(true);
         item.setOwner(user);
         var createdItem = save(item);
         item
@@ -250,6 +252,38 @@ public class ItemService {
             "Unable to delete. You are not the owner of this item."
         );
         delete(id);
+    }
+
+    /**
+     * archive the item by id.
+     *
+     * @param id the id of the entity.
+     * @throws ItemServiceException unable to delete
+     */
+    public void archiveItem(UUID id) throws ItemServiceException {
+        log.debug("Request to delete Item : {}", id);
+        var foundItem = findOne(id);
+        if (foundItem.isEmpty()) throw new ItemServiceException("Item does not exist");
+
+        foundItem.get().isActive(false);
+        save(foundItem.get());
+    }
+
+    /**
+     * archive the item by id.
+     *
+     * @param id the id of the entity.
+     */
+    public void archiveItem(UUID id, User user) throws ItemServiceException {
+        log.debug("Request to delete Item : {}", id);
+        var foundItem = findOne(id);
+        if (foundItem.isEmpty()) throw new ItemServiceException("Item does not exist");
+
+        if (!foundItem.get().getOwner().getId().equals(user.getId())) throw new ItemServiceException(
+            "Unable to delete. You are not the owner of this item."
+        );
+        foundItem.get().isActive(false);
+        save(foundItem.get());
     }
 
     @Transactional(readOnly = true)

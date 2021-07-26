@@ -96,6 +96,7 @@ public class ItemResource {
             throw new BadRequestAlertException("A new item cannot already have an ID", ENTITY_NAME, "idexists");
         }
         item.setCreatedDate(ZonedDateTime.now());
+        item.isActive(true);
         Item result = itemService.save(item);
         return ResponseEntity
             .created(new URI("/api/items/" + result.getId()))
@@ -251,7 +252,6 @@ public class ItemResource {
         var user = userService
             .getUserWithAuthorities()
             .orElseThrow(() -> new ItemResourceException("You are not authorized to do perform that action"));
-        item.setCreatedDate(ZonedDateTime.now());
         Item result = itemService.createItem(item, user);
         return ResponseEntity
             .created(new URI("/api/items/" + result.getId()))
@@ -364,9 +364,9 @@ public class ItemResource {
             .orElseThrow(() -> new ItemResourceException("You are not authorized to do perform that action"));
 
         if (user.hasRole(AuthoritiesConstants.ADMIN)) {
-            itemService.delete(id);
+            itemService.archiveItem(id);
         } else {
-            itemService.delete(id, user);
+            itemService.archiveItem(id, user);
         }
         return ResponseEntity
             .noContent()

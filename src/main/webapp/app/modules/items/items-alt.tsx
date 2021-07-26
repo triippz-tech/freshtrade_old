@@ -17,6 +17,7 @@ import { SortType } from 'app/components/sort-by';
 import { Condition } from 'app/shared/model/enumerations/condition.model';
 import { ConditionFilter } from 'app/shared/util/filters/enum/condition-filter';
 import { NumberFilter } from 'app/shared/util/filters/number-filter';
+import { BooleanFilter } from 'app/shared/util/filters/boolean-filter';
 
 export interface IItemsProps extends StateProps, DispatchProps, RouteComponentProps<{ slug: string }> {}
 
@@ -34,6 +35,10 @@ export const ItemsAlt = (props: IItemsProps) => {
 
   const buildCriteria = () => {
     const criteria: IItemCriteria = defaultFilter;
+    criteria.isActive = new BooleanFilter({
+      variableName: 'isActive',
+      filter: { equals: true },
+    });
     criteria.categorySlug =
       props.match.params.slug === undefined
         ? null
