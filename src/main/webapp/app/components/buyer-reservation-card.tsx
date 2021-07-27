@@ -75,7 +75,7 @@ export const BuyerReservationCard: React.FC<BuyerReservationCardProps> = props =
           <Row>
             <strong>Event</strong>
           </Row>
-          <Row>{props.reservation.event.eventName}</Row>
+          <Row>{props.reservation.event ? props.reservation.event.eventName : 'N/A'}</Row>
         </Col>
         <Col>
           <Row>

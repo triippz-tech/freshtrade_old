@@ -1,5 +1,6 @@
 package com.triippztech.freshtrade.repository;
 
+import com.triippztech.freshtrade.domain.Item;
 import com.triippztech.freshtrade.domain.ItemToken;
 import com.triippztech.freshtrade.domain.Reservation;
 import java.util.List;
@@ -28,4 +29,6 @@ public interface ItemTokenRepository extends JpaRepository<ItemToken, Long>, Jpa
     Optional<ItemToken> findOneWithEagerRelationships(@Param("id") Long id);
 
     List<ItemToken> findAllByReservation(Reservation reservation);
+
+    Integer countAllByItem(Item item);
 }
