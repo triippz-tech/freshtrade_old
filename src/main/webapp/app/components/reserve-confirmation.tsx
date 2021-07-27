@@ -10,7 +10,7 @@ export const ReserveConfirmation = ({ showAlert = false, isErr = false, message 
         <div className="d-flex align-items-center pr-3">
           <i className="fa fa-check-circle d-none d-sm-block w-3rem h-3rem svg-icon-light flex-shrink-0 mr-3" aria-hidden="true"></i>
           <p className="mb-0">
-            {message} {!isErr && <Link to={`/reservations/${reservationNumber}`}>View Reservation</Link>}
+            {message} {!isErr && <Link to={'/account/reservations/'}>View Reservation</Link>}
             <br className="d-inline-block d-lg-none" />
           </p>
         </div>

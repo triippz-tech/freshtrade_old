@@ -187,7 +187,14 @@ public class ReservationService {
         if (!foundRes.get().getIsActive()) throw new ReservationServiceException("This reservation is no longer active");
 
         // remove the tokens
-        itemTokenRepository.findAllByReservation(foundRes.get()).forEach(itemTokenRepository::delete);
+        itemTokenRepository
+            .findAllByReservation(foundRes.get())
+            .forEach(
+                itemToken -> {
+                    itemToken.setActive(false);
+                    itemTokenRepository.save(itemToken);
+                }
+            );
 
         // update the res
         var res = foundRes.get();

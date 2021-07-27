@@ -292,11 +292,12 @@ public class ItemService {
         var found = itemRepository.findOneWithEagerRelationships(id);
         if (found.isEmpty()) return Optional.empty();
 
-        if (found.get().getTokens().isEmpty()) return Optional.of(new ItemDetailDTO(found.get(), found.get().getQuantity()));
+        var tokenCount = tokenRepository.countAllByItem(found.get());
+        if (tokenCount == 0) return Optional.of(new ItemDetailDTO(found.get(), tokenCount));
 
-        if (found.get().getTokens().size() == found.get().getQuantity()) return Optional.of(new ItemDetailDTO(found.get(), 0));
+        if (tokenCount.equals(found.get().getQuantity())) return Optional.of(new ItemDetailDTO(found.get(), 0));
 
-        var availableTokens = found.get().getQuantity() - found.get().getTokens().size();
+        var availableTokens = found.get().getQuantity() - tokenCount;
         return Optional.of(new ItemDetailDTO(found.get(), availableTokens));
     }
 
@@ -369,6 +370,7 @@ public class ItemService {
 
         ItemToken itemToken = new ItemToken()
             .item(item)
+            .isActive(true)
             .tokenCode(tokenCode)
             .tokenName(tokenName)
             .createdDate(ZonedDateTime.now())

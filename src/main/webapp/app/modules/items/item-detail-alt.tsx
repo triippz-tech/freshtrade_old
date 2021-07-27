@@ -44,6 +44,7 @@ export const ItemDetailAlt = (props: ItemDetailAltDetail) => {
             reservationNumber: response.data.reservationNumber,
             message: `Successfully reserved ${response.data.reservedAmount} ${props.itemEntity.name} for ${props.itemEntity.tradeEvent.startDate} at ${props.itemEntity.tradeEvent.eventName}`,
           });
+          props.getEntityDetail(props.match.params.id);
         } else {
           setAlert({
             showAlert: true,

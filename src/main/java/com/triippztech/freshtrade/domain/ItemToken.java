@@ -39,6 +39,10 @@ public class ItemToken implements Serializable {
     @Column(name = "updated_date")
     private ZonedDateTime updatedDate;
 
+    @NotNull
+    @Column(name = "is_active", nullable = false)
+    private Boolean isActive;
+
     @ManyToOne
     private User owner;
 
@@ -157,6 +161,19 @@ public class ItemToken implements Serializable {
         this.reservation = reservation;
     }
 
+    public ItemToken isActive(Boolean isActive) {
+        this.isActive = isActive;
+        return this;
+    }
+
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -178,11 +195,12 @@ public class ItemToken implements Serializable {
     @Override
     public String toString() {
         return "ItemToken{" +
-            "id=" + getId() +
-            ", tokenName='" + getTokenName() + "'" +
-            ", tokenCode='" + getTokenCode() + "'" +
-            ", createdDate='" + getCreatedDate() + "'" +
-            ", updatedDate='" + getUpdatedDate() + "'" +
-            "}";
+            "id=" + id +
+            ", tokenName='" + tokenName + '\'' +
+            ", tokenCode='" + tokenCode + '\'' +
+            ", createdDate=" + createdDate +
+            ", updatedDate=" + updatedDate +
+            ", isActive=" + isActive +
+            '}';
     }
 }
