@@ -49,6 +49,11 @@ public class Category implements Serializable {
     @JsonIgnoreProperties(value = { "images", "tokens", "owner", "location", "tradeEvent", "categories", "users" }, allowSetters = true)
     private Set<Item> items = new HashSet<>();
 
+    @OneToMany(mappedBy = "category", fetch = FetchType.EAGER)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JsonIgnoreProperties(value = { "item", "category" }, allowSetters = true)
+    private Set<Image> images = new HashSet<>();
+
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public UUID getId() {
         return id;
@@ -144,6 +149,29 @@ public class Category implements Serializable {
             items.forEach(i -> i.addCategories(this));
         }
         this.items = items;
+    }
+
+    public Category images(Set<Image> images) {
+        this.setImages(images);
+        return this;
+    }
+
+    public Category addImage(Image image) {
+        this.images.add(image);
+        return this;
+    }
+
+    public Category removeImage(Image image) {
+        this.images.remove(image);
+        return this;
+    }
+
+    public void setImages(Set<Image> images) {
+        this.images = images;
+    }
+
+    public Set<Image> getImages() {
+        return images;
     }
 
     public Boolean getIsFeatured() {

@@ -2,6 +2,7 @@ package com.triippztech.freshtrade.repository;
 
 import com.triippztech.freshtrade.domain.Item;
 import com.triippztech.freshtrade.domain.User;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -26,6 +27,10 @@ public interface ItemRepository extends JpaRepository<Item, UUID>, JpaSpecificat
         countQuery = "select count(distinct item) from Item item"
     )
     Page<Item> findAllWithEagerRelationships(Pageable pageable);
+
+    Page<Item> findTop5ByCreatedDateAfterAndIsActiveTrue(Pageable pageable, ZonedDateTime createdDate);
+
+    Page<Item> findAllByIsFeaturedTrueAndIsActiveTrue(Pageable pageable);
 
     @Query("select distinct item from Item item left join fetch item.categories left join fetch item.users")
     List<Item> findAllWithEagerRelationships();

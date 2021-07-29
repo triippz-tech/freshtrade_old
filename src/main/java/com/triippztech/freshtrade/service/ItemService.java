@@ -10,6 +10,7 @@ import com.triippztech.freshtrade.service.dto.item.ItemReservationDTO;
 import com.triippztech.freshtrade.service.mail.BuyerMailService;
 import com.triippztech.freshtrade.service.mail.SellerEmailService;
 import java.io.IOException;
+import java.time.DayOfWeek;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -203,6 +204,19 @@ public class ItemService {
     public Page<Item> findAllByCurrentUser(User user, Pageable pageable) {
         log.debug("Request to get all Items for current User: {}", user);
         return itemRepository.findAllByOwner(user, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Item> findTrendingItems(Pageable pageable) {
+        final ZonedDateTime input = ZonedDateTime.now();
+        final ZonedDateTime startOfLastWeek = input.minusWeeks(10).with(DayOfWeek.MONDAY);
+
+        return itemRepository.findTop5ByCreatedDateAfterAndIsActiveTrue(pageable, startOfLastWeek);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Item> findFeaturedItems(Pageable pageable) {
+        return itemRepository.findAllByIsFeaturedTrueAndIsActiveTrue(pageable);
     }
 
     /**

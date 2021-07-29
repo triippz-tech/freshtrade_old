@@ -35,6 +35,10 @@ public class Image implements Serializable {
     @JsonIgnoreProperties(value = { "images", "tokens", "owner", "location", "tradeEvent", "categories", "users" }, allowSetters = true)
     private Item item;
 
+    @ManyToOne
+    @JsonIgnoreProperties(value = { "images", "isActive", "isFeatured", "items" }, allowSetters = true)
+    private Category category;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public UUID getId() {
         return id;
@@ -101,7 +105,18 @@ public class Image implements Serializable {
         this.item = item;
     }
 
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
+    public Image category(Category category) {
+        this.category = category;
+        return this;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
 
     @Override
     public boolean equals(Object o) {

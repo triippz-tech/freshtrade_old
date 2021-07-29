@@ -6,6 +6,7 @@ import authentication, { AuthenticationState } from './authentication';
 import applicationProfile, { ApplicationProfileState } from './application-profile';
 import userLocation, { UserLocationState } from './user-location.reducer';
 
+import homePage, { HomePageState } from 'app/modules/home/home.reducer';
 import administration, { AdministrationState } from 'app/modules/administration/administration.reducer';
 import userManagement, { UserManagementState } from 'app/modules/administration/user-management/user-management.reducer';
 import register, { RegisterState } from 'app/modules/account/register/register.reducer';
@@ -52,6 +53,7 @@ import userProfile, {
 import sellerMetrics, { SellerMetricsState } from 'app/modules/seller/seller-metrics.reducer';
 
 export interface IRootState {
+  readonly homePage: HomePageState;
   readonly sellerMetrics: SellerMetricsState;
   readonly userLocation: UserLocationState;
   readonly authentication: AuthenticationState;
@@ -78,6 +80,7 @@ export interface IRootState {
 }
 
 const rootReducer = combineReducers<IRootState>({
+  homePage,
   authentication,
   locale,
   applicationProfile,
