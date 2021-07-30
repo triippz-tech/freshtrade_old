@@ -59,7 +59,7 @@ export const CategoryUpdate = (props: ICategoryUpdateProps) => {
       const entity = {
         ...categoryEntity,
         ...values,
-        images: images,
+        images: images /* eslint object-shorthand: 0 */,
       };
 
       if (isNew) {
