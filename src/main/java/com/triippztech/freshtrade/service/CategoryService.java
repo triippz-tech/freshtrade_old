@@ -2,9 +2,12 @@ package com.triippztech.freshtrade.service;
 
 import com.triippztech.freshtrade.domain.Category;
 import com.triippztech.freshtrade.repository.CategoryRepository;
+import com.triippztech.freshtrade.repository.ImageRepository;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import javax.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -23,8 +26,11 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
-    public CategoryService(CategoryRepository categoryRepository) {
+    private final ImageRepository imageRepository;
+
+    public CategoryService(CategoryRepository categoryRepository, ImageRepository imageRepository) {
         this.categoryRepository = categoryRepository;
+        this.imageRepository = imageRepository;
     }
 
     /**
@@ -126,5 +132,46 @@ public class CategoryService {
     public Optional<Category> findBySlug(String slug) {
         log.debug("Request to get Category by Slug: {}", slug);
         return categoryRepository.findBySlugEquals(slug);
+    }
+
+    public Category create(Category category) {
+        log.debug("Request to save Category : {}", category);
+        category.setCreatedDate(ZonedDateTime.now());
+        var createdCategory = save(category);
+        category
+            .getImages()
+            .forEach(
+                image -> {
+                    image.setCategory(createdCategory);
+                    image.setCreatedDate(ZonedDateTime.now());
+                    image.setIsVisible(true);
+                    imageRepository.save(image);
+                }
+            );
+        return createdCategory;
+    }
+
+    public Category updateCategory(Category category) {
+        log.debug("Request to update Category : {}", category);
+
+        var foundCategory = findOne(category.getId());
+        if (foundCategory.isEmpty()) throw new EntityNotFoundException("Category was not found");
+
+        category
+            .getImages()
+            .forEach(
+                image -> {
+                    if (
+                        image.getId() == null ||
+                        foundCategory.get().getImages().stream().noneMatch(image1 -> image1.getImageUrl().equals(image.getImageUrl()))
+                    ) {
+                        image.setCategory(foundCategory.get());
+                        image.setCreatedDate(ZonedDateTime.now());
+                        image.setIsVisible(true);
+                        imageRepository.save(image);
+                    }
+                }
+            );
+        return save(category);
     }
 }

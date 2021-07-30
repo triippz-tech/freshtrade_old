@@ -59,6 +59,9 @@ public class Item implements Serializable {
     @Column(name = "updated_date")
     private ZonedDateTime updatedDate;
 
+    @Column(name = "is_featured")
+    private Boolean isFeatured;
+
     @OneToMany(mappedBy = "item", fetch = FetchType.EAGER)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "item" }, allowSetters = true)
@@ -369,6 +372,14 @@ public class Item implements Serializable {
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
+
+    public Boolean getFeatured() {
+        return isFeatured;
+    }
+
+    public void setFeatured(Boolean featured) {
+        isFeatured = featured;
+    }
 
     @Override
     public boolean equals(Object o) {

@@ -37,4 +37,6 @@
     <!-- JULY 2021 -->
     <include file="config/liquibase/changelog/Y2021/JULY/202107060000_update_Reservation_entity.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/Y2021/JULY/202107260000_update_ItemToken_entity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/Y2021/JULY/202107270000_update_Image_constraints.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/Y2021/JULY/202107270100_update_Item_entity.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>

@@ -2,22 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Row, Col, Label } from 'reactstrap';
-import { AvFeedback, AvForm, AvGroup, AvInput, AvField } from 'availity-reactstrap-validation';
+import { AvForm, AvGroup, AvInput, AvField } from 'availity-reactstrap-validation';
 import { Translate, translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IRootState } from 'app/shared/reducers';
 
-import { IItem } from 'app/shared/model/item.model';
 import { getEntities as getItems } from 'app/entities/item/item.reducer';
 import { getEntity, updateEntity, createEntity, reset } from './category.reducer';
-import { ICategory } from 'app/shared/model/category.model';
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
-import { mapIdList } from 'app/shared/util/entity-utils';
+import { IImage } from 'app/shared/model/image.model';
 
 export interface ICategoryUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
 export const CategoryUpdate = (props: ICategoryUpdateProps) => {
   const [isNew] = useState(!props.match.params || !props.match.params.id);
+  const [inputs, setInputs] = useState<Array<string>>(['input-0']);
 
   const { categoryEntity, items, loading, updating } = props;
 
@@ -42,10 +41,25 @@ export const CategoryUpdate = (props: ICategoryUpdateProps) => {
   const saveEntity = (event, errors, values) => {
     values.createdDate = convertDateTimeToServer(values.createdDate);
 
+    const images: Array<IImage> = inputs
+      .map((val, idx) => {
+        const value = values[val] === null ? null : values[val];
+        delete values[val];
+        console.log(value);
+        const img: IImage = {
+          imageUrl: value,
+        };
+        return img;
+      })
+      .filter(function (el) {
+        return el != null;
+      });
+
     if (errors.length === 0) {
       const entity = {
         ...categoryEntity,
         ...values,
+        images: images /* eslint object-shorthand: 0 */,
       };
 
       if (isNew) {
@@ -54,6 +68,14 @@ export const CategoryUpdate = (props: ICategoryUpdateProps) => {
         props.updateEntity(entity);
       }
     }
+  };
+
+  const addAnotherImage = () => {
+    const lastIn: string = inputs[inputs.length - 1];
+    const num: number = Number.parseInt(lastIn[lastIn.length - 1], 2);
+    const newNum = num + 1;
+
+    setInputs([...inputs, `input-${newNum}`]);
   };
 
   return (
@@ -109,7 +131,7 @@ export const CategoryUpdate = (props: ICategoryUpdateProps) => {
                   }}
                 />
               </AvGroup>
-              <AvGroup>
+              <AvGroup hidden>
                 <Label id="createdDateLabel" for="category-createdDate">
                   <Translate contentKey="freshtradeApp.category.createdDate">Created Date</Translate>
                 </Label>
@@ -122,6 +144,32 @@ export const CategoryUpdate = (props: ICategoryUpdateProps) => {
                   placeholder={'YYYY-MM-DD HH:mm'}
                   value={isNew ? displayDefaultDateTime() : convertDateTimeFromServer(props.categoryEntity.createdDate)}
                 />
+              </AvGroup>
+              <AvGroup>
+                {inputs.map((val, idx) => (
+                  <div key={val}>
+                    <Label id="detailsLabel" for={val}>
+                      Image {idx + 1}
+                    </Label>
+                    <AvInput
+                      id={val}
+                      data-cy={val}
+                      type="string"
+                      name={val}
+                      validate={{
+                        pattern: {
+                          value: '[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)',
+                          errorMessage: 'Must provide a valid URL for image',
+                        },
+                      }}
+                    />
+                  </div>
+                ))}
+              </AvGroup>
+              <AvGroup>
+                <Button onClick={addAnotherImage} size="sm">
+                  Add More Images
+                </Button>
               </AvGroup>
               <AvGroup check>
                 <Label id="isActiveLabel">

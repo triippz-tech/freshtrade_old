@@ -312,6 +312,36 @@ public class ItemResource {
     }
 
     /**
+     * {@code GET  /items} : get trending items.
+     *
+     * @param pageable the pagination information.
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of items in body.
+     */
+    @GetMapping("/items/trending")
+    public ResponseEntity<List<ListItemDTO>> getTrendingItems(ItemCriteria criteria, Pageable pageable) {
+        log.debug("REST request to get trending Items by criteria: {}", criteria);
+        Page<Item> page = itemService.findTrendingItems(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(itemMapper.itemsToItemDTOs(page.getContent()));
+    }
+
+    /**
+     * {@code GET  /featured} : get featured items.
+     *
+     * @param pageable the pagination information.
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of items in body.
+     */
+    @GetMapping("/items/featured")
+    public ResponseEntity<List<ListItemDTO>> getFeaturedItems(ItemCriteria criteria, Pageable pageable) {
+        log.debug("REST request to get trending Items by criteria: {}", criteria);
+        Page<Item> page = itemService.findFeaturedItems(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(itemMapper.itemsToItemDTOs(page.getContent()));
+    }
+
+    /**
      * {@code GET  /items/count} : count all the items.
      *
      * @param criteria the criteria which the requested entities should match.
